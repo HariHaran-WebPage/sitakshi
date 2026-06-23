@@ -4,7 +4,7 @@ import Navbar from '../components/Header/Navbar';
 import HomepageMain from '../components/Pages/HomePageComponents/HomepageMain';
 import Aboutpage from '../components/Pages/About Us/Aboutpage';
 import ContactSection from '../components/Pages/Contact/ContactSection';
-import BlogPage from '../components/Pages/Blogpage/BlogPage';
+import BlogPage from '../components/Pages/Blogpage/Blogpage';
 import ServicesPage from '../components/Pages/Services/frontend-development';
 import BackendServicesPage from '../components/Pages/Services/backend-development';
 import FullStackServicesPage from '../components/Pages/Services/full-stack';
