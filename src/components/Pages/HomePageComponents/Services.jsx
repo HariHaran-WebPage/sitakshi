@@ -80,6 +80,10 @@ const SERVICES = [
   },
 ];
 
+// Manual curve offsets per card (translateX in px, positive = push right)
+// Shape: 1=down(0), 2=little up(14), 3=most up(28), 4=down(6), 5=down(0)
+const CURVE_OFFSETS = [0, 14, 28, 6, 0];
+
 function useCountUp(target, duration = 1800, started = false) {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -131,7 +135,6 @@ const styles = `
     pointer-events: none; z-index: 0;
   }
 
-  /* ── Main grid ── */
   .svc-inner {
     max-width: 1440px;
     width: 94%;
@@ -146,7 +149,6 @@ const styles = `
     height: 100%;
   }
 
-  /* ── LEFT ── */
   .svc-left { display: flex; flex-direction: column; gap: 28px; }
 
   .svc-eyebrow {
@@ -207,7 +209,7 @@ const styles = `
   .svc-cta-link svg { flex-shrink: 0; transition: transform 0.3s ease; }
   .svc-cta-link:hover svg { transform: translate(3px,-2px); }
 
-  /* ── RIGHT: cards ── */
+  /* ── RIGHT: curved cards ── */
   .svc-cards-outer {
     position: relative;
     height: 100%;
@@ -223,9 +225,7 @@ const styles = `
     padding: 12px 0;
   }
 
-  /* Every card: full opacity, full content always visible */
   .svc-card {
-    width: 100%;
     background: var(--white);
     border: 1.5px solid var(--border);
     border-radius: 18px;
@@ -235,18 +235,16 @@ const styles = `
     gap: 16px;
     position: relative;
     transition:
-      transform    0.45s cubic-bezier(0.4, 0, 0.2, 1),
+      transform    0.5s cubic-bezier(0.4, 0, 0.2, 1),
       border-color 0.35s ease,
       box-shadow   0.35s ease;
     will-change: transform;
   }
 
-  /* Active: green border + scale up + nudge upward */
   .svc-card--active {
     border-color: var(--primary);
-    box-shadow: 0 12px 40px rgba(0,163,77,0.14), 0 2px 8px rgba(0,163,77,0.08);
-    transform: scale(1.025) translateY(-6px);
-    z-index: 2;
+    box-shadow: 0 16px 48px rgba(0,163,77,0.18), 0 2px 10px rgba(0,163,77,0.10);
+    z-index: 10;
   }
 
   .svc-card-num {
@@ -262,7 +260,6 @@ const styles = `
     transition: background 0.35s ease;
   }
   .svc-card-icon svg { width: 30px; height: 30px; }
-
   .svc-card--active .svc-card-icon { background: var(--primary); }
   .svc-card--active .svc-card-icon svg { filter: brightness(0) invert(1); }
 
@@ -276,7 +273,6 @@ const styles = `
     color: var(--text); letter-spacing: -0.01em; line-height: 1.3;
   }
 
-  /* Description always visible */
   .svc-card-desc {
     font-size: 12.5px; line-height: 1.7; color: var(--text-muted);
   }
@@ -301,7 +297,6 @@ const styles = `
     background: var(--primary); border-color: var(--primary); color: var(--white);
   }
 
-  /* ── Responsive ── */
   @media (max-width: 1200px) {
     .svc-inner { gap: 44px; padding: 0 24px; }
   }
@@ -318,22 +313,15 @@ const styles = `
   }
   @media (max-width: 900px) {
     .svc-section { height: auto !important; }
-    .svc-sticky {
-      position: relative;
-      height: auto;
-      padding: 60px 0 72px;
-    }
+    .svc-sticky { position: relative; height: auto; padding: 60px 0 72px; }
     .svc-inner {
       grid-template-columns: 1fr;
-      gap: 36px;
-      padding: 0 20px;
-      height: auto;
-      align-items: start;
+      gap: 36px; padding: 0 20px;
+      height: auto; align-items: start;
     }
     .svc-left { text-align: center; align-items: center; }
     .svc-body-text { max-width: 560px; }
     .svc-stats { justify-content: center; }
-    .svc-card--active { transform: scale(1.018) translateY(-6px); }
   }
   @media (max-width: 640px) {
     .svc-sticky { padding: 48px 0 60px; }
@@ -365,7 +353,6 @@ const styles = `
     .svc-card-arrow { width: 28px; height: 28px; }
     .svc-cards-track { gap: 5px; }
   }
-
   @media (prefers-reduced-motion: reduce) {
     .svc-card { transition: border-color 0.2s ease; }
   }
@@ -378,12 +365,12 @@ const ServicesSection = () => {
 
   const sectionRef = useRef(null);
   const statsRef   = useRef(null);
+  const cardRefs   = useRef([]);
 
   const c200 = useCountUp(200, 1800, statsStarted);
   const c98  = useCountUp(98,  1600, statsStarted);
   const c12  = useCountUp(12,  1400, statsStarted);
 
-  // Detect mobile (<=900px) — on mobile we don't use scroll hijack
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 900);
     check();
@@ -391,7 +378,6 @@ const ServicesSection = () => {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Stats counter
   useEffect(() => {
     if (!statsRef.current) return;
     const obs = new IntersectionObserver(
@@ -407,11 +393,11 @@ const ServicesSection = () => {
     if (isMobile) return;
     const handleScroll = () => {
       if (!sectionRef.current) return;
-      const rect    = sectionRef.current.getBoundingClientRect();
+      const rect     = sectionRef.current.getBoundingClientRect();
       const scrolled = -rect.top;
-      const vh      = window.innerHeight;
-      const rawIdx  = scrolled / vh;
-      const clamped = Math.max(0, Math.min(SERVICES.length - 1, rawIdx));
+      const vh       = window.innerHeight;
+      const rawIdx   = scrolled / vh;
+      const clamped  = Math.max(0, Math.min(SERVICES.length - 1, rawIdx));
       setActiveIndex(Math.round(clamped));
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -419,8 +405,7 @@ const ServicesSection = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  // On mobile: highlight card as it scrolls into view
-  const cardRefs = useRef([]);
+  // Mobile: highlight card as it scrolls into view
   useEffect(() => {
     if (!isMobile) return;
     const observers = cardRefs.current.map((el, i) => {
@@ -438,6 +423,9 @@ const ServicesSection = () => {
   const sectionStyle = isMobile
     ? {}
     : { height: `${(SERVICES.length + 1) * 100}vh` };
+
+  // Active card pops out furthest right (max offset + extra boost)
+  const ACTIVE_OFFSET = Math.max(...CURVE_OFFSETS) + 22; // 28 + 22 = 50px
 
   return (
     <>
@@ -486,17 +474,24 @@ const ServicesSection = () => {
               </a>
             </div>
 
-            {/* RIGHT — all 5 cards, always fully visible */}
+            {/* RIGHT — custom wave curve cards */}
             <div className="svc-cards-outer" role="region" aria-label="Services">
               <div className="svc-cards-track">
                 {SERVICES.map((s, i) => {
-                  const isActive = i === activeIndex;
+                  const isActive   = i === activeIndex;
+                  const translateX = isActive ? ACTIVE_OFFSET : CURVE_OFFSETS[i];
+                  const translateY = isActive ? -6 : 0;
+                  const scale      = isActive ? 1.022 : 1;
+
                   return (
                     <div
                       key={s.id}
                       ref={el => cardRefs.current[i] = el}
                       className={`svc-card${isActive ? ' svc-card--active' : ''}`}
                       aria-current={isActive ? 'true' : undefined}
+                      style={{
+                        transform: `translateX(${translateX}px) translateY(${translateY}px) scale(${scale})`,
+                      }}
                     >
                       <span className="svc-card-num">0{i + 1}</span>
 

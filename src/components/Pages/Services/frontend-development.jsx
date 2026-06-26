@@ -91,6 +91,16 @@ function useParallax(strength = 14) {
   return { ref, tilt };
 }
 
+function useWindowWidth() {
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  useEffect(() => {
+    const handler = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return width;
+}
+
 const SERVICE_IMAGES = [
   { img: IMAGES.mvp, label: 'MVP Dev', sub: 'Idea → Launch' },
   { img: IMAGES.mobile, label: 'Mobile App', sub: 'iOS & Android' },
@@ -609,14 +619,30 @@ function EnquiryForm() {
 }
 
 function Hero() {
+  const w = useWindowWidth();
+  const isMobile = w <= 768;
+  const isSmall = w <= 480;
+  const isTiny = w <= 375;
+
+  const deviceScale = isTiny ? 0.52 : isSmall ? 0.64 : isMobile ? 0.88 : w <= 1024 ? 0.78 : 1;
+  const deviceHeight = isTiny ? 260 : isSmall ? 310 : isMobile ? 420 : w <= 1024 ? 380 : 420;
+
   return (
-    <div className="srv-hero-grid" style={{ maxWidth: 1320, margin: '0 auto', padding: '80px 64px 72px', display: 'grid', gridTemplateColumns: '1fr 1.1fr', gap: 60, alignItems: 'center' }}>
+    <div style={{
+      maxWidth: 1320,
+      margin: '0 auto',
+      padding: isMobile ? (isSmall ? '40px 16px 0' : '48px 24px 0') : w <= 1024 ? '60px 32px 56px' : '80px 64px 72px',
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : w <= 1024 ? '1fr 1fr' : '1fr 1.1fr',
+      gap: isMobile ? 0 : w <= 1024 ? 32 : 60,
+      alignItems: 'center',
+    }}>
       <div className="reveal-up" style={{ animationDelay: '0s' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#0a0a0a', color: '#fff', fontSize: 11, fontWeight: 600, padding: '7px 16px 7px 10px', borderRadius: 30, marginBottom: 26, border: '1px solid #222', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 0 3px rgba(34,197,94,0.25)', display: 'inline-block', flexShrink: 0, animation: 'pulseDot 2s ease-in-out infinite' }} />
           What We Build
         </div>
-        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(36px, 4.5vw, 56px)', fontWeight: 900, lineHeight: 1.06, marginBottom: 20, color: '#0a0a0a', letterSpacing: '-1px' }}>
+        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(32px, 4.5vw, 56px)', fontWeight: 900, lineHeight: 1.06, marginBottom: 20, color: '#0a0a0a', letterSpacing: '-1px' }}>
           Services Built<br />for <span style={{ background: 'linear-gradient(135deg,#16a34a 0%,#22c55e 55%,#4ade80 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Startup Speed</span>
         </h1>
         <p style={{ color: '#1f2937', fontSize: 15, lineHeight: 1.8, marginBottom: 34, maxWidth: 440 }}>From MVP to scale — we offer the exact services growing startups need, without the agency bloat. Pick what fits your stage and move fast.</p>
@@ -627,8 +653,15 @@ function Hero() {
           </a>
         </div>
       </div>
-      <div className="reveal-up hero-devices-wrap" style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', animationDelay: '0.18s', overflow: 'hidden' }}>
-        <div className="hero-devices-scaler" style={{ transformOrigin: 'top center', flexShrink: 0 }}>
+      <div className="reveal-up" style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        animationDelay: '0.18s',
+        overflow: 'hidden',
+        marginTop: isMobile ? 8 : 0,
+      }}>
+        <div style={{ transform: `scale(${deviceScale})`, transformOrigin: isMobile ? 'top center' : 'top center', display: 'block', height: deviceHeight, flexShrink: 0 }}>
           <HeroDevices />
         </div>
       </div>
@@ -637,17 +670,24 @@ function Hero() {
 }
 
 function StatsBand() {
+  const w = useWindowWidth();
+  const isMobile = w <= 480;
+  const isTablet = w <= 1024;
+
   const stats = [
     { icon: 'ti ti-package', num: 85, suffix: '+', label: 'Projects Shipped' },
     { icon: 'ti ti-clock', num: 48, suffix: 'hr', label: 'Avg. Response Time' },
     { icon: 'ti ti-users', num: 40, suffix: '+', label: 'Startups Served' },
     { icon: 'ti ti-heart', num: 98, suffix: '%', label: 'Satisfaction Rate' },
   ];
+
+  const cols = isMobile ? '1fr' : isTablet ? '1fr 1fr' : 'repeat(4,1fr)';
+
   return (
     <div style={{ background: '#0a0a0a', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,transparent,#16a34a,#22c55e,#4ade80,#22c55e,#16a34a,transparent)', backgroundSize: '200% 100%', animation: 'gradientMove 3s linear infinite', zIndex: 2 }} />
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle,rgba(34,197,94,0.18) 1px,transparent 1px)', backgroundSize: '28px 28px', maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)', pointerEvents: 'none' }} />
-      <div className="srv-stats-grid" style={{ maxWidth: 1320, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: 1320, margin: '0 auto', display: 'grid', gridTemplateColumns: cols, position: 'relative', zIndex: 1 }}>
         {stats.map((s, i) => <StatCell key={i} {...s} />)}
       </div>
     </div>
@@ -655,12 +695,18 @@ function StatsBand() {
 }
 
 function ServicesGrid() {
+  const w = useWindowWidth();
+  const isMobile = w <= 768;
+  const isTablet = w <= 1024;
+  const pad = isMobile ? '0 24px' : isTablet ? '0 32px' : '0 64px';
+  const cols = isMobile ? '1fr' : isTablet ? '1fr 1fr' : 'repeat(3,1fr)';
+
   return (
-    <div className="srv-section-pad" style={{ maxWidth: 1320, margin: '96px auto', padding: '0 64px' }}>
+    <div style={{ maxWidth: 1320, margin: isMobile ? '72px auto' : '96px auto', padding: pad }}>
       <div style={{ display: 'inline-block', background: '#f0fdf4', color: '#15803d', fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: '1px solid #bbf7d0' }}>Our Services</div>
       <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 900, color: '#0a0a0a', marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Everything Your Startup Needs</h2>
       <p style={{ fontSize: 15, color: '#6b7280', lineHeight: 1.7, maxWidth: 480, marginBottom: 48 }}>Pick the service that fits your current stage — or stack them together for end-to-end ownership.</p>
-      <div className="srv-services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 22 }}>
         {services.map((svc, i) => <ServiceCard key={i} svc={svc} index={i} />)}
       </div>
     </div>
@@ -668,14 +714,22 @@ function ServicesGrid() {
 }
 
 function HowWeWork() {
+  const w = useWindowWidth();
+  const isMobile = w <= 480;
+  const isTablet = w <= 768;
+  const pad = isMobile ? '56px 16px' : isTablet ? '56px 24px' : w <= 1024 ? '64px 32px' : '88px 64px';
+  const cols = isMobile ? '1fr' : isTablet ? '1fr 1fr' : 'repeat(4,1fr)';
+
   return (
-    <div className="srv-band-pad" style={{ background: '#0a0a0a', padding: '88px 64px', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ background: '#0a0a0a', padding: pad, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: '-40%', right: '-10%', width: '55%', height: '180%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.13) 0%,transparent 70%)', pointerEvents: 'none' }} />
       <div style={{ maxWidth: 1320, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'inline-block', background: 'rgba(22,163,74,0.14)', color: '#4ade80', fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: '1px solid rgba(22,163,74,0.25)' }}>How We Work</div>
         <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 900, color: '#fff', marginBottom: 56, lineHeight: 1.1, letterSpacing: '-1px' }}>Four Steps, Zero Guesswork</h2>
-        <div className="srv-process-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 40, position: 'relative' }}>
-          <div style={{ position: 'absolute', top: 36, left: '12.5%', right: '12.5%', height: 1, background: 'linear-gradient(90deg,transparent,rgba(22,163,74,0.3),rgba(22,163,74,0.3),transparent)', zIndex: 0 }} />
+        <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 40, position: 'relative' }}>
+          {!isMobile && !isTablet && (
+            <div style={{ position: 'absolute', top: 36, left: '12.5%', right: '12.5%', height: 1, background: 'linear-gradient(90deg,transparent,rgba(22,163,74,0.3),rgba(22,163,74,0.3),transparent)', zIndex: 0 }} />
+          )}
           {processSteps.map((step, i) => <ProcessStep key={i} step={step} index={i} />)}
         </div>
       </div>
@@ -685,17 +739,23 @@ function HowWeWork() {
 
 function Contact() {
   const { ref, visible } = useReveal();
+  const w = useWindowWidth();
+  const isMobile = w <= 768;
+  const isTablet = w <= 1024;
+  const pad = isMobile ? '0 24px' : isTablet ? '0 32px' : '0 64px';
+  const contactCols = isMobile ? '1fr' : '1.15fr 1fr';
+
   return (
-    <div id="contact" className="srv-section-pad" style={{ maxWidth: 1320, margin: '96px auto', padding: '0 64px' }}>
+    <div id="contact" style={{ maxWidth: 1320, margin: isMobile ? '72px auto' : '96px auto', padding: pad }}>
       <div style={{ display: 'inline-block', background: '#f0fdf4', color: '#15803d', fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: '1px solid #bbf7d0' }}>Get In Touch</div>
       <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 900, color: '#0a0a0a', marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Send Us an Enquiry</h2>
       <p style={{ fontSize: 15, color: '#6b7280', lineHeight: 1.7, maxWidth: 460, marginBottom: 48 }}>No pricing sheets, no sales pressure — tell us about your project and we'll get back to you fast.</p>
-      <div ref={ref} className="srv-contact-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 0, background: '#0a0a0a', borderRadius: 24, overflow: 'hidden', border: '1.5px solid rgba(22,163,74,0.25)', boxShadow: '0 24px 64px rgba(22,163,74,0.14)', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
-        <div style={{ padding: '44px 40px', borderRight: '1px solid rgba(255,255,255,0.07)', position: 'relative' }}>
+      <div ref={ref} style={{ display: 'grid', gridTemplateColumns: contactCols, gap: 0, background: '#0a0a0a', borderRadius: 24, overflow: 'hidden', border: '1.5px solid rgba(22,163,74,0.25)', boxShadow: '0 24px 64px rgba(22,163,74,0.14)', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+        <div style={{ padding: isMobile ? '32px 24px' : '44px 40px', borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)', borderBottom: isMobile ? '1px solid rgba(255,255,255,0.07)' : 'none', position: 'relative' }}>
           <div style={{ position: 'absolute', top: '-30%', left: '-20%', width: '70%', height: '160%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.16) 0%,transparent 70%)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative', zIndex: 1 }}><EnquiryForm /></div>
         </div>
-        <div style={{ padding: '34px 32px 30px', background: 'linear-gradient(165deg,#0d1410 0%,#0a100c 100%)', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ padding: isMobile ? '32px 24px' : '34px 32px 30px', background: 'linear-gradient(165deg,#0d1410 0%,#0a100c 100%)', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: '-20%', right: '-30%', width: '80%', height: '80%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.14) 0%,transparent 70%)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80' }} className="mock-pulse-dot" />
@@ -714,8 +774,13 @@ function Contact() {
 }
 
 function FAQ() {
+  const w = useWindowWidth();
+  const isMobile = w <= 768;
+  const isTablet = w <= 1024;
+  const pad = isMobile ? '56px 24px' : isTablet ? '64px 32px' : '88px 64px';
+
   return (
-    <div className="srv-band-pad" style={{ background: '#fafaf8', padding: '88px 64px' }}>
+    <div style={{ background: '#fafaf8', padding: pad }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
         <div style={{ display: 'inline-block', background: '#f0fdf4', color: '#15803d', fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: '1px solid #bbf7d0' }}>FAQ</div>
         <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 900, color: '#0a0a0a', marginBottom: 40, lineHeight: 1.1, letterSpacing: '-1px' }}>Common Questions</h2>
@@ -726,10 +791,15 @@ function FAQ() {
 }
 
 function CTA() {
+  const w = useWindowWidth();
+  const isMobile = w <= 768;
+  const isTablet = w <= 1024;
+  const pad = isMobile ? '56px 24px' : isTablet ? '64px 32px' : '72px 64px';
+
   return (
-    <div className="srv-band-pad" style={{ background: '#0a0a0a', borderTop: '1px solid #1a1a1a', padding: '72px 64px', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ background: '#0a0a0a', borderTop: '1px solid #1a1a1a', padding: pad, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: '-50%', right: '-15%', width: '55%', height: '200%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.16) 0%,transparent 70%)', animation: 'pulse 5s ease-in-out infinite' }} />
-      <div className="srv-cta-inner" style={{ maxWidth: 1320, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: 1320, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap', position: 'relative', zIndex: 1, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
           <div className="float-icon" style={{ width: 70, height: 70, background: 'rgba(22,163,74,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4ade80', fontSize: 32, flexShrink: 0, border: '1.5px solid rgba(22,163,74,0.3)' }}><i className="ti ti-bolt" /></div>
           <div>
@@ -800,49 +870,12 @@ export default function ServicesPage() {
         .enq-select-wrap:focus-within .enq-select-chevron { color: #4ade80; transform: rotate(180deg); }
         .enq-select option { background: #0d1410; color: #fff; }
 
-        @media (prefers-reduced-motion: reduce) {
-          .reveal-up, .float-icon, .mock-bar, .mock-bar-grow, .mock-pulse-dot, .mock-node-pulse, .mock-shield-ring, .mock-pulse-line, .device-laptop-float, .device-phone-float { animation: none !important; }
-        }
-
-        /* ─── Tablet landscape (≤1024px): side-by-side still, just tighter ─── */
-        @media (max-width: 1024px) {
-          .srv-hero-grid { padding: 60px 32px 56px !important; gap: 32px !important; grid-template-columns: 1fr 1fr !important; }
-          .hero-devices-wrap { overflow: visible; }
-          .hero-devices-scaler { transform: scale(0.78); transform-origin: top left; display: block; height: 380px; }
-          .srv-services-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .srv-process-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .srv-contact-grid { grid-template-columns: 1fr !important; }
-          .srv-stats-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .srv-section-pad { padding: 0 32px !important; }
-          .srv-band-pad { padding: 64px 32px !important; }
-        }
-
-        /* ─── Tablet portrait (≤768px): stack hero, devices full-width below ─── */
-        @media (max-width: 768px) {
-          .srv-hero-grid { grid-template-columns: 1fr !important; padding: 48px 24px 0 !important; gap: 0 !important; }
-          .hero-devices-wrap { width: 100%; overflow: hidden; display: flex !important; justify-content: center !important; margin-top: 8px; }
-          .hero-devices-scaler { transform: scale(0.88); transform-origin: top center; display: block; height: 420px; }
-          .srv-services-grid { grid-template-columns: 1fr !important; }
-          .srv-process-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .srv-contact-grid { grid-template-columns: 1fr !important; }
-          .srv-stats-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .srv-section-pad { padding: 0 24px !important; margin: 72px auto !important; }
-          .srv-band-pad { padding: 56px 24px !important; }
-          .srv-cta-inner { flex-direction: column !important; align-items: flex-start !important; }
+        @media (max-width: 480px) {
           .enq-row { grid-template-columns: 1fr !important; }
         }
 
-        /* ─── Mobile (≤480px) ─── */
-        @media (max-width: 480px) {
-          .srv-hero-grid { padding: 40px 16px 0 !important; }
-          .hero-devices-scaler { transform: scale(0.64); transform-origin: top center; height: 310px; }
-          .srv-stats-grid { grid-template-columns: 1fr !important; }
-          .srv-process-grid { grid-template-columns: 1fr !important; }
-        }
-
-        /* ─── Small mobile (≤375px) ─── */
-        @media (max-width: 375px) {
-          .hero-devices-scaler { transform: scale(0.52); transform-origin: top center; height: 260px; }
+        @media (prefers-reduced-motion: reduce) {
+          .reveal-up, .float-icon, .mock-bar, .mock-bar-grow, .mock-pulse-dot, .mock-node-pulse, .mock-shield-ring, .mock-pulse-line, .device-laptop-float, .device-phone-float { animation: none !important; }
         }
       `}</style>
       <div style={{ fontFamily: 'Poppins, sans-serif', background: '#fafaf8', color: '#0a0a0a', lineHeight: 1.6, fontSize: 14 }}>
