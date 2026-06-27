@@ -259,6 +259,11 @@ function WebsiteContent() {
   );
 }
 
+// ─── FIXED HeroDevices ────────────────────────────────────────────────────────
+// Natural width of the device group (laptop 440 + phone overlap -26 + phone 158 - 26 = ~546px)
+// We render at natural size and let the parent scale the whole group uniformly.
+// The parent uses a padding-bottom aspect trick so height adjusts automatically.
+
 function HeroDevices() {
   const { ref, tilt } = useParallax(5);
   const laptopScrollRef = useRef(null);
@@ -282,78 +287,134 @@ function HeroDevices() {
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  return (
-    <div ref={ref} style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 0, transform: `perspective(1400px) rotateX(${-tilt.y * 0.22}deg) rotateY(${tilt.x * 0.22}deg)`, transition: 'transform 0.2s ease-out', position: 'relative' }}>
-      {/* MacBook */}
-      <div className="device-laptop-float" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, position: 'relative' }}>
-        <div style={{ width: 440, background: 'linear-gradient(100deg,#f1f1ef 0%,#dcdcd9 18%,#c9c9c6 38%,#dadad7 55%,#cacac7 75%,#e6e6e3 100%)', borderRadius: '14px 14px 4px 4px', padding: '11px 11px 8px', boxShadow: '0 0 0 1px rgba(120,120,118,0.7),0 1px 0 rgba(255,255,255,0.9) inset,0 36px 80px -12px rgba(0,0,0,0.32),0 14px 28px -8px rgba(0,0,0,0.18)', position: 'relative' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 5 }}>
-            <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'radial-gradient(circle at 35% 35%, #2a2a2a, #050505 70%)', border: '0.5px solid #444' }} />
-          </div>
-          <div style={{ background: '#040404', borderRadius: 8, overflow: 'hidden', border: '1px solid #000', position: 'relative' }}>
-            <div style={{ background: 'linear-gradient(180deg,#19191d,#131316)', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8, borderBottom: '0.5px solid #2a2a2e' }}>
-              <div style={{ display: 'flex', gap: 5 }}>
-                <div style={{ width: 11, height: 11, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%, #ff8a80, #ff5f56)' }} />
-                <div style={{ width: 11, height: 11, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%, #ffd479, #febc30)' }} />
-                <div style={{ width: 11, height: 11, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%, #6fe583, #28ca42)' }} />
-              </div>
-              <div style={{ flex: 1, background: '#1e1e24', borderRadius: 6, padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <svg width="8" height="9" viewBox="0 0 8 9" fill="none"><rect x="1" y="4" width="6" height="5" rx="1" fill="#22c55e" opacity="0.75" /><path d="M2 4V2.5a2 2 0 1 1 4 0V4" stroke="#22c55e" strokeWidth="1" opacity="0.75" fill="none" /></svg>
-                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.38)', fontFamily: 'monospace' }}>yourstudio.io</span>
-              </div>
-            </div>
-            <div ref={laptopScrollRef} className="hide-scrollbar" style={{ height: 280, overflowY: 'scroll', background: '#fafaf8' }}>
-              <WebsiteContent />
-            </div>
-          </div>
-        </div>
-        <div style={{ width: 440, height: 9, background: 'linear-gradient(180deg,#9a9a97 0%,#6c6c69 35%,#4a4a47 60%,#7c7c79 100%)' }} />
-        <div style={{ width: 472, marginLeft: -16, height: 26, background: 'linear-gradient(180deg,#e4e4e1 0%,#cfcfcc 45%,#b9b9b6 100%)', clipPath: 'polygon(2.5% 0%, 97.5% 0%, 100% 100%, 0% 100%)', borderRadius: '0 0 7px 7px', boxShadow: '0 18px 36px -8px rgba(0,0,0,0.32)' }} />
-        <div style={{ width: '78%', height: 14, background: 'radial-gradient(ellipse,rgba(0,0,0,0.22) 0%,transparent 72%)', marginTop: 4, filter: 'blur(6px)' }} />
-      </div>
+  // Natural dimensions of the device group
+  // Laptop: 440px wide, ~360px tall (lid + base + foot)
+  // Phone: 158px wide, overlaps laptop by 26px on left, extends 14px below laptop bottom
+  // Total natural width ≈ 440 + 158 - 26 = 572px
+  // Total natural height ≈ 374px (laptop height + phone bottom offset)
+  const NATURAL_W = 572;
+  const NATURAL_H = 374;
 
-      {/* iPhone */}
-      <div className="device-phone-float" style={{ marginLeft: -26, marginBottom: 14, zIndex: 3, position: 'relative', flexShrink: 0 }}>
-        <div style={{ width: 158, background: 'linear-gradient(135deg,#9b9690 0%,#85807a 16%,#716c66 34%,#86817b 52%,#736e68 70%,#544f4a 88%,#403c38 100%)', borderRadius: 38, position: 'relative', overflow: 'visible', boxShadow: '0 0 0 1.5px #2a2722,0 0 0 3px rgba(170,164,150,0.35),0 30px 64px -10px rgba(10,9,7,0.55)' }}>
-          <div style={{ position: 'absolute', right: -3, top: 88, width: 4, height: 36, background: 'linear-gradient(180deg,#aba59a,#7a756a)', borderRadius: '0 2.5px 2.5px 0' }} />
-          <div style={{ position: 'absolute', left: -3, top: 70, width: 4, height: 18, background: 'linear-gradient(180deg,#aba59a,#7a756a)', borderRadius: '2.5px 0 0 2.5px' }} />
-          <div style={{ position: 'absolute', left: -3, top: 100, width: 4, height: 30, background: 'linear-gradient(180deg,#aba59a,#7a756a)', borderRadius: '2.5px 0 0 2.5px' }} />
-          <div style={{ position: 'absolute', left: -3, top: 138, width: 4, height: 30, background: 'linear-gradient(180deg,#aba59a,#7a756a)', borderRadius: '2.5px 0 0 2.5px' }} />
-          <div style={{ margin: '4px', borderRadius: 34, overflow: 'hidden', background: '#000', position: 'relative' }}>
-            <div style={{ position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', width: 52, height: 14, background: '#000', borderRadius: 11, zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px' }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0d0d0d', border: '0.5px solid #222' }} />
-              <div style={{ width: 2.5, height: 2.5, borderRadius: '50%', background: '#1a1815' }} />
-            </div>
-            <div style={{ position: 'relative', zIndex: 10, padding: '34px 15px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#111' }}>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.92)', fontWeight: 700, letterSpacing: '-0.3px' }}>9:41</span>
-              <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                <svg width="15" height="11" viewBox="0 0 20 14" fill="none">
-                  <rect x="0" y="9" width="3" height="5" rx="0.5" fill="rgba(255,255,255,0.95)" />
-                  <rect x="4.5" y="6" width="3" height="8" rx="0.5" fill="rgba(255,255,255,0.95)" />
-                  <rect x="9" y="3" width="3" height="11" rx="0.5" fill="rgba(255,255,255,0.95)" />
-                  <rect x="13.5" y="0" width="3" height="14" rx="0.5" fill="rgba(255,255,255,0.95)" />
-                </svg>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <div style={{ width: 24, height: 11, border: '1.5px solid rgba(255,255,255,0.7)', borderRadius: 3, padding: '1.5px 2px' }}>
-                    <div style={{ width: '82%', height: '100%', background: 'rgba(255,255,255,0.92)', borderRadius: 1 }} />
+  return (
+    // Outer: fills its parent column, maintains aspect ratio, clips nothing
+    <div style={{ width: '100%', position: 'relative', paddingBottom: `${(NATURAL_H / NATURAL_W) * 100}%` }}>
+      {/* Scaler: absolutely fills the outer box, scales inner content */}
+      <div
+        ref={ref}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'flex-start',
+          overflow: 'visible',
+        }}
+      >
+        {/* Inner natural-size group, scaled to fit */}
+        <div style={{
+          width: NATURAL_W,
+          height: NATURAL_H,
+          position: 'relative',
+          transformOrigin: 'bottom left',
+          // Scale is applied via CSS custom property set by the wrapper below
+          transform: `scale(var(--device-scale, 1)) perspective(1400px) rotateX(${-tilt.y * 0.22}deg) rotateY(${tilt.x * 0.22}deg)`,
+          transition: 'transform 0.2s ease-out',
+          flexShrink: 0,
+        }}>
+          {/* MacBook */}
+          <div className="device-laptop-float" style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', position: 'absolute', left: 0, bottom: 0 }}>
+            <div style={{ width: 440, background: 'linear-gradient(100deg,#f1f1ef 0%,#dcdcd9 18%,#c9c9c6 38%,#dadad7 55%,#cacac7 75%,#e6e6e3 100%)', borderRadius: '14px 14px 4px 4px', padding: '11px 11px 8px', boxShadow: '0 0 0 1px rgba(120,120,118,0.7),0 1px 0 rgba(255,255,255,0.9) inset,0 36px 80px -12px rgba(0,0,0,0.32),0 14px 28px -8px rgba(0,0,0,0.18)', position: 'relative' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 5 }}>
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'radial-gradient(circle at 35% 35%, #2a2a2a, #050505 70%)', border: '0.5px solid #444' }} />
+              </div>
+              <div style={{ background: '#040404', borderRadius: 8, overflow: 'hidden', border: '1px solid #000', position: 'relative' }}>
+                <div style={{ background: 'linear-gradient(180deg,#19191d,#131316)', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8, borderBottom: '0.5px solid #2a2a2e' }}>
+                  <div style={{ display: 'flex', gap: 5 }}>
+                    <div style={{ width: 11, height: 11, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%, #ff8a80, #ff5f56)' }} />
+                    <div style={{ width: 11, height: 11, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%, #ffd479, #febc30)' }} />
+                    <div style={{ width: 11, height: 11, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%, #6fe583, #28ca42)' }} />
                   </div>
+                  <div style={{ flex: 1, background: '#1e1e24', borderRadius: 6, padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <svg width="8" height="9" viewBox="0 0 8 9" fill="none"><rect x="1" y="4" width="6" height="5" rx="1" fill="#22c55e" opacity="0.75" /><path d="M2 4V2.5a2 2 0 1 1 4 0V4" stroke="#22c55e" strokeWidth="1" opacity="0.75" fill="none" /></svg>
+                    <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.38)', fontFamily: 'monospace' }}>yourstudio.io</span>
+                  </div>
+                </div>
+                <div ref={laptopScrollRef} className="hide-scrollbar" style={{ height: 280, overflowY: 'scroll', background: '#fafaf8' }}>
+                  <WebsiteContent />
                 </div>
               </div>
             </div>
-            <div ref={phoneScrollRef} className="hide-scrollbar" style={{ height: 248, position: 'relative', zIndex: 5, overflowY: 'scroll', overflowX: 'hidden', background: '#fafaf8' }}>
-              <div style={{ transform: 'scale(0.6)', transformOrigin: 'top left', width: `${100 / 0.6}%` }}>
-                <WebsiteContent />
+            <div style={{ width: 440, height: 9, background: 'linear-gradient(180deg,#9a9a97 0%,#6c6c69 35%,#4a4a47 60%,#7c7c79 100%)' }} />
+            <div style={{ width: 472, marginLeft: -16, height: 26, background: 'linear-gradient(180deg,#e4e4e1 0%,#cfcfcc 45%,#b9b9b6 100%)', clipPath: 'polygon(2.5% 0%, 97.5% 0%, 100% 100%, 0% 100%)', borderRadius: '0 0 7px 7px', boxShadow: '0 18px 36px -8px rgba(0,0,0,0.32)' }} />
+          </div>
+
+          {/* iPhone — positioned absolutely relative to the group */}
+          <div className="device-phone-float" style={{ position: 'absolute', right: 0, bottom: 14, zIndex: 3 }}>
+            <div style={{ width: 158, background: 'linear-gradient(135deg,#9b9690 0%,#85807a 16%,#716c66 34%,#86817b 52%,#736e68 70%,#544f4a 88%,#403c38 100%)', borderRadius: 38, position: 'relative', overflow: 'visible', boxShadow: '0 0 0 1.5px #2a2722,0 0 0 3px rgba(170,164,150,0.35),0 30px 64px -10px rgba(10,9,7,0.55)' }}>
+              <div style={{ position: 'absolute', right: -3, top: 88, width: 4, height: 36, background: 'linear-gradient(180deg,#aba59a,#7a756a)', borderRadius: '0 2.5px 2.5px 0' }} />
+              <div style={{ position: 'absolute', left: -3, top: 70, width: 4, height: 18, background: 'linear-gradient(180deg,#aba59a,#7a756a)', borderRadius: '2.5px 0 0 2.5px' }} />
+              <div style={{ position: 'absolute', left: -3, top: 100, width: 4, height: 30, background: 'linear-gradient(180deg,#aba59a,#7a756a)', borderRadius: '2.5px 0 0 2.5px' }} />
+              <div style={{ position: 'absolute', left: -3, top: 138, width: 4, height: 30, background: 'linear-gradient(180deg,#aba59a,#7a756a)', borderRadius: '2.5px 0 0 2.5px' }} />
+              <div style={{ margin: '4px', borderRadius: 34, overflow: 'hidden', background: '#000', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', width: 52, height: 14, background: '#000', borderRadius: 11, zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0d0d0d', border: '0.5px solid #222' }} />
+                  <div style={{ width: 2.5, height: 2.5, borderRadius: '50%', background: '#1a1815' }} />
+                </div>
+                <div style={{ position: 'relative', zIndex: 10, padding: '34px 15px 5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#111' }}>
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.92)', fontWeight: 700, letterSpacing: '-0.3px' }}>9:41</span>
+                  <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                    <svg width="15" height="11" viewBox="0 0 20 14" fill="none">
+                      <rect x="0" y="9" width="3" height="5" rx="0.5" fill="rgba(255,255,255,0.95)" />
+                      <rect x="4.5" y="6" width="3" height="8" rx="0.5" fill="rgba(255,255,255,0.95)" />
+                      <rect x="9" y="3" width="3" height="11" rx="0.5" fill="rgba(255,255,255,0.95)" />
+                      <rect x="13.5" y="0" width="3" height="14" rx="0.5" fill="rgba(255,255,255,0.95)" />
+                    </svg>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <div style={{ width: 24, height: 11, border: '1.5px solid rgba(255,255,255,0.7)', borderRadius: 3, padding: '1.5px 2px' }}>
+                        <div style={{ width: '82%', height: '100%', background: 'rgba(255,255,255,0.92)', borderRadius: 1 }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div ref={phoneScrollRef} className="hide-scrollbar" style={{ height: 248, position: 'relative', zIndex: 5, overflowY: 'scroll', overflowX: 'hidden', background: '#fafaf8' }}>
+                  <div style={{ transform: 'scale(0.6)', transformOrigin: 'top left', width: `${100 / 0.6}%` }}>
+                    <WebsiteContent />
+                  </div>
+                </div>
+                <div style={{ position: 'relative', zIndex: 10, background: 'rgba(250,250,248,0.95)', padding: '7px 0 12px', display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ width: 48, height: 4.5, background: 'rgba(10,10,10,0.25)', borderRadius: 3 }} />
+                </div>
               </div>
-            </div>
-            <div style={{ position: 'relative', zIndex: 10, background: 'rgba(250,250,248,0.95)', padding: '7px 0 12px', display: 'flex', justifyContent: 'center' }}>
-              <div style={{ width: 48, height: 4.5, background: 'rgba(10,10,10,0.25)', borderRadius: 3 }} />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Invisible CSS variable injector — sets --device-scale based on container width */}
+      <DeviceScaleInjector naturalWidth={NATURAL_W} />
     </div>
   );
 }
+
+// Measures the container and writes --device-scale so the CSS transform picks it up
+function DeviceScaleInjector({ naturalWidth }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => {
+      const containerW = el.parentElement?.offsetWidth || naturalWidth;
+      const scale = Math.min(1, containerW / naturalWidth);
+      el.parentElement?.style.setProperty('--device-scale', scale);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el.parentElement);
+    return () => ro.disconnect();
+  }, [naturalWidth]);
+  return <div ref={ref} style={{ display: 'none' }} />;
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 function MockThumb({ type, color }) {
   const wrap = { width: '100%', height: 92, borderRadius: 12, background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)', position: 'relative', overflow: 'hidden', marginBottom: 18 };
@@ -487,19 +548,11 @@ function FaqItem({ item }) {
   );
 }
 
-function StatCell({ icon, num, suffix, label }) {
+function StatNumber({ num, suffix, isMobile }) {
   const { ref, count } = useCountUp(num);
   return (
-    <div ref={ref} style={{ padding: '44px 36px', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', gap: 18, alignItems: 'center' }}>
-      <div style={{ width: 56, height: 56, background: 'rgba(22,163,74,0.12)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#22c55e', fontSize: 26, flexShrink: 0, border: '1px solid rgba(34,197,94,0.18)' }}>
-        <i className={icon} />
-      </div>
-      <div>
-        <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 36, fontWeight: 900, lineHeight: 1, letterSpacing: '-1px', background: 'linear-gradient(135deg,#ffffff 0%,#bbf7d0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-          {num === null ? suffix : `${count}${suffix}`}
-        </div>
-        <div style={{ fontSize: 11, color: '#6b7280', fontWeight: 500, marginTop: 5, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</div>
-      </div>
+    <div ref={ref} style={{ fontFamily: 'Playfair Display, serif', fontSize: isMobile ? 26 : 36, fontWeight: 900, lineHeight: 1, letterSpacing: '-1px', background: 'linear-gradient(135deg,#ffffff 0%,#bbf7d0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+      {num === null ? suffix : `${count}${suffix}`}
     </div>
   );
 }
@@ -618,25 +671,25 @@ function EnquiryForm() {
   );
 }
 
+// ─── FIXED Hero ───────────────────────────────────────────────────────────────
 function Hero() {
   const w = useWindowWidth();
   const isMobile = w <= 768;
   const isSmall = w <= 480;
-  const isTiny = w <= 375;
-
-  const deviceScale = isTiny ? 0.52 : isSmall ? 0.64 : isMobile ? 0.78 : w <= 1024 ? 0.78 : 1;
-  const deviceHeight = isTiny ? 250 : isSmall ? 300 : isMobile ? 380 : w <= 1024 ? 380 : 420;
 
   return (
     <div style={{
       maxWidth: 1320,
       margin: '0 auto',
-      padding: isMobile ? (isSmall ? '40px 16px 0' : '48px 20px 0') : w <= 1024 ? '60px 32px 56px' : '80px 64px 72px',
+      padding: isMobile
+        ? (isSmall ? '40px 16px 32px' : '48px 20px 32px')
+        : w <= 1024 ? '60px 32px 56px' : '80px 64px 72px',
       display: 'grid',
       gridTemplateColumns: isMobile ? '1fr' : w <= 1024 ? '1fr 1fr' : '1fr 1.1fr',
-      gap: isMobile ? 0 : w <= 1024 ? 32 : 60,
+      gap: isMobile ? 40 : w <= 1024 ? 32 : 60,
       alignItems: 'center',
     }}>
+      {/* Left: copy */}
       <div className="reveal-up" style={{ animationDelay: '0s' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#0a0a0a', color: '#fff', fontSize: 11, fontWeight: 600, padding: '7px 16px 7px 10px', borderRadius: 30, marginBottom: 26, border: '1px solid #222', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 0 3px rgba(34,197,94,0.25)', display: 'inline-block', flexShrink: 0, animation: 'pulseDot 2s ease-in-out infinite' }} />
@@ -653,30 +706,24 @@ function Hero() {
           </a>
         </div>
       </div>
-      <div className="reveal-up" style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        animationDelay: '0.18s',
-        overflow: 'hidden',
-        marginTop: isMobile ? 24 : 0,
-        width: '100%',
-      }}>
-        <div style={{
-          transform: `scale(${deviceScale})`,
-          transformOrigin: 'top center',
-          display: 'block',
-          height: deviceHeight,
-          flexShrink: 0,
+
+      {/* Right: devices — always fully visible, scales to fit column */}
+      <div
+        className="reveal-up"
+        style={{
+          animationDelay: '0.18s',
+          // On mobile, give it a fixed reasonable height; on desktop let it be natural
           width: '100%',
-          maxWidth: isMobile ? '100%' : 'none',
-        }}>
-          <HeroDevices />
-        </div>
+          // Prevent the column from being too narrow to show devices
+          minWidth: 0,
+        }}
+      >
+        <HeroDevices />
       </div>
     </div>
   );
 }
+// ─────────────────────────────────────────────────────────────────────────────
 
 function StatsBand() {
   const w = useWindowWidth();
@@ -709,15 +756,6 @@ function StatsBand() {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-function StatNumber({ num, suffix, isMobile }) {
-  const { ref, count } = useCountUp(num);
-  return (
-    <div ref={ref} style={{ fontFamily: 'Playfair Display, serif', fontSize: isMobile ? 26 : 36, fontWeight: 900, lineHeight: 1, letterSpacing: '-1px', background: 'linear-gradient(135deg,#ffffff 0%,#bbf7d0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-      {num === null ? suffix : `${count}${suffix}`}
     </div>
   );
 }
