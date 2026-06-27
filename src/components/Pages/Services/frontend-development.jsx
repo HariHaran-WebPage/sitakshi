@@ -624,14 +624,14 @@ function Hero() {
   const isSmall = w <= 480;
   const isTiny = w <= 375;
 
-  const deviceScale = isTiny ? 0.52 : isSmall ? 0.64 : isMobile ? 0.88 : w <= 1024 ? 0.78 : 1;
-  const deviceHeight = isTiny ? 260 : isSmall ? 310 : isMobile ? 420 : w <= 1024 ? 380 : 420;
+  const deviceScale = isTiny ? 0.52 : isSmall ? 0.64 : isMobile ? 0.78 : w <= 1024 ? 0.78 : 1;
+  const deviceHeight = isTiny ? 250 : isSmall ? 300 : isMobile ? 380 : w <= 1024 ? 380 : 420;
 
   return (
     <div style={{
       maxWidth: 1320,
       margin: '0 auto',
-      padding: isMobile ? (isSmall ? '40px 16px 0' : '48px 24px 0') : w <= 1024 ? '60px 32px 56px' : '80px 64px 72px',
+      padding: isMobile ? (isSmall ? '40px 16px 0' : '48px 20px 0') : w <= 1024 ? '60px 32px 56px' : '80px 64px 72px',
       display: 'grid',
       gridTemplateColumns: isMobile ? '1fr' : w <= 1024 ? '1fr 1fr' : '1fr 1.1fr',
       gap: isMobile ? 0 : w <= 1024 ? 32 : 60,
@@ -642,14 +642,14 @@ function Hero() {
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 0 3px rgba(34,197,94,0.25)', display: 'inline-block', flexShrink: 0, animation: 'pulseDot 2s ease-in-out infinite' }} />
           What We Build
         </div>
-        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(32px, 4.5vw, 56px)', fontWeight: 900, lineHeight: 1.06, marginBottom: 20, color: '#0a0a0a', letterSpacing: '-1px' }}>
+        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(28px, 4.5vw, 56px)', fontWeight: 900, lineHeight: 1.06, marginBottom: 20, color: '#0a0a0a', letterSpacing: '-1px' }}>
           Services Built<br />for <span style={{ background: 'linear-gradient(135deg,#16a34a 0%,#22c55e 55%,#4ade80 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Startup Speed</span>
         </h1>
-        <p style={{ color: '#1f2937', fontSize: 15, lineHeight: 1.8, marginBottom: 34, maxWidth: 440 }}>From MVP to scale — we offer the exact services growing startups need, without the agency bloat. Pick what fits your stage and move fast.</p>
+        <p style={{ color: '#1f2937', fontSize: isSmall ? 14 : 15, lineHeight: 1.8, marginBottom: 34, maxWidth: 440 }}>From MVP to scale — we offer the exact services growing startups need, without the agency bloat. Pick what fits your stage and move fast.</p>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <button className="magnetic-btn" style={{ background: '#0a0a0a', color: '#fff', padding: '14px 28px', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, border: 'none', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.18)' }}>Explore Services →</button>
+          <button className="magnetic-btn" style={{ background: '#0a0a0a', color: '#fff', padding: isSmall ? '12px 20px' : '14px 28px', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, border: 'none', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.18)' }}>Explore Services →</button>
           <a href="#contact" style={{ textDecoration: 'none' }}>
-            <button className="magnetic-btn-outline" style={{ background: '#fff', color: '#0a0a0a', padding: '14px 28px', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, border: '1.5px solid #e2e8f0', cursor: 'pointer' }}>Send an Enquiry</button>
+            <button className="magnetic-btn-outline" style={{ background: '#fff', color: '#0a0a0a', padding: isSmall ? '12px 20px' : '14px 28px', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, border: '1.5px solid #e2e8f0', cursor: 'pointer' }}>Send an Enquiry</button>
           </a>
         </div>
       </div>
@@ -659,9 +659,18 @@ function Hero() {
         alignItems: 'flex-start',
         animationDelay: '0.18s',
         overflow: 'hidden',
-        marginTop: isMobile ? 8 : 0,
+        marginTop: isMobile ? 24 : 0,
+        width: '100%',
       }}>
-        <div style={{ transform: `scale(${deviceScale})`, transformOrigin: isMobile ? 'top center' : 'top center', display: 'block', height: deviceHeight, flexShrink: 0 }}>
+        <div style={{
+          transform: `scale(${deviceScale})`,
+          transformOrigin: 'top center',
+          display: 'block',
+          height: deviceHeight,
+          flexShrink: 0,
+          width: '100%',
+          maxWidth: isMobile ? '100%' : 'none',
+        }}>
           <HeroDevices />
         </div>
       </div>
@@ -681,15 +690,34 @@ function StatsBand() {
     { icon: 'ti ti-heart', num: 98, suffix: '%', label: 'Satisfaction Rate' },
   ];
 
-  const cols = isMobile ? '1fr' : isTablet ? '1fr 1fr' : 'repeat(4,1fr)';
+  const cols = isMobile ? '1fr 1fr' : isTablet ? '1fr 1fr' : 'repeat(4,1fr)';
 
   return (
     <div style={{ background: '#0a0a0a', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,transparent,#16a34a,#22c55e,#4ade80,#22c55e,#16a34a,transparent)', backgroundSize: '200% 100%', animation: 'gradientMove 3s linear infinite', zIndex: 2 }} />
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle,rgba(34,197,94,0.18) 1px,transparent 1px)', backgroundSize: '28px 28px', maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)', pointerEvents: 'none' }} />
       <div style={{ maxWidth: 1320, margin: '0 auto', display: 'grid', gridTemplateColumns: cols, position: 'relative', zIndex: 1 }}>
-        {stats.map((s, i) => <StatCell key={i} {...s} />)}
+        {stats.map((s, i) => (
+          <div key={i} style={{ padding: isMobile ? '28px 20px' : '44px 36px', borderRight: '1px solid rgba(255,255,255,0.06)', borderBottom: isMobile && i < 2 ? '1px solid rgba(255,255,255,0.06)' : 'none', display: 'flex', gap: 14, alignItems: 'center' }}>
+            <div style={{ width: isMobile ? 40 : 56, height: isMobile ? 40 : 56, background: 'rgba(22,163,74,0.12)', borderRadius: isMobile ? 12 : 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#22c55e', fontSize: isMobile ? 20 : 26, flexShrink: 0, border: '1px solid rgba(34,197,94,0.18)' }}>
+              <i className={s.icon} />
+            </div>
+            <div>
+              <StatNumber num={s.num} suffix={s.suffix} isMobile={isMobile} />
+              <div style={{ fontSize: isMobile ? 9 : 11, color: '#6b7280', fontWeight: 500, marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</div>
+            </div>
+          </div>
+        ))}
       </div>
+    </div>
+  );
+}
+
+function StatNumber({ num, suffix, isMobile }) {
+  const { ref, count } = useCountUp(num);
+  return (
+    <div ref={ref} style={{ fontFamily: 'Playfair Display, serif', fontSize: isMobile ? 26 : 36, fontWeight: 900, lineHeight: 1, letterSpacing: '-1px', background: 'linear-gradient(135deg,#ffffff 0%,#bbf7d0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+      {num === null ? suffix : `${count}${suffix}`}
     </div>
   );
 }
@@ -698,13 +726,13 @@ function ServicesGrid() {
   const w = useWindowWidth();
   const isMobile = w <= 768;
   const isTablet = w <= 1024;
-  const pad = isMobile ? '0 24px' : isTablet ? '0 32px' : '0 64px';
+  const pad = isMobile ? '0 16px' : isTablet ? '0 32px' : '0 64px';
   const cols = isMobile ? '1fr' : isTablet ? '1fr 1fr' : 'repeat(3,1fr)';
 
   return (
-    <div style={{ maxWidth: 1320, margin: isMobile ? '72px auto' : '96px auto', padding: pad }}>
+    <div style={{ maxWidth: 1320, margin: isMobile ? '60px auto' : '96px auto', padding: pad }}>
       <div style={{ display: 'inline-block', background: '#f0fdf4', color: '#15803d', fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: '1px solid #bbf7d0' }}>Our Services</div>
-      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 900, color: '#0a0a0a', marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Everything Your Startup Needs</h2>
+      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(24px, 3vw, 38px)', fontWeight: 900, color: '#0a0a0a', marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Everything Your Startup Needs</h2>
       <p style={{ fontSize: 15, color: '#6b7280', lineHeight: 1.7, maxWidth: 480, marginBottom: 48 }}>Pick the service that fits your current stage — or stack them together for end-to-end ownership.</p>
       <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 22 }}>
         {services.map((svc, i) => <ServiceCard key={i} svc={svc} index={i} />)}
@@ -717,16 +745,16 @@ function HowWeWork() {
   const w = useWindowWidth();
   const isMobile = w <= 480;
   const isTablet = w <= 768;
-  const pad = isMobile ? '56px 16px' : isTablet ? '56px 24px' : w <= 1024 ? '64px 32px' : '88px 64px';
-  const cols = isMobile ? '1fr' : isTablet ? '1fr 1fr' : 'repeat(4,1fr)';
+  const pad = isMobile ? '48px 16px' : isTablet ? '56px 24px' : w <= 1024 ? '64px 32px' : '88px 64px';
+  const cols = isMobile ? '1fr 1fr' : isTablet ? '1fr 1fr' : 'repeat(4,1fr)';
 
   return (
     <div style={{ background: '#0a0a0a', padding: pad, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: '-40%', right: '-10%', width: '55%', height: '180%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.13) 0%,transparent 70%)', pointerEvents: 'none' }} />
       <div style={{ maxWidth: 1320, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'inline-block', background: 'rgba(22,163,74,0.14)', color: '#4ade80', fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: '1px solid rgba(22,163,74,0.25)' }}>How We Work</div>
-        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 900, color: '#fff', marginBottom: 56, lineHeight: 1.1, letterSpacing: '-1px' }}>Four Steps, Zero Guesswork</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 40, position: 'relative' }}>
+        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(24px, 3vw, 38px)', fontWeight: 900, color: '#fff', marginBottom: isMobile ? 36 : 56, lineHeight: 1.1, letterSpacing: '-1px' }}>Four Steps, Zero Guesswork</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: cols, gap: isMobile ? 32 : 40, position: 'relative' }}>
           {!isMobile && !isTablet && (
             <div style={{ position: 'absolute', top: 36, left: '12.5%', right: '12.5%', height: 1, background: 'linear-gradient(90deg,transparent,rgba(22,163,74,0.3),rgba(22,163,74,0.3),transparent)', zIndex: 0 }} />
           )}
@@ -742,32 +770,34 @@ function Contact() {
   const w = useWindowWidth();
   const isMobile = w <= 768;
   const isTablet = w <= 1024;
-  const pad = isMobile ? '0 24px' : isTablet ? '0 32px' : '0 64px';
+  const pad = isMobile ? '0 16px' : isTablet ? '0 32px' : '0 64px';
   const contactCols = isMobile ? '1fr' : '1.15fr 1fr';
 
   return (
-    <div id="contact" style={{ maxWidth: 1320, margin: isMobile ? '72px auto' : '96px auto', padding: pad }}>
+    <div id="contact" style={{ maxWidth: 1320, margin: isMobile ? '60px auto' : '96px auto', padding: pad }}>
       <div style={{ display: 'inline-block', background: '#f0fdf4', color: '#15803d', fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: '1px solid #bbf7d0' }}>Get In Touch</div>
-      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 900, color: '#0a0a0a', marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Send Us an Enquiry</h2>
+      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(24px, 3vw, 38px)', fontWeight: 900, color: '#0a0a0a', marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Send Us an Enquiry</h2>
       <p style={{ fontSize: 15, color: '#6b7280', lineHeight: 1.7, maxWidth: 460, marginBottom: 48 }}>No pricing sheets, no sales pressure — tell us about your project and we'll get back to you fast.</p>
       <div ref={ref} style={{ display: 'grid', gridTemplateColumns: contactCols, gap: 0, background: '#0a0a0a', borderRadius: 24, overflow: 'hidden', border: '1.5px solid rgba(22,163,74,0.25)', boxShadow: '0 24px 64px rgba(22,163,74,0.14)', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
-        <div style={{ padding: isMobile ? '32px 24px' : '44px 40px', borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)', borderBottom: isMobile ? '1px solid rgba(255,255,255,0.07)' : 'none', position: 'relative' }}>
+        <div style={{ padding: isMobile ? '28px 20px' : '44px 40px', borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)', borderBottom: isMobile ? '1px solid rgba(255,255,255,0.07)' : 'none', position: 'relative' }}>
           <div style={{ position: 'absolute', top: '-30%', left: '-20%', width: '70%', height: '160%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.16) 0%,transparent 70%)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative', zIndex: 1 }}><EnquiryForm /></div>
         </div>
-        <div style={{ padding: isMobile ? '32px 24px' : '34px 32px 30px', background: 'linear-gradient(165deg,#0d1410 0%,#0a100c 100%)', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: '-20%', right: '-30%', width: '80%', height: '80%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.14) 0%,transparent 70%)', pointerEvents: 'none' }} />
-          <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80' }} className="mock-pulse-dot" />
-            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', fontWeight: 600, letterSpacing: '0.09em', textTransform: 'uppercase' }}>Live Preview</span>
+        {!isMobile && (
+          <div style={{ padding: '34px 32px 30px', background: 'linear-gradient(165deg,#0d1410 0%,#0a100c 100%)', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: '-20%', right: '-30%', width: '80%', height: '80%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.14) 0%,transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80' }} className="mock-pulse-dot" />
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', fontWeight: 600, letterSpacing: '0.09em', textTransform: 'uppercase' }}>Live Preview</span>
+            </div>
+            <p style={{ position: 'relative', zIndex: 1, fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 28, maxWidth: 240 }}>Your enquiry lands here — the same dashboard on laptop and mobile.</p>
+            <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center' }}><DeviceShowcase /></div>
+            <div style={{ position: 'relative', zIndex: 1, marginTop: 30, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.07)', fontSize: 12, color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <i className="ti ti-clock" style={{ fontSize: 14, color: '#4ade80' }} />
+              Usually responds within 4 hours
+            </div>
           </div>
-          <p style={{ position: 'relative', zIndex: 1, fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 28, maxWidth: 240 }}>Your enquiry lands here — the same dashboard on laptop and mobile.</p>
-          <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center' }}><DeviceShowcase /></div>
-          <div style={{ position: 'relative', zIndex: 1, marginTop: 30, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.07)', fontSize: 12, color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <i className="ti ti-clock" style={{ fontSize: 14, color: '#4ade80' }} />
-            Usually responds within 4 hours
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -777,13 +807,13 @@ function FAQ() {
   const w = useWindowWidth();
   const isMobile = w <= 768;
   const isTablet = w <= 1024;
-  const pad = isMobile ? '56px 24px' : isTablet ? '64px 32px' : '88px 64px';
+  const pad = isMobile ? '48px 16px' : isTablet ? '64px 32px' : '88px 64px';
 
   return (
     <div style={{ background: '#fafaf8', padding: pad }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
         <div style={{ display: 'inline-block', background: '#f0fdf4', color: '#15803d', fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: '1px solid #bbf7d0' }}>FAQ</div>
-        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 900, color: '#0a0a0a', marginBottom: 40, lineHeight: 1.1, letterSpacing: '-1px' }}>Common Questions</h2>
+        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(24px, 3vw, 38px)', fontWeight: 900, color: '#0a0a0a', marginBottom: 40, lineHeight: 1.1, letterSpacing: '-1px' }}>Common Questions</h2>
         {faqs.map((item, i) => <FaqItem key={i} item={item} />)}
       </div>
     </div>
@@ -794,24 +824,24 @@ function CTA() {
   const w = useWindowWidth();
   const isMobile = w <= 768;
   const isTablet = w <= 1024;
-  const pad = isMobile ? '56px 24px' : isTablet ? '64px 32px' : '72px 64px';
+  const pad = isMobile ? '48px 16px' : isTablet ? '64px 32px' : '72px 64px';
 
   return (
     <div style={{ background: '#0a0a0a', borderTop: '1px solid #1a1a1a', padding: pad, position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: '-50%', right: '-15%', width: '55%', height: '200%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.16) 0%,transparent 70%)', animation: 'pulse 5s ease-in-out infinite' }} />
-      <div style={{ maxWidth: 1320, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap', position: 'relative', zIndex: 1, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center' }}>
+      <div style={{ maxWidth: 1320, margin: '0 auto', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap', position: 'relative', zIndex: 1, flexDirection: isMobile ? 'column' : 'row' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
-          <div className="float-icon" style={{ width: 70, height: 70, background: 'rgba(22,163,74,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4ade80', fontSize: 32, flexShrink: 0, border: '1.5px solid rgba(22,163,74,0.3)' }}><i className="ti ti-bolt" /></div>
+          <div className="float-icon" style={{ width: isMobile ? 54 : 70, height: isMobile ? 54 : 70, background: 'rgba(22,163,74,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4ade80', fontSize: isMobile ? 24 : 32, flexShrink: 0, border: '1.5px solid rgba(22,163,74,0.3)' }}><i className="ti ti-bolt" /></div>
           <div>
-            <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 900, color: '#fff', marginBottom: 8, letterSpacing: '-0.8px' }}>Not Sure Where to Start?</h2>
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 15 }}>Send a quick enquiry — we'll map the right service to your stage.</p>
+            <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(20px, 2.5vw, 32px)', fontWeight: 900, color: '#fff', marginBottom: 8, letterSpacing: '-0.8px' }}>Not Sure Where to Start?</h2>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: isMobile ? 13 : 15 }}>Send a quick enquiry — we'll map the right service to your stage.</p>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', flexShrink: 0 }}>
           <a href="#contact" style={{ textDecoration: 'none' }}>
-            <button className="magnetic-btn" style={{ background: '#22c55e', color: '#fff', padding: '14px 28px', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer', boxShadow: '0 6px 20px rgba(34,197,94,0.35)' }}>Send Your Enquiry →</button>
+            <button className="magnetic-btn" style={{ background: '#22c55e', color: '#fff', padding: isMobile ? '12px 20px' : '14px 28px', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer', boxShadow: '0 6px 20px rgba(34,197,94,0.35)' }}>Send Your Enquiry →</button>
           </a>
-          <button className="magnetic-btn-outline" style={{ background: 'transparent', color: '#fff', padding: '14px 28px', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, border: '1.5px solid rgba(255,255,255,0.2)', cursor: 'pointer' }}>View Our Work →</button>
+          <button className="magnetic-btn-outline" style={{ background: 'transparent', color: '#fff', padding: isMobile ? '12px 20px' : '14px 28px', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 13, border: '1.5px solid rgba(255,255,255,0.2)', cursor: 'pointer' }}>View Our Work →</button>
         </div>
       </div>
     </div>
@@ -825,6 +855,7 @@ export default function ServicesPage() {
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap');
         @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; overflow-x: hidden; }
         body { font-family: 'Poppins', sans-serif; background: #fafaf8; color: #0a0a0a; line-height: 1.6; font-size: 14px; }
 
         .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
@@ -878,7 +909,7 @@ export default function ServicesPage() {
           .reveal-up, .float-icon, .mock-bar, .mock-bar-grow, .mock-pulse-dot, .mock-node-pulse, .mock-shield-ring, .mock-pulse-line, .device-laptop-float, .device-phone-float { animation: none !important; }
         }
       `}</style>
-      <div style={{ fontFamily: 'Poppins, sans-serif', background: '#fafaf8', color: '#0a0a0a', lineHeight: 1.6, fontSize: 14 }}>
+      <div style={{ fontFamily: 'Poppins, sans-serif', background: '#fafaf8', color: '#0a0a0a', lineHeight: 1.6, fontSize: 14, width: '100%', overflowX: 'hidden' }}>
         <Hero />
         <StatsBand />
         <ServicesGrid />

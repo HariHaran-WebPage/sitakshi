@@ -80,9 +80,10 @@ const SERVICES = [
   },
 ];
 
-// Manual curve offsets per card (translateX in px, positive = push right)
-// Shape: 1=down(0), 2=little up(14), 3=most up(28), 4=down(6), 5=down(0)
+// Curve offsets per card index — used only on desktop (≥901px)
+// Active card always gets ACTIVE_OFFSET instead
 const CURVE_OFFSETS = [0, 14, 28, 6, 0];
+const ACTIVE_OFFSET = 50; // push active card furthest right
 
 function useCountUp(target, duration = 1800, started = false) {
   const [count, setCount] = useState(0);
@@ -113,8 +114,14 @@ const styles = `
     --white:         #ffffff;
   }
 
-  .svc-section { width: 100%; position: relative; }
+  /* ─── Section wrapper ─── */
+  .svc-section {
+    width: 100%;
+    position: relative;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+  }
 
+  /* ─── Sticky panel (desktop) ─── */
   .svc-sticky {
     position: sticky;
     top: 0;
@@ -124,97 +131,149 @@ const styles = `
     display: flex;
     align-items: center;
     background: var(--white);
-    font-family: 'Inter', 'Segoe UI', sans-serif;
   }
 
   .svc-bg-dots {
-    position: absolute; inset: 0;
+    position: absolute;
+    inset: 0;
     background-image: radial-gradient(circle, rgba(0,163,77,0.13) 1px, transparent 1px);
     background-size: 32px 32px;
     opacity: 0.45;
-    pointer-events: none; z-index: 0;
+    pointer-events: none;
+    z-index: 0;
   }
 
+  /* ─── Main grid ─── */
   .svc-inner {
     max-width: 1440px;
     width: 94%;
     margin: 0 auto;
-    padding: 0 32px;
+    padding: 0 40px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    gap: 64px;
     align-items: center;
     position: relative;
     z-index: 1;
     height: 100%;
   }
 
-  .svc-left { display: flex; flex-direction: column; gap: 28px; }
+  /* ─── LEFT column ─── */
+  .svc-left {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
 
   .svc-eyebrow {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-size: 12px; font-weight: 700; letter-spacing: 0.13em;
-    text-transform: uppercase; color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--primary);
   }
   .svc-eyebrow-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--primary); flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--primary);
+    flex-shrink: 0;
   }
 
   .svc-heading {
     margin: 0;
-    font-size: clamp(34px, 3.4vw, 60px);
-    font-weight: 800; line-height: 1.15;
-    color: var(--text); letter-spacing: -0.03em;
+    font-size: clamp(32px, 3.4vw, 58px);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--text);
+    letter-spacing: -0.03em;
   }
   .svc-heading em {
-    display: block; font-style: normal;
+    display: block;
+    font-style: normal;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text; margin-top: 6px;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 6px;
   }
 
   .svc-body-text {
-    margin: 0; font-size: 15px; line-height: 1.85; color: var(--text-muted);
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--text-muted);
   }
 
-  .svc-stats { display: flex; align-items: center; gap: 24px; padding: 16px 0 4px; }
-  .svc-stat  { display: flex; flex-direction: column; gap: 4px; }
+  /* ─── Stats ─── */
+  .svc-stats {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 16px 0 4px;
+    flex-wrap: wrap;
+  }
+  .svc-stat { display: flex; flex-direction: column; gap: 4px; }
   .svc-stat-value {
-    font-size: 36px; font-weight: 800; letter-spacing: -0.02em; line-height: 1;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   .svc-stat-label {
-    font-size: 10px; font-weight: 700; color: var(--text-faint);
-    text-transform: uppercase; letter-spacing: 0.1em;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
   }
   .svc-stat-divider {
-    width: 1.5px; height: 44px;
-    background: linear-gradient(180deg, var(--primary), transparent); flex-shrink: 0;
+    width: 1.5px;
+    height: 44px;
+    background: linear-gradient(180deg, var(--primary), transparent);
+    flex-shrink: 0;
   }
 
+  /* ─── CTA ─── */
   .svc-cta-link {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-size: 14px; font-weight: 700; color: var(--primary);
-    text-decoration: none; padding: 13px 26px;
-    background: var(--primary-light); border-radius: 50px;
-    width: fit-content; transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+    padding: 13px 26px;
+    background: var(--primary-light);
+    border-radius: 50px;
+    width: fit-content;
+    transition: all 0.3s ease;
   }
   .svc-cta-link:hover {
-    background: var(--primary); color: #fff;
+    background: var(--primary);
+    color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0,163,77,0.22);
   }
   .svc-cta-link svg { flex-shrink: 0; transition: transform 0.3s ease; }
-  .svc-cta-link:hover svg { transform: translate(3px,-2px); }
+  .svc-cta-link:hover svg { transform: translate(3px, -2px); }
 
-  /* ── RIGHT: curved cards ── */
+  /* ─── RIGHT: cards ─── */
   .svc-cards-outer {
     position: relative;
     height: 100%;
     display: flex;
     align-items: center;
+    /* clip so shifted cards don't overflow viewport */
+    overflow: hidden;
+    padding-right: 0;
   }
 
   .svc-cards-track {
@@ -222,7 +281,9 @@ const styles = `
     flex-direction: column;
     gap: 8px;
     width: 100%;
-    padding: 12px 0;
+    padding: 16px 0;
+    /* leave room on right for active card offset */
+    padding-right: 8px;
   }
 
   .svc-card {
@@ -239,6 +300,8 @@ const styles = `
       border-color 0.35s ease,
       box-shadow   0.35s ease;
     will-change: transform;
+    /* prevent card text from wrapping awkwardly when shifted */
+    min-width: 0;
   }
 
   .svc-card--active {
@@ -248,15 +311,25 @@ const styles = `
   }
 
   .svc-card-num {
-    position: absolute; top: 11px; right: 13px;
-    font-size: 10px; font-weight: 800;
-    letter-spacing: 0.08em; color: var(--primary); opacity: 0.3;
+    position: absolute;
+    top: 11px;
+    right: 13px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--primary);
+    opacity: 0.3;
   }
 
   .svc-card-icon {
-    width: 52px; height: 52px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; background: var(--primary-light);
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--primary-light);
     transition: background 0.35s ease;
   }
   .svc-card-icon svg { width: 30px; height: 30px; }
@@ -264,85 +337,156 @@ const styles = `
   .svc-card--active .svc-card-icon svg { filter: brightness(0) invert(1); }
 
   .svc-card-body {
-    flex: 1; min-width: 0;
-    display: flex; flex-direction: column; gap: 5px;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
 
   .svc-card-title {
-    font-size: 15px; font-weight: 800;
-    color: var(--text); letter-spacing: -0.01em; line-height: 1.3;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
   }
 
   .svc-card-desc {
-    font-size: 12.5px; line-height: 1.7; color: var(--text-muted);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--text-muted);
   }
 
   .svc-card-tag {
-    display: inline-block; align-self: flex-start;
-    padding: 3px 10px; border-radius: 20px;
-    font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
-    background: var(--primary-light); color: var(--primary);
+    display: inline-block;
+    align-self: flex-start;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    background: var(--primary-light);
+    color: var(--primary);
     margin-top: 2px;
   }
 
   .svc-card-arrow {
-    width: 36px; height: 36px; border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     border: 1.5px solid var(--border);
     background: var(--white);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-faint); flex-shrink: 0; cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-faint);
+    flex-shrink: 0;
+    cursor: pointer;
     transition: all 0.3s ease;
   }
   .svc-card--active .svc-card-arrow {
-    background: var(--primary); border-color: var(--primary); color: var(--white);
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
   }
 
-  @media (max-width: 1200px) {
-    .svc-inner { gap: 44px; padding: 0 24px; }
+  /* ══════════════════════════════════════════
+     RESPONSIVE BREAKPOINTS
+  ══════════════════════════════════════════ */
+
+  /* 1280px – large desktop */
+  @media (max-width: 1280px) {
+    .svc-inner { gap: 48px; padding: 0 32px; }
   }
-  @media (max-width: 1024px) {
-    .svc-inner { gap: 32px; padding: 0 20px; }
-    .svc-heading { font-size: clamp(28px, 3vw, 46px); }
+
+  /* 1100px – mid desktop */
+  @media (max-width: 1100px) {
+    .svc-inner { gap: 36px; padding: 0 24px; }
+    .svc-heading { font-size: clamp(28px, 3vw, 48px); }
     .svc-stat-value { font-size: 30px; }
-    .svc-card { padding: 13px 16px; gap: 13px; }
+    .svc-card { padding: 13px 16px; gap: 12px; }
     .svc-card-icon { width: 46px; height: 46px; }
     .svc-card-icon svg { width: 26px; height: 26px; }
     .svc-card-title { font-size: 14px; }
     .svc-card-desc { font-size: 12px; }
     .svc-cards-track { gap: 7px; }
   }
+
+  /* 900px – switch to single-column, disable sticky */
   @media (max-width: 900px) {
     .svc-section { height: auto !important; }
-    .svc-sticky { position: relative; height: auto; padding: 60px 0 72px; }
+
+    .svc-sticky {
+      position: relative;
+      height: auto;
+      padding: 64px 0 80px;
+      overflow: visible;
+    }
+
     .svc-inner {
       grid-template-columns: 1fr;
-      gap: 36px; padding: 0 20px;
-      height: auto; align-items: start;
+      gap: 40px;
+      padding: 0 24px;
+      height: auto;
+      align-items: start;
     }
-    .svc-left { text-align: center; align-items: center; }
+
+    .svc-left {
+      text-align: center;
+      align-items: center;
+    }
+
     .svc-body-text { max-width: 560px; }
+
     .svc-stats { justify-content: center; }
+
+    /* On mobile/tablet the cards stack normally – no translateX curve */
+    .svc-cards-outer {
+      overflow: visible;
+      height: auto;
+    }
+
+    .svc-cards-track {
+      padding: 0;
+      gap: 10px;
+    }
+
+    /* Reset any JS-driven transforms on mobile via CSS override */
+    .svc-card {
+      transform: none !important;
+    }
+    /* Restore active state visuals (shadow/border) without transform */
+    .svc-card--active {
+      border-color: var(--primary);
+      box-shadow: 0 16px 48px rgba(0,163,77,0.18), 0 2px 10px rgba(0,163,77,0.10);
+    }
   }
+
+  /* 640px – small tablet / large phone */
   @media (max-width: 640px) {
     .svc-sticky { padding: 48px 0 60px; }
-    .svc-inner { padding: 0 14px; gap: 28px; }
+    .svc-inner { padding: 0 16px; gap: 32px; }
     .svc-heading { font-size: clamp(26px, 7vw, 38px); }
     .svc-body-text { font-size: 14px; }
     .svc-stat-value { font-size: 26px; }
-    .svc-stats { gap: 14px; flex-wrap: wrap; padding: 12px 0 0; }
+    .svc-stats { gap: 14px; padding: 12px 0 0; }
     .svc-stat-divider { height: 36px; }
     .svc-eyebrow { font-size: 11px; }
     .svc-cta-link { font-size: 13px; padding: 11px 20px; }
+
     .svc-card { padding: 12px 14px; gap: 12px; border-radius: 14px; }
     .svc-card-icon { width: 42px; height: 42px; border-radius: 11px; }
     .svc-card-icon svg { width: 24px; height: 24px; }
     .svc-card-title { font-size: 13px; }
     .svc-card-desc { font-size: 11.5px; }
     .svc-card-arrow { width: 32px; height: 32px; border-radius: 8px; }
-    .svc-cards-track { gap: 6px; }
+    .svc-cards-track { gap: 8px; }
   }
+
+  /* 400px – small phone */
   @media (max-width: 400px) {
-    .svc-inner { padding: 0 10px; gap: 22px; }
+    .svc-inner { padding: 0 12px; gap: 24px; }
     .svc-heading { font-size: clamp(22px, 8.5vw, 32px); }
     .svc-stat-value { font-size: 22px; }
     .svc-card { padding: 10px 12px; gap: 10px; border-radius: 12px; }
@@ -351,10 +495,13 @@ const styles = `
     .svc-card-title { font-size: 12.5px; }
     .svc-card-desc { font-size: 11px; line-height: 1.6; }
     .svc-card-arrow { width: 28px; height: 28px; }
-    .svc-cards-track { gap: 5px; }
+    .svc-cards-track { gap: 6px; }
   }
+
+  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    .svc-card { transition: border-color 0.2s ease; }
+    .svc-card { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .svc-cta-link { transition: none; }
   }
 `;
 
@@ -371,6 +518,7 @@ const ServicesSection = () => {
   const c98  = useCountUp(98,  1600, statsStarted);
   const c12  = useCountUp(12,  1400, statsStarted);
 
+  // Detect mobile breakpoint
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 900);
     check();
@@ -378,6 +526,7 @@ const ServicesSection = () => {
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  // Trigger stat counter when stats row is visible
   useEffect(() => {
     if (!statsRef.current) return;
     const obs = new IntersectionObserver(
@@ -388,7 +537,7 @@ const ServicesSection = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Scroll-driven active card (desktop only)
+  // Desktop: scroll-driven active card
   useEffect(() => {
     if (isMobile) return;
     const handleScroll = () => {
@@ -405,14 +554,14 @@ const ServicesSection = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  // Mobile: highlight card as it scrolls into view
+  // Mobile: highlight card as it scrolls into centre view
   useEffect(() => {
     if (!isMobile) return;
     const observers = cardRefs.current.map((el, i) => {
       if (!el) return null;
       const obs = new IntersectionObserver(
         ([e]) => { if (e.isIntersecting) setActiveIndex(i); },
-        { threshold: 0.6 }
+        { threshold: 0.55, rootMargin: '-10% 0px -10% 0px' }
       );
       obs.observe(el);
       return obs;
@@ -420,12 +569,10 @@ const ServicesSection = () => {
     return () => observers.forEach(o => o && o.disconnect());
   }, [isMobile]);
 
+  // Section height: on desktop each card gets 1 scroll-page
   const sectionStyle = isMobile
     ? {}
     : { height: `${(SERVICES.length + 1) * 100}vh` };
-
-  // Active card pops out furthest right (max offset + extra boost)
-  const ACTIVE_OFFSET = Math.max(...CURVE_OFFSETS) + 22; // 28 + 22 = 50px
 
   return (
     <>
@@ -436,20 +583,23 @@ const ServicesSection = () => {
 
           <div className="svc-inner">
 
-            {/* LEFT */}
+            {/* ── LEFT ── */}
             <div className="svc-left">
               <div className="svc-eyebrow">
                 <span className="svc-eyebrow-dot" />
                 What We Do
               </div>
+
               <h2 className="svc-heading">
                 How Can We
                 <em>Help You!</em>
               </h2>
+
               <p className="svc-body-text">
                 Our custom software design and development teams design, build, test,
                 and deliver products that fit your vision and market demand.
               </p>
+
               <div className="svc-stats" ref={statsRef}>
                 <div className="svc-stat">
                   <div className="svc-stat-value">{c200}+</div>
@@ -466,6 +616,7 @@ const ServicesSection = () => {
                   <div className="svc-stat-label">Years Active</div>
                 </div>
               </div>
+
               <a href="#contact" className="svc-cta-link">
                 See What We Do
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -474,11 +625,13 @@ const ServicesSection = () => {
               </a>
             </div>
 
-            {/* RIGHT — custom wave curve cards */}
+            {/* ── RIGHT: cards ── */}
             <div className="svc-cards-outer" role="region" aria-label="Services">
               <div className="svc-cards-track">
                 {SERVICES.map((s, i) => {
-                  const isActive   = i === activeIndex;
+                  const isActive = i === activeIndex;
+
+                  // On desktop apply wave-curve offsets; on mobile CSS overrides to none
                   const translateX = isActive ? ACTIVE_OFFSET : CURVE_OFFSETS[i];
                   const translateY = isActive ? -6 : 0;
                   const scale      = isActive ? 1.022 : 1;
@@ -486,7 +639,7 @@ const ServicesSection = () => {
                   return (
                     <div
                       key={s.id}
-                      ref={el => cardRefs.current[i] = el}
+                      ref={el => (cardRefs.current[i] = el)}
                       className={`svc-card${isActive ? ' svc-card--active' : ''}`}
                       aria-current={isActive ? 'true' : undefined}
                       style={{
