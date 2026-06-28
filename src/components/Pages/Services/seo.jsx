@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-/* ══════════════════════════════════════════════
-   DATA
-══════════════════════════════════════════════ */
 const seoServices = [
   { icon: 'ti ti-search', accent: 'dark', tag: '01', title: 'Technical SEO', subtitle: 'Foundation First', desc: 'We audit and fix every crawlability issue, Core Web Vital, schema gap, and indexing error holding your site back from rankings it deserves.', features: ['Site speed & CWV', 'Schema markup', 'Crawl optimisation', 'Index health'], cta: 'Fix My Foundation' },
   { icon: 'ti ti-file-text', accent: 'mid', tag: '02', title: 'Content Strategy', subtitle: 'Rank-Ready Writing', desc: 'Keyword clusters, topical authority maps, and human-first content that search engines reward. We write, publish, and iterate — you own the traffic.', features: ['Keyword clustering', 'Topical authority', 'Content briefs', 'On-page optimisation'], cta: 'Build My Content Engine' },
@@ -38,9 +35,6 @@ const IMAGES = {
   founder2: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=60&q=75&auto=format',
 };
 
-/* ══════════════════════════════════════════════
-   HOOKS
-══════════════════════════════════════════════ */
 function useReveal() {
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
@@ -93,7 +87,6 @@ function useParallax(strength = 14) {
   return { ref, tilt };
 }
 
-/* scene scale based on container width */
 function useSceneScale(baseWidth = 560) {
   const ref = useRef(null);
   const [scale, setScale] = useState(1);
@@ -110,9 +103,6 @@ function useSceneScale(baseWidth = 560) {
   return { ref, scale };
 }
 
-/* ══════════════════════════════════════════════
-   ANIMATED BACKGROUND
-══════════════════════════════════════════════ */
 function AnimatedBg() {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -122,18 +112,8 @@ function AnimatedBg() {
     let animId;
     let W = canvas.offsetWidth, H = canvas.offsetHeight;
     canvas.width = W; canvas.height = H;
-    const orbs = Array.from({ length: 6 }, () => ({
-      x: Math.random() * W, y: Math.random() * H,
-      r: 80 + Math.random() * 140,
-      vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
-      opacity: 0.04 + Math.random() * 0.08, hue: 130 + Math.random() * 40,
-    }));
-    const particles = Array.from({ length: 55 }, () => ({
-      x: Math.random() * W, y: Math.random() * H,
-      r: 0.8 + Math.random() * 1.8,
-      vx: (Math.random() - 0.5) * 0.18, vy: -0.05 - Math.random() * 0.2,
-      opacity: 0.15 + Math.random() * 0.4, life: Math.random(),
-    }));
+    const orbs = Array.from({ length: 6 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: 80 + Math.random() * 140, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, opacity: 0.04 + Math.random() * 0.08, hue: 130 + Math.random() * 40 }));
+    const particles = Array.from({ length: 55 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: 0.8 + Math.random() * 1.8, vx: (Math.random() - 0.5) * 0.18, vy: -0.05 - Math.random() * 0.2, opacity: 0.15 + Math.random() * 0.4, life: Math.random() }));
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
       orbs.forEach(o => {
@@ -141,10 +121,8 @@ function AnimatedBg() {
         if (o.x < -o.r) o.x = W + o.r; if (o.x > W + o.r) o.x = -o.r;
         if (o.y < -o.r) o.y = H + o.r; if (o.y > H + o.r) o.y = -o.r;
         const g = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r);
-        g.addColorStop(0, `hsla(${o.hue},80%,55%,${o.opacity})`);
-        g.addColorStop(1, 'transparent');
-        ctx.beginPath(); ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2);
-        ctx.fillStyle = g; ctx.fill();
+        g.addColorStop(0, `hsla(${o.hue},80%,55%,${o.opacity})`); g.addColorStop(1, 'transparent');
+        ctx.beginPath(); ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
       });
       particles.forEach(p => {
         p.x += p.vx; p.y += p.vy; p.life += 0.004;
@@ -153,16 +131,6 @@ function AnimatedBg() {
         ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(74,222,128,${p.opacity * fade})`; ctx.fill();
       });
-      ctx.strokeStyle = 'rgba(34,197,94,0.04)'; ctx.lineWidth = 1;
-      const t = Date.now() * 0.0003;
-      for (let row = 0; row < 8; row++) {
-        const y = (row / 7) * H; ctx.beginPath();
-        for (let xi = 0; xi <= W; xi += 4) {
-          const wave = Math.sin(xi * 0.008 + t + row * 0.7) * 12;
-          if (xi === 0) ctx.moveTo(xi, y + wave); else ctx.lineTo(xi, y + wave);
-        }
-        ctx.stroke();
-      }
       animId = requestAnimationFrame(draw);
     };
     draw();
@@ -173,9 +141,6 @@ function AnimatedBg() {
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} />;
 }
 
-/* ══════════════════════════════════════════════
-   SPEEDOMETER
-══════════════════════════════════════════════ */
 function Speedometer() {
   const [score, setScore] = useState(0);
   const [needleDeg, setNeedleDeg] = useState(-90);
@@ -192,8 +157,7 @@ function Speedometer() {
       const p = Math.min(Math.max((now - t0) / SPIN_DURATION, 0), 1);
       const deg = -90 + easeIn(p) * (SPIN_END_DEG + 90);
       setNeedleDeg(deg);
-      if (p < 1) { raf = requestAnimationFrame(spinStep); }
-      else {
+      if (p < 1) { raf = requestAnimationFrame(spinStep); } else {
         setPhase('settle');
         const t1 = performance.now();
         const easeOut = t => 1 - Math.pow(-2 * t + 2, 3) / 8;
@@ -221,228 +185,143 @@ function Speedometer() {
   };
   const innerR = 68;
   return (
-    <div className="speedometer-wrap" style={{ position: 'relative', width: 280, height: 178, flexShrink: 0 }}>
+    <div style={{ position: 'relative', width: 280, height: 178, flexShrink: 0 }}>
       <svg width="280" height="178" viewBox="0 0 220 140" style={{ overflow: 'visible' }}>
         <defs>
-          <radialGradient id="discGrad" cx="50%" cy="70%" r="60%"><stop offset="0%" stopColor="#ffffff"/><stop offset="100%" stopColor="#e8f5e9"/></radialGradient>
-          <radialGradient id="discGradSpin" cx="50%" cy="50%" r="60%"><stop offset="0%" stopColor="#d1fae5"/><stop offset="100%" stopColor="#a7f3d0"/></radialGradient>
-          <filter id="needleGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <filter id="gaugeGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <radialGradient id="discGrad" cx="50%" cy="70%" r="60%"><stop offset="0%" stopColor="#ffffff" /><stop offset="100%" stopColor="#e8f5e9" /></radialGradient>
+          <radialGradient id="discGradSpin" cx="50%" cy="50%" r="60%"><stop offset="0%" stopColor="#d1fae5" /><stop offset="100%" stopColor="#a7f3d0" /></radialGradient>
+          <filter id="needleGlow"><feGaussianBlur stdDeviation="3" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+          <filter id="gaugeGlow"><feGaussianBlur stdDeviation="4" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
         </defs>
-        <circle cx={cx} cy={cy} r={R+12} fill="none"
-          stroke={phase==='spin'?'rgba(34,197,94,0.5)':(glowPulse?'rgba(34,197,94,0.6)':'rgba(34,197,94,0.18)')}
-          strokeWidth={phase==='spin'?8:6} strokeDasharray={phase==='spin'?'20 8':'none'}
-          style={{transition:'stroke 0.4s ease',animation:phase==='spin'?'spinRing 0.4s linear infinite':'none'}}/>
-        {phase==='spin'&&<circle cx={cx} cy={cy} r={R+20} fill="none" stroke="rgba(74,222,128,0.2)" strokeWidth="2" strokeDasharray="6 10" style={{animation:'spinRingReverse 0.6s linear infinite'}}/>}
-        <path d={arcSeg(180,210)} fill="none" stroke="#e53935" strokeWidth="14" strokeLinecap="butt"/>
-        <path d={arcSeg(210,240)} fill="none" stroke="#ef6c00" strokeWidth="14" strokeLinecap="butt"/>
-        <path d={arcSeg(240,270)} fill="none" stroke="#fdd835" strokeWidth="14" strokeLinecap="butt"/>
-        <path d={arcSeg(270,315)} fill="none" stroke="#8bc34a" strokeWidth="14" strokeLinecap="butt"/>
-        <path d={arcSeg(315,360)} fill="none" stroke="#22c55e" strokeWidth="14" strokeLinecap="butt"/>
-        <circle cx={cx} cy={cy} r={innerR} fill={phase==='spin'?'url(#discGradSpin)':'url(#discGrad)'} filter="url(#gaugeGlow)" style={{transition:'fill 0.5s ease'}}/>
-        <circle cx={cx} cy={cy} r={innerR} fill="none" stroke={phase==='spin'?'rgba(34,197,94,0.5)':'rgba(34,197,94,0.15)'} strokeWidth="1.5" style={{transition:'stroke 0.5s ease'}}/>
-        {[180,210,240,270,315,360].map((deg,i)=>{
-          const rad=deg*Math.PI/180;
-          return <line key={i} x1={cx+(R-8)*Math.cos(rad)} y1={cy+(R-8)*Math.sin(rad)} x2={cx+(R+2)*Math.cos(rad)} y2={cy+(R+2)*Math.sin(rad)} stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round"/>;
+        <circle cx={cx} cy={cy} r={R + 12} fill="none" stroke={phase === 'spin' ? 'rgba(34,197,94,0.5)' : (glowPulse ? 'rgba(34,197,94,0.6)' : 'rgba(34,197,94,0.18)')} strokeWidth={phase === 'spin' ? 8 : 6} strokeDasharray={phase === 'spin' ? '20 8' : 'none'} style={{ transition: 'stroke 0.4s ease', animation: phase === 'spin' ? 'spinRing 0.4s linear infinite' : 'none' }} />
+        {phase === 'spin' && <circle cx={cx} cy={cy} r={R + 20} fill="none" stroke="rgba(74,222,128,0.2)" strokeWidth="2" strokeDasharray="6 10" style={{ animation: 'spinRingReverse 0.6s linear infinite' }} />}
+        <path d={arcSeg(180, 210)} fill="none" stroke="#e53935" strokeWidth="14" strokeLinecap="butt" />
+        <path d={arcSeg(210, 240)} fill="none" stroke="#ef6c00" strokeWidth="14" strokeLinecap="butt" />
+        <path d={arcSeg(240, 270)} fill="none" stroke="#fdd835" strokeWidth="14" strokeLinecap="butt" />
+        <path d={arcSeg(270, 315)} fill="none" stroke="#8bc34a" strokeWidth="14" strokeLinecap="butt" />
+        <path d={arcSeg(315, 360)} fill="none" stroke="#22c55e" strokeWidth="14" strokeLinecap="butt" />
+        <circle cx={cx} cy={cy} r={innerR} fill={phase === 'spin' ? 'url(#discGradSpin)' : 'url(#discGrad)'} filter="url(#gaugeGlow)" style={{ transition: 'fill 0.5s ease' }} />
+        <circle cx={cx} cy={cy} r={innerR} fill="none" stroke={phase === 'spin' ? 'rgba(34,197,94,0.5)' : 'rgba(34,197,94,0.15)'} strokeWidth="1.5" style={{ transition: 'stroke 0.5s ease' }} />
+        {[180, 210, 240, 270, 315, 360].map((deg, i) => {
+          const rad = deg * Math.PI / 180;
+          return <line key={i} x1={cx + (R - 8) * Math.cos(rad)} y1={cy + (R - 8) * Math.sin(rad)} x2={cx + (R + 2) * Math.cos(rad)} y2={cy + (R + 2) * Math.sin(rad)} stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" />;
         })}
-        <text x={cx} y={cy-8} textAnchor="middle" dominantBaseline="middle"
-          style={{fontFamily:'Poppins,sans-serif',fontSize:28,fontWeight:900,fill:phase==='spin'?'#16a34a':'#15803d',transition:'fill 0.3s'}}>
-          {phase==='spin'?'?':score}
-        </text>
-        <text x={cx} y={cy+16} textAnchor="middle"
-          style={{fontFamily:'Poppins,sans-serif',fontSize:9,fontWeight:700,fill:'#16a34a',letterSpacing:'0.1em'}}>
-          {phase==='spin'?'SCAN…':'SCORE'}
-        </text>
-        <g style={{transformOrigin:`${cx}px ${cy}px`,transform:`rotate(${needleDeg}deg)`,transition:phase==='spin'?'none':'transform 0.02s linear'}} filter="url(#needleGlow)">
-          <line x1={cx} y1={cy} x2={cx+62} y2={cy} stroke={phase==='spin'?'#4ade80':'#22c55e'} strokeWidth={phase==='spin'?3:2.5} strokeLinecap="round"/>
-          <circle cx={cx} cy={cy} r={phase==='spin'?9:7} fill={phase==='spin'?'#16a34a':'#22c55e'} style={{filter:phase==='spin'?'drop-shadow(0 0 8px rgba(34,197,94,0.8))':'none',transition:'filter 0.3s'}}/>
-          <circle cx={cx} cy={cy} r={3.5} fill="#ffffff"/>
+        <text x={cx} y={cy - 8} textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 28, fontWeight: 900, fill: phase === 'spin' ? '#16a34a' : '#15803d', transition: 'fill 0.3s' }}>{phase === 'spin' ? '?' : score}</text>
+        <text x={cx} y={cy + 16} textAnchor="middle" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 9, fontWeight: 700, fill: '#16a34a', letterSpacing: '0.1em' }}>{phase === 'spin' ? 'SCAN…' : 'SCORE'}</text>
+        <g style={{ transformOrigin: `${cx}px ${cy}px`, transform: `rotate(${needleDeg}deg)`, transition: phase === 'spin' ? 'none' : 'transform 0.02s linear' }} filter="url(#needleGlow)">
+          <line x1={cx} y1={cy} x2={cx + 62} y2={cy} stroke={phase === 'spin' ? '#4ade80' : '#22c55e'} strokeWidth={phase === 'spin' ? 3 : 2.5} strokeLinecap="round" />
+          <circle cx={cx} cy={cy} r={phase === 'spin' ? 9 : 7} fill={phase === 'spin' ? '#16a34a' : '#22c55e'} style={{ filter: phase === 'spin' ? 'drop-shadow(0 0 8px rgba(34,197,94,0.8))' : 'none', transition: 'filter 0.3s' }} />
+          <circle cx={cx} cy={cy} r={3.5} fill="#ffffff" />
         </g>
-        {glowPulse&&<circle cx={cx} cy={cy} r={innerR+10} fill="none" stroke="rgba(34,197,94,0.6)" strokeWidth="3" style={{animation:'burstRing 0.6s ease-out forwards'}}/>}
-        <line x1={cx-R} y1={cy} x2={cx+R} y2={cy} stroke="rgba(34,197,94,0.2)" strokeWidth="1" strokeDasharray="3 3"/>
+        {glowPulse && <circle cx={cx} cy={cy} r={innerR + 10} fill="none" stroke="rgba(34,197,94,0.6)" strokeWidth="3" style={{ animation: 'burstRing 0.6s ease-out forwards' }} />}
+        <line x1={cx - R} y1={cy} x2={cx + R} y2={cy} stroke="rgba(34,197,94,0.2)" strokeWidth="1" strokeDasharray="3 3" />
       </svg>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   CHIP
-══════════════════════════════════════════════ */
 function SeoChip({ icon, label, sub, style, animClass, danger }) {
   const [hov, setHov] = useState(false);
   return (
-    <div className={animClass}
-      onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{
-        position:'absolute', display:'flex', alignItems:'center', gap:10,
-        background:hov?'rgba(8,20,12,0.97)':'rgba(8,20,12,0.90)',
-        border:`1.5px solid ${hov?'rgba(34,197,94,0.6)':'rgba(34,197,94,0.22)'}`,
-        borderRadius:50, padding:'10px 18px 10px 10px',
-        backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
-        boxShadow:hov?'0 0 24px rgba(34,197,94,0.3),0 8px 28px rgba(0,0,0,0.6)':'0 4px 20px rgba(0,0,0,0.5)',
-        cursor:'default', transition:'all 0.3s ease',
-        transform:hov?'scale(1.06) translateY(-2px)':'scale(1)',
-        zIndex:8, whiteSpace:'nowrap', ...style,
-      }}>
-      <div style={{
-        width:32,height:32,borderRadius:'50%',
-        background:danger?'rgba(220,38,38,0.25)':'rgba(34,197,94,0.15)',
-        border:`1.5px solid ${danger?'rgba(220,38,38,0.5)':'rgba(34,197,94,0.4)'}`,
-        display:'flex',alignItems:'center',justifyContent:'center',
-        flexShrink:0,fontSize:15,color:danger?'#f87171':'#4ade80',
-      }}>
-        <i className={icon} aria-hidden="true"/>
+    <div className={animClass} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{ position: 'absolute', display: 'flex', alignItems: 'center', gap: 10, background: hov ? 'rgba(8,20,12,0.97)' : 'rgba(8,20,12,0.90)', border: `1.5px solid ${hov ? 'rgba(34,197,94,0.6)' : 'rgba(34,197,94,0.22)'}`, borderRadius: 50, padding: '10px 18px 10px 10px', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', boxShadow: hov ? '0 0 24px rgba(34,197,94,0.3),0 8px 28px rgba(0,0,0,0.6)' : '0 4px 20px rgba(0,0,0,0.5)', cursor: 'default', transition: 'all 0.3s ease', transform: hov ? 'scale(1.06) translateY(-2px)' : 'scale(1)', zIndex: 8, whiteSpace: 'nowrap', ...style }}>
+      <div style={{ width: 32, height: 32, borderRadius: '50%', background: danger ? 'rgba(220,38,38,0.25)' : 'rgba(34,197,94,0.15)', border: `1.5px solid ${danger ? 'rgba(220,38,38,0.5)' : 'rgba(34,197,94,0.4)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 15, color: danger ? '#f87171' : '#4ade80' }}>
+        <i className={icon} aria-hidden="true" />
       </div>
       <div>
-        <div style={{fontFamily:'Poppins,sans-serif',fontSize:12.5,fontWeight:700,color:'#ffffff',lineHeight:1.2}}>{label}</div>
-        {sub&&<div style={{fontFamily:'Poppins,sans-serif',fontSize:10,color:'rgba(255,255,255,0.5)',marginTop:1}}>{sub}</div>}
+        <div style={{ fontFamily: 'Poppins,sans-serif', fontSize: 12.5, fontWeight: 700, color: '#ffffff', lineHeight: 1.2 }}>{label}</div>
+        {sub && <div style={{ fontFamily: 'Poppins,sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.5)', marginTop: 1 }}>{sub}</div>}
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   TRAFFIC PILL
-══════════════════════════════════════════════ */
 function TrafficPill() {
   const [val, setVal] = useState(14896);
-  useEffect(()=>{
-    const id=setInterval(()=>setVal(v=>v+Math.floor(Math.random()*35)+5),1600);
-    return ()=>clearInterval(id);
-  },[]);
+  useEffect(() => {
+    const id = setInterval(() => setVal(v => v + Math.floor(Math.random() * 35) + 5), 1600);
+    return () => clearInterval(id);
+  }, []);
   return (
-    <div style={{
-      position:'absolute',top:90,left:20,zIndex:9,
-      background:'rgba(8,20,12,0.92)',border:'1.5px solid rgba(34,197,94,0.25)',
-      borderRadius:16,padding:'14px 18px',backdropFilter:'blur(16px)',
-      boxShadow:'0 6px 28px rgba(0,0,0,0.55)',
-      animation:'chipFloat2 5s ease-in-out infinite',minWidth:160,
-    }}>
-      <div style={{fontSize:8,color:'rgba(255,255,255,0.38)',textTransform:'uppercase',letterSpacing:'0.09em',fontWeight:700,marginBottom:5}}>Organic Traffic</div>
-      <div style={{display:'flex',alignItems:'baseline',gap:8,marginBottom:8}}>
-        <span style={{fontFamily:'JetBrains Mono,monospace',fontSize:20,fontWeight:800,color:'#ffffff'}}>{val.toLocaleString()}</span>
-        <span style={{fontSize:10,color:'#4ade80',fontWeight:700}}>↑312%</span>
+    <div style={{ position: 'absolute', top: 90, left: 20, zIndex: 9, background: 'rgba(8,20,12,0.92)', border: '1.5px solid rgba(34,197,94,0.25)', borderRadius: 16, padding: '14px 18px', backdropFilter: 'blur(16px)', boxShadow: '0 6px 28px rgba(0,0,0,0.55)', animation: 'chipFloat2 5s ease-in-out infinite', minWidth: 160 }}>
+      <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.09em', fontWeight: 700, marginBottom: 5 }}>Organic Traffic</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 }}>
+        <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 20, fontWeight: 800, color: '#ffffff' }}>{val.toLocaleString()}</span>
+        <span style={{ fontSize: 10, color: '#4ade80', fontWeight: 700 }}>↑312%</span>
       </div>
-      <div style={{display:'flex',alignItems:'flex-end',gap:3,height:28}}>
-        {[30,44,36,58,48,70,82,95].map((h,i)=>(
-          <div key={i} style={{flex:1,height:`${h}%`,borderRadius:'2px 2px 0 0',background:i===7?'#22c55e':`rgba(74,222,128,${0.12+i*0.1})`}}/>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 28 }}>
+        {[30, 44, 36, 58, 48, 70, 82, 95].map((h, i) => (
+          <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: i === 7 ? '#22c55e' : `rgba(74,222,128,${0.12 + i * 0.1})` }} />
         ))}
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   RANK BADGE
-══════════════════════════════════════════════ */
 function RankBadge() {
   const [rank, setRank] = useState(47);
   const [flash, setFlash] = useState(false);
-  useEffect(()=>{
-    if(rank<=1)return;
-    const delay=rank>20?85:rank>5?160:380;
-    const t=setTimeout(()=>{setRank(r=>r-1);setFlash(true);setTimeout(()=>setFlash(false),120);},delay);
-    return ()=>clearTimeout(t);
-  },[rank]);
+  useEffect(() => {
+    if (rank <= 1) return;
+    const delay = rank > 20 ? 85 : rank > 5 ? 160 : 380;
+    const t = setTimeout(() => { setRank(r => r - 1); setFlash(true); setTimeout(() => setFlash(false), 120); }, delay);
+    return () => clearTimeout(t);
+  }, [rank]);
   return (
-    <div style={{
-      position:'absolute',bottom:30,right:68,zIndex:10,
-      width:72,height:72,borderRadius:'50%',
-      background:rank===1?'linear-gradient(135deg,#16a34a,#22c55e)':'rgba(8,20,12,0.92)',
-      border:`2.5px solid ${rank===1?'#4ade80':'rgba(34,197,94,0.45)'}`,
-      boxShadow:rank===1?'0 0 28px rgba(34,197,94,0.7),0 0 8px rgba(34,197,94,0.4)':'0 4px 20px rgba(0,0,0,0.55)',
-      display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:1,
-      backdropFilter:'blur(12px)',transition:'all 0.5s ease',
-      animation:'chipFloat3 5.5s ease-in-out infinite',
-    }}>
-      <div style={{fontFamily:'Poppins,sans-serif',fontSize:rank>9?16:20,fontWeight:900,lineHeight:1,color:rank===1?'#fff':(flash?'#4ade80':'#22c55e'),transition:'color 0.1s'}}>#{rank}</div>
-      <div style={{fontSize:7,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.05em',color:rank===1?'rgba(255,255,255,0.9)':'rgba(74,222,128,0.85)'}}>{rank===1?'TOP!':'Rank'}</div>
+    <div style={{ position: 'absolute', bottom: 30, right: 68, zIndex: 10, width: 72, height: 72, borderRadius: '50%', background: rank === 1 ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'rgba(8,20,12,0.92)', border: `2.5px solid ${rank === 1 ? '#4ade80' : 'rgba(34,197,94,0.45)'}`, boxShadow: rank === 1 ? '0 0 28px rgba(34,197,94,0.7),0 0 8px rgba(34,197,94,0.4)' : '0 4px 20px rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, backdropFilter: 'blur(12px)', transition: 'all 0.5s ease', animation: 'chipFloat3 5.5s ease-in-out infinite' }}>
+      <div style={{ fontFamily: 'Poppins,sans-serif', fontSize: rank > 9 ? 16 : 20, fontWeight: 900, lineHeight: 1, color: rank === 1 ? '#fff' : (flash ? '#4ade80' : '#22c55e'), transition: 'color 0.1s' }}>#{rank}</div>
+      <div style={{ fontSize: 7, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: rank === 1 ? 'rgba(255,255,255,0.9)' : 'rgba(74,222,128,0.85)' }}>{rank === 1 ? 'TOP!' : 'Rank'}</div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   WEB LINES
-══════════════════════════════════════════════ */
 function WebLines() {
-  const cx=450,cy=385;
-  const pts=[[200,72],[400,52],[100,200],[115,295],[100,415],[390,490]];
+  const cx = 450, cy = 385;
+  const pts = [[200, 72], [400, 52], [100, 200], [115, 295], [100, 415], [390, 490]];
   return (
-    <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:2}} viewBox="0 0 560 540" preserveAspectRatio="none">
-      {pts.map(([x,y],i)=>(
-        <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(34,197,94,0.18)" strokeWidth="1" strokeDasharray="5 4"
-          style={{animation:`dashFlow 2s linear infinite`,animationDelay:`${i*0.3}s`}}/>
-      ))}
-      {[[0,1],[1,5],[5,4],[4,2],[2,3],[3,0],[0,5],[1,4]].map(([a,b],i)=>(
-        <line key={`x${i}`} x1={pts[a][0]} y1={pts[a][1]} x2={pts[b][0]} y2={pts[b][1]} stroke="rgba(34,197,94,0.07)" strokeWidth="0.8" strokeDasharray="4 5"/>
-      ))}
-      {pts.map(([x,y],i)=>(
-        <circle key={`d${i}`} r="2.5" fill="#22c55e" opacity="0.55">
-          <animateMotion dur={`${2.2+i*0.25}s`} repeatCount="indefinite" path={`M${cx},${cy} L${x},${y}`}/>
-        </circle>
-      ))}
-      {pts.map(([x,y],i)=>(
-        <circle key={`id${i}`} cx={x} cy={y} r="3.5" fill="rgba(34,197,94,0.25)" stroke="rgba(34,197,94,0.5)" strokeWidth="1"/>
-      ))}
-      <circle cx={cx} cy={cy} r="5" fill="rgba(34,197,94,0.3)" stroke="rgba(34,197,94,0.6)" strokeWidth="1.5"/>
+    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }} viewBox="0 0 560 540" preserveAspectRatio="none">
+      {pts.map(([x, y], i) => (<line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(34,197,94,0.18)" strokeWidth="1" strokeDasharray="5 4" style={{ animation: `dashFlow 2s linear infinite`, animationDelay: `${i * 0.3}s` }} />))}
+      {[[0, 1], [1, 5], [5, 4], [4, 2], [2, 3], [3, 0], [0, 5], [1, 4]].map(([a, b], i) => (<line key={`x${i}`} x1={pts[a][0]} y1={pts[a][1]} x2={pts[b][0]} y2={pts[b][1]} stroke="rgba(34,197,94,0.07)" strokeWidth="0.8" strokeDasharray="4 5" />))}
+      {pts.map(([x, y], i) => (<circle key={`d${i}`} r="2.5" fill="#22c55e" opacity="0.55"><animateMotion dur={`${2.2 + i * 0.25}s`} repeatCount="indefinite" path={`M${cx},${cy} L${x},${y}`} /></circle>))}
+      {pts.map(([x, y], i) => (<circle key={`id${i}`} cx={x} cy={y} r="3.5" fill="rgba(34,197,94,0.25)" stroke="rgba(34,197,94,0.5)" strokeWidth="1" />))}
+      <circle cx={cx} cy={cy} r="5" fill="rgba(34,197,94,0.3)" stroke="rgba(34,197,94,0.6)" strokeWidth="1.5" />
     </svg>
   );
 }
 
-/* ══════════════════════════════════════════════
-   SEO DEVICE SCENE — scales uniformly on all screens
-   The inner canvas is always 560×540. A wrapper
-   measures available width and applies CSS scale()
-   so the design never breaks — it just shrinks.
-══════════════════════════════════════════════ */
+// KEY FIX: useSceneScale with baseWidth=560 means the scene scales
+// proportionally on any container width — laptop gets 1:1, mobile gets ~0.6x etc.
 function SeoDeviceScene() {
   const { ref: wrapRef, scale } = useSceneScale(560);
   const { ref: tiltRef, tilt } = useParallax(3);
-
   return (
-    /* outer wrapper — measures available space */
-    <div ref={wrapRef} style={{ width:'100%', maxWidth:560 }}>
-      {/* scale container — clips to scaled height */}
-      <div style={{ width:'100%', height: 540 * scale, overflow:'hidden' }}>
-        {/* inner canvas — always 560×540, scaled from top-left */}
-        <div ref={tiltRef} style={{
-          width:560, height:540,
-          transformOrigin:'top left',
-          transform:`scale(${scale}) perspective(1400px) rotateX(${-tilt.y*0.12}deg) rotateY(${tilt.x*0.12}deg)`,
-          transition:'transform 0.25s ease-out',
-          position:'relative',
-        }}>
-          {/* Glows */}
-          <div style={{position:'absolute',top:'20%',left:'30%',width:360,height:360,borderRadius:'50%',background:'radial-gradient(circle,rgba(34,197,94,0.13) 0%,rgba(34,197,94,0.05) 50%,transparent 75%)',filter:'blur(40px)',pointerEvents:'none',zIndex:0,animation:'sceneGlow 4s ease-in-out infinite'}}/>
-          <div style={{position:'absolute',top:'50%',right:'10%',width:200,height:200,borderRadius:'50%',background:'radial-gradient(circle,rgba(74,222,128,0.1) 0%,transparent 70%)',filter:'blur(30px)',pointerEvents:'none',zIndex:0,animation:'sceneGlow2 5.5s ease-in-out infinite 1.5s'}}/>
-
-          <WebLines/>
-
-          <SeoChip icon="ti ti-devices" label="SEO Scanner" sub="Automated scans" animClass="chipFloat1" style={{top:48,left:140}}/>
-          <SeoChip icon="ti ti-sitemap" label="HTML Site Map" sub="Auto-generated" animClass="chipFloat2" style={{top:28,right:60}}/>
-          <TrafficPill/>
-          <SeoChip icon="ti ti-alert-square" label="404 Error" sub="Detection & fix" animClass="chipFloat3" danger style={{top:272,left:22}}/>
-          <SeoChip icon="ti ti-shield-check" label="Site Verification" sub="Google & Bing" animClass="chipFloat1" style={{top:400,left:18}}/>
-          <SeoChip icon="ti ti-search" label="Search Appearance" sub="SERP preview" animClass="chipFloat2" style={{bottom:20,left:'38%'}}/>
-
-          <div style={{position:'absolute',bottom:200,right:80,zIndex:6,animation:'chipFloat3 6s ease-in-out infinite'}}>
-            <Speedometer/>
+    <div ref={wrapRef} style={{ width: '100%', maxWidth: 560 }}>
+      <div style={{ width: '100%', height: 540 * scale, overflow: 'hidden', position: 'relative' }}>
+        <div ref={tiltRef} style={{ width: 560, height: 540, transformOrigin: 'top left', transform: `scale(${scale}) perspective(1400px) rotateX(${-tilt.y * 0.12}deg) rotateY(${tilt.x * 0.12}deg)`, transition: 'transform 0.25s ease-out', position: 'relative' }}>
+          <div style={{ position: 'absolute', top: '20%', left: '30%', width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle,rgba(34,197,94,0.13) 0%,rgba(34,197,94,0.05) 50%,transparent 75%)', filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0, animation: 'sceneGlow 4s ease-in-out infinite' }} />
+          <div style={{ position: 'absolute', top: '50%', right: '10%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(74,222,128,0.1) 0%,transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none', zIndex: 0, animation: 'sceneGlow2 5.5s ease-in-out infinite 1.5s' }} />
+          <WebLines />
+          <SeoChip icon="ti ti-devices" label="SEO Scanner" sub="Automated scans" animClass="chipFloat1" style={{ top: 48, left: 140 }} />
+          <SeoChip icon="ti ti-sitemap" label="HTML Site Map" sub="Auto-generated" animClass="chipFloat2" style={{ top: 28, right: 60 }} />
+          <TrafficPill />
+          <SeoChip icon="ti ti-alert-square" label="404 Error" sub="Detection & fix" animClass="chipFloat3" danger style={{ top: 272, left: 22 }} />
+          <SeoChip icon="ti ti-shield-check" label="Site Verification" sub="Google & Bing" animClass="chipFloat1" style={{ top: 400, left: 18 }} />
+          <SeoChip icon="ti ti-search" label="Search Appearance" sub="SERP preview" animClass="chipFloat2" style={{ bottom: 20, left: '38%' }} />
+          <div style={{ position: 'absolute', bottom: 200, right: 80, zIndex: 6, animation: 'chipFloat3 6s ease-in-out infinite' }}>
+            <Speedometer />
           </div>
-          <RankBadge/>
+          <RankBadge />
         </div>
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   SERVICE CARD
-══════════════════════════════════════════════ */
 const accentMap = {
-  dark:  {bg:'#0e1411',border:'rgba(34,197,94,0.16)',bar:'linear-gradient(90deg,#16a34a,#22c55e,#4ade80)',iconBg:'rgba(34,197,94,0.12)',iconColor:'#4ade80',tagColor:'#4ade80',titleColor:'#fff',descColor:'rgba(255,255,255,0.6)',featColor:'rgba(255,255,255,0.52)',hoverBorder:'rgba(34,197,94,0.45)',hoverShadow:'0 24px 60px -12px rgba(22,163,74,0.35)'},
-  mid:   {bg:'#06150c',border:'rgba(34,197,94,0.14)',bar:'linear-gradient(90deg,#14532d,#16a34a,#22c55e)',iconBg:'rgba(22,163,74,0.18)',iconColor:'#86efac',tagColor:'#86efac',titleColor:'#f0fdf4',descColor:'rgba(187,247,208,0.68)',featColor:'rgba(187,247,208,0.56)',hoverBorder:'rgba(34,197,94,0.4)',hoverShadow:'0 24px 60px -12px rgba(5,46,22,0.55)'},
-  light: {bg:'#ffffff',border:'rgba(15,23,42,0.07)',bar:'linear-gradient(90deg,#22c55e,#4ade80,#86efac)',iconBg:'#f0fdf4',iconColor:'#15803d',tagColor:'#16a34a',titleColor:'#0f1c14',descColor:'#586b5d',featColor:'#3f5345',hoverBorder:'rgba(22,163,74,0.32)',hoverShadow:'0 24px 60px -16px rgba(15,23,42,0.16)'},
-  soft:  {bg:'#ffffff',border:'rgba(15,23,42,0.07)',bar:'linear-gradient(90deg,#4ade80,#86efac,#bbf7d0)',iconBg:'#f0fdf4',iconColor:'#16a34a',tagColor:'#22c55e',titleColor:'#0a0a0a',descColor:'#5b6470',featColor:'#586474',hoverBorder:'rgba(22,163,74,0.28)',hoverShadow:'0 24px 60px -16px rgba(15,23,42,0.14)'},
+  dark: { bg: '#0e1411', border: 'rgba(34,197,94,0.16)', bar: 'linear-gradient(90deg,#16a34a,#22c55e,#4ade80)', iconBg: 'rgba(34,197,94,0.12)', iconColor: '#4ade80', tagColor: '#4ade80', titleColor: '#fff', descColor: 'rgba(255,255,255,0.6)', featColor: 'rgba(255,255,255,0.52)', hoverBorder: 'rgba(34,197,94,0.45)', hoverShadow: '0 24px 60px -12px rgba(22,163,74,0.35)' },
+  mid: { bg: '#06150c', border: 'rgba(34,197,94,0.14)', bar: 'linear-gradient(90deg,#14532d,#16a34a,#22c55e)', iconBg: 'rgba(22,163,74,0.18)', iconColor: '#86efac', tagColor: '#86efac', titleColor: '#f0fdf4', descColor: 'rgba(187,247,208,0.68)', featColor: 'rgba(187,247,208,0.56)', hoverBorder: 'rgba(34,197,94,0.4)', hoverShadow: '0 24px 60px -12px rgba(5,46,22,0.55)' },
+  light: { bg: '#ffffff', border: 'rgba(15,23,42,0.07)', bar: 'linear-gradient(90deg,#22c55e,#4ade80,#86efac)', iconBg: '#f0fdf4', iconColor: '#15803d', tagColor: '#16a34a', titleColor: '#0f1c14', descColor: '#586b5d', featColor: '#3f5345', hoverBorder: 'rgba(22,163,74,0.32)', hoverShadow: '0 24px 60px -16px rgba(15,23,42,0.16)' },
+  soft: { bg: '#ffffff', border: 'rgba(15,23,42,0.07)', bar: 'linear-gradient(90deg,#4ade80,#86efac,#bbf7d0)', iconBg: '#f0fdf4', iconColor: '#16a34a', tagColor: '#22c55e', titleColor: '#0a0a0a', descColor: '#5b6470', featColor: '#586474', hoverBorder: 'rgba(22,163,74,0.28)', hoverShadow: '0 24px 60px -16px rgba(15,23,42,0.14)' },
 };
 
 function ServiceCard({ svc, index }) {
@@ -450,85 +329,75 @@ function ServiceCard({ svc, index }) {
   const [hovered, setHovered] = useState(false);
   const a = accentMap[svc.accent];
   return (
-    <div ref={ref} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)}
-      style={{background:a.bg,border:`1px solid ${hovered?a.hoverBorder:a.border}`,borderRadius:24,padding:'28px 26px 30px',position:'relative',overflow:'hidden',cursor:'default',opacity:visible?1:0,transform:visible?(hovered?'translateY(-8px)':'translateY(0)'):'translateY(28px)',transition:`opacity 0.5s ease ${index*80}ms,transform 0.4s cubic-bezier(0.22,1,0.36,1),box-shadow 0.4s ease,border-color 0.4s ease`,boxShadow:hovered?a.hoverShadow:'0 1px 2px rgba(15,23,42,0.04)'}}>
-      <div style={{position:'absolute',inset:0,backgroundImage:`radial-gradient(circle at 100% 0%,${a.iconColor}14 0%,transparent 55%)`,pointerEvents:'none'}}/>
-      <div style={{position:'absolute',top:0,left:0,right:0,height:hovered?3:2.5,background:a.bar,transition:'height 0.35s ease'}}/>
-      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:20}}>
+    <div ref={ref} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      style={{ background: a.bg, border: `1px solid ${hovered ? a.hoverBorder : a.border}`, borderRadius: 24, padding: '28px 26px 30px', position: 'relative', overflow: 'hidden', cursor: 'default', opacity: visible ? 1 : 0, transform: visible ? (hovered ? 'translateY(-8px)' : 'translateY(0)') : 'translateY(28px)', transition: `opacity 0.5s ease ${index * 80}ms,transform 0.4s cubic-bezier(0.22,1,0.36,1),box-shadow 0.4s ease,border-color 0.4s ease`, boxShadow: hovered ? a.hoverShadow : '0 1px 2px rgba(15,23,42,0.04)' }}>
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: `radial-gradient(circle at 100% 0%,${a.iconColor}14 0%,transparent 55%)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: hovered ? 3 : 2.5, background: a.bar, transition: 'height 0.35s ease' }} />
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
-          <span style={{fontFamily:'Playfair Display,serif',fontSize:11,fontWeight:700,letterSpacing:'0.12em',color:a.tagColor,opacity:0.55,display:'block',marginBottom:6}}>{svc.tag}</span>
-          <div style={{fontSize:10.5,color:a.tagColor,fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase'}}>{svc.subtitle}</div>
+          <span style={{ fontFamily: 'Playfair Display,serif', fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: a.tagColor, opacity: 0.55, display: 'block', marginBottom: 6 }}>{svc.tag}</span>
+          <div style={{ fontSize: 10.5, color: a.tagColor, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{svc.subtitle}</div>
         </div>
-        <div style={{width:46,height:46,background:a.iconBg,borderRadius:14,display:'flex',alignItems:'center',justifyContent:'center',color:a.iconColor,fontSize:21,flexShrink:0,border:`1px solid ${a.iconColor}33`,boxShadow:hovered?`0 8px 20px -6px ${a.iconColor}55`:'none',transition:'transform 0.4s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.4s ease',transform:hovered?'scale(1.1) rotate(-4deg)':'scale(1)'}}>
-          <i className={svc.icon} aria-hidden="true"/>
+        <div style={{ width: 46, height: 46, background: a.iconBg, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: a.iconColor, fontSize: 21, flexShrink: 0, border: `1px solid ${a.iconColor}33`, boxShadow: hovered ? `0 8px 20px -6px ${a.iconColor}55` : 'none', transition: 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.4s ease', transform: hovered ? 'scale(1.1) rotate(-4deg)' : 'scale(1)' }}>
+          <i className={svc.icon} aria-hidden="true" />
         </div>
       </div>
-      <h3 style={{fontFamily:'Playfair Display,serif',fontSize:22,fontWeight:800,color:a.titleColor,marginBottom:12,lineHeight:1.2,letterSpacing:'-0.4px'}}>{svc.title}</h3>
-      <p style={{fontSize:13.5,color:a.descColor,lineHeight:1.8,marginBottom:20}}>{svc.desc}</p>
-      <div style={{height:1,background:`linear-gradient(90deg,${a.iconColor}30,transparent)`,marginBottom:18}}/>
-      <ul style={{listStyle:'none',padding:0,margin:'0 0 24px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px 12px'}}>
-        {svc.features.map((f,i)=>(
-          <li key={i} style={{display:'flex',alignItems:'center',gap:7,fontSize:12,color:a.featColor}}>
-            <span style={{width:5,height:5,borderRadius:'50%',background:a.iconColor,flexShrink:0}}/>
-            <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{f}</span>
+      <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 22, fontWeight: 800, color: a.titleColor, marginBottom: 12, lineHeight: 1.2, letterSpacing: '-0.4px' }}>{svc.title}</h3>
+      <p style={{ fontSize: 13.5, color: a.descColor, lineHeight: 1.8, marginBottom: 20 }}>{svc.desc}</p>
+      <div style={{ height: 1, background: `linear-gradient(90deg,${a.iconColor}30,transparent)`, marginBottom: 18 }} />
+      <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 12px' }}>
+        {svc.features.map((f, i) => (
+          <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, color: a.featColor }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: a.iconColor, flexShrink: 0 }} />
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f}</span>
           </li>
         ))}
       </ul>
-      <button style={{background:hovered?a.iconColor:'transparent',border:`1.5px solid ${a.iconColor}`,color:hovered?(svc.accent==='light'||svc.accent==='soft'?'#fff':'#06140c'):a.iconColor,borderRadius:11,padding:'12px 20px',fontFamily:'Poppins,sans-serif',fontWeight:600,fontSize:12.5,cursor:'pointer',transition:'all 0.3s ease',width:'100%',display:'flex',alignItems:'center',justifyContent:'center',gap:7}}>
-        {svc.cta}<i className="ti ti-arrow-right" style={{fontSize:14,transform:hovered?'translateX(2px)':'translateX(0)',transition:'transform 0.3s ease'}}/>
+      <button style={{ background: hovered ? a.iconColor : 'transparent', border: `1.5px solid ${a.iconColor}`, color: hovered ? (svc.accent === 'light' || svc.accent === 'soft' ? '#fff' : '#06140c') : a.iconColor, borderRadius: 11, padding: '12px 20px', fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: 12.5, cursor: 'pointer', transition: 'all 0.3s ease', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+        {svc.cta}<i className="ti ti-arrow-right" style={{ fontSize: 14, transform: hovered ? 'translateX(2px)' : 'translateX(0)', transition: 'transform 0.3s ease' }} />
       </button>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   STATS BAND
-══════════════════════════════════════════════ */
 function StatCell({ icon, num, suffix, label }) {
   const { ref, count } = useCountUp(num);
   return (
-    <div ref={ref} style={{padding:'44px 36px',borderRight:'1px solid rgba(255,255,255,0.06)',display:'flex',gap:18,alignItems:'center'}}>
-      <div style={{width:56,height:56,background:'rgba(22,163,74,0.12)',borderRadius:16,display:'flex',alignItems:'center',justifyContent:'center',color:'#22c55e',fontSize:26,flexShrink:0,border:'1px solid rgba(34,197,94,0.18)'}}>
-        <i className={icon}/>
-      </div>
+    <div ref={ref} className="stat-cell">
+      <div className="stat-icon-wrap"><i className={icon} /></div>
       <div>
-        <div style={{fontFamily:'Playfair Display,serif',fontSize:36,fontWeight:900,lineHeight:1,letterSpacing:'-1px',background:'linear-gradient(135deg,#ffffff 0%,#bbf7d0 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
-          {suffix==='%'||suffix==='+'?`${count}${suffix}`:num===null?suffix:`${count}${suffix}`}
-        </div>
-        <div style={{fontSize:11,color:'#6b7280',fontWeight:500,marginTop:5,textTransform:'uppercase',letterSpacing:'0.5px'}}>{label}</div>
+        <div className="stat-number">{suffix === '%' || suffix === '+' ? `${count}${suffix}` : num === null ? suffix : `${count}${suffix}`}</div>
+        <div className="stat-label">{label}</div>
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   CASE STUDY CARD
-══════════════════════════════════════════════ */
 function CaseStudyCard({ cs, index }) {
   const { ref, visible } = useReveal();
   const [hov, setHov] = useState(false);
   return (
-    <div ref={ref} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{borderRadius:20,overflow:'hidden',background:'#fff',border:`1px solid ${hov?'rgba(22,163,74,0.3)':'rgba(0,0,0,0.07)'}`,boxShadow:hov?'0 20px 50px -12px rgba(22,163,74,0.18)':'0 2px 8px rgba(0,0,0,0.04)',opacity:visible?1:0,transform:visible?'translateY(0)':'translateY(28px)',transition:`opacity 0.5s ease ${index*100}ms,transform 0.5s ease ${index*100}ms,box-shadow 0.4s ease,border-color 0.4s ease`}}>
-      <div style={{position:'relative',height:160,overflow:'hidden'}}>
-        <img src={cs.img} alt={cs.company} style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(0.5) saturate(0.8)',transform:hov?'scale(1.04)':'scale(1)',transition:'transform 0.5s ease'}}/>
-        <div style={{position:'absolute',inset:0,background:'linear-gradient(135deg,rgba(5,46,22,0.75),rgba(0,0,0,0.45))'}}/>
-        <div style={{position:'absolute',top:16,left:16}}>
-          <div style={{fontSize:8,color:'rgba(255,255,255,0.6)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:4}}>{cs.industry}</div>
-          <div style={{fontFamily:'Playfair Display,serif',fontSize:20,fontWeight:900,color:'#fff'}}>{cs.company}</div>
+    <div ref={ref} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{ borderRadius: 20, overflow: 'hidden', background: '#fff', border: `1px solid ${hov ? 'rgba(22,163,74,0.3)' : 'rgba(0,0,0,0.07)'}`, boxShadow: hov ? '0 20px 50px -12px rgba(22,163,74,0.18)' : '0 2px 8px rgba(0,0,0,0.04)', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(28px)', transition: `opacity 0.5s ease ${index * 100}ms,transform 0.5s ease ${index * 100}ms,box-shadow 0.4s ease,border-color 0.4s ease` }}>
+      <div style={{ position: 'relative', height: 160, overflow: 'hidden' }}>
+        <img src={cs.img} alt={cs.company} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.5) saturate(0.8)', transform: hov ? 'scale(1.04)' : 'scale(1)', transition: 'transform 0.5s ease' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,rgba(5,46,22,0.75),rgba(0,0,0,0.45))' }} />
+        <div style={{ position: 'absolute', top: 16, left: 16 }}>
+          <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.6)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{cs.industry}</div>
+          <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 20, fontWeight: 900, color: '#fff' }}>{cs.company}</div>
         </div>
-        <div style={{position:'absolute',bottom:16,right:16,background:'rgba(34,197,94,0.18)',border:'1px solid rgba(34,197,94,0.4)',borderRadius:8,padding:'6px 12px',backdropFilter:'blur(8px)'}}>
-          <div style={{fontFamily:'JetBrains Mono,monospace',fontSize:12,fontWeight:700,color:'#4ade80'}}>{cs.result}</div>
-          <div style={{fontSize:8,color:'rgba(255,255,255,0.55)',marginTop:1}}>in {cs.timeframe}</div>
+        <div style={{ position: 'absolute', bottom: 16, right: 16, background: 'rgba(34,197,94,0.18)', border: '1px solid rgba(34,197,94,0.4)', borderRadius: 8, padding: '6px 12px', backdropFilter: 'blur(8px)' }}>
+          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 12, fontWeight: 700, color: '#4ade80' }}>{cs.result}</div>
+          <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.55)', marginTop: 1 }}>in {cs.timeframe}</div>
         </div>
       </div>
-      <div style={{padding:'20px 22px 22px'}}>
-        <p style={{fontFamily:'Playfair Display,serif',fontSize:14,fontWeight:700,color:'#0a0a0a',lineHeight:1.6,marginBottom:16}}>"{cs.quote}"</p>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <img src={cs.avatar} alt={cs.person} style={{width:34,height:34,borderRadius:'50%',objectFit:'cover',border:'2px solid #bbf7d0'}}/>
+      <div style={{ padding: '20px 22px 22px' }}>
+        <p style={{ fontFamily: 'Playfair Display,serif', fontSize: 14, fontWeight: 700, color: '#0a0a0a', lineHeight: 1.6, marginBottom: 16 }}>"{cs.quote}"</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <img src={cs.avatar} alt={cs.person} style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', border: '2px solid #bbf7d0' }} />
           <div>
-            <div style={{fontSize:12,fontWeight:700,color:'#0a0a0a'}}>{cs.person}</div>
-            <div style={{fontSize:10.5,color:'#9ca3af'}}>{cs.role}, {cs.company}</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#0a0a0a' }}>{cs.person}</div>
+            <div style={{ fontSize: 10.5, color: '#9ca3af' }}>{cs.role}, {cs.company}</div>
           </div>
         </div>
       </div>
@@ -536,135 +405,123 @@ function CaseStudyCard({ cs, index }) {
   );
 }
 
-/* ══════════════════════════════════════════════
-   PROCESS STEP
-══════════════════════════════════════════════ */
 function ProcessStep({ step, index }) {
   const { ref, visible } = useReveal();
   return (
-    <div ref={ref} style={{textAlign:'center',opacity:visible?1:0,transform:visible?'translateY(0)':'translateY(24px)',transition:`opacity 0.5s ease ${index*100}ms,transform 0.5s ease ${index*100}ms`}}>
-      <div style={{width:72,height:72,background:'rgba(22,163,74,0.12)',border:'1px solid rgba(34,197,94,0.22)',borderRadius:20,display:'flex',alignItems:'center',justifyContent:'center',color:'#22c55e',fontSize:30,margin:'0 auto 20px'}}>
-        <i className={step.icon} aria-hidden="true"/>
+    <div ref={ref} style={{ textAlign: 'center', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transition: `opacity 0.5s ease ${index * 100}ms,transform 0.5s ease ${index * 100}ms` }}>
+      <div style={{ width: 72, height: 72, background: 'rgba(22,163,74,0.12)', border: '1px solid rgba(34,197,94,0.22)', borderRadius: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#22c55e', fontSize: 30, margin: '0 auto 20px' }}>
+        <i className={step.icon} aria-hidden="true" />
       </div>
-      <div style={{fontFamily:'Playfair Display,serif',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:'#4ade80',opacity:0.6,marginBottom:8}}>0{index+1}</div>
-      <h4 style={{fontFamily:'Playfair Display,serif',fontSize:20,fontWeight:800,color:'#fff',marginBottom:10}}>{step.title}</h4>
-      <p style={{fontSize:13.5,color:'rgba(255,255,255,0.55)',lineHeight:1.8,maxWidth:220,margin:'0 auto'}}>{step.desc}</p>
+      <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4ade80', opacity: 0.6, marginBottom: 8 }}>0{index + 1}</div>
+      <h4 style={{ fontFamily: 'Playfair Display,serif', fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 10 }}>{step.title}</h4>
+      <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.8, maxWidth: 220, margin: '0 auto' }}>{step.desc}</p>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   FAQ
-══════════════════════════════════════════════ */
 function FaqItem({ item }) {
   const [open, setOpen] = useState(false);
   return (
-    <div style={{borderBottom:'1px solid #ece9e2',padding:'20px 0'}}>
-      <button onClick={()=>setOpen(!open)} style={{width:'100%',display:'flex',justifyContent:'space-between',alignItems:'center',background:'none',border:'none',cursor:'pointer',fontFamily:'Poppins,sans-serif',fontSize:15,fontWeight:600,color:'#0a0a0a',textAlign:'left',gap:16}}>
+    <div style={{ borderBottom: '1px solid #ece9e2', padding: '20px 0' }}>
+      <button onClick={() => setOpen(!open)} style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Poppins,sans-serif', fontSize: 15, fontWeight: 600, color: '#0a0a0a', textAlign: 'left', gap: 16 }}>
         {item.q}
-        <span style={{width:28,height:28,borderRadius:'50%',background:open?'#0a0a0a':'#f0fdf4',border:`1.5px solid ${open?'#0a0a0a':'#bbf7d0'}`,display:'flex',alignItems:'center',justifyContent:'center',color:open?'#22c55e':'#15803d',fontSize:16,flexShrink:0,transition:'all 0.25s ease',transform:open?'rotate(180deg)':'rotate(0)'}}>{open?'−':'+'}</span>
+        <span style={{ width: 28, height: 28, borderRadius: '50%', background: open ? '#0a0a0a' : '#f0fdf4', border: `1.5px solid ${open ? '#0a0a0a' : '#bbf7d0'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: open ? '#22c55e' : '#15803d', fontSize: 16, flexShrink: 0, transition: 'all 0.25s ease', transform: open ? 'rotate(180deg)' : 'rotate(0)' }}>{open ? '−' : '+'}</span>
       </button>
-      <div style={{maxHeight:open?220:0,overflow:'hidden',transition:'max-height 0.35s ease'}}>
-        <p style={{marginTop:12,fontSize:14,color:'#6b7280',lineHeight:1.8,paddingRight:44}}>{item.a}</p>
+      <div style={{ maxHeight: open ? 220 : 0, overflow: 'hidden', transition: 'max-height 0.35s ease' }}>
+        <p style={{ marginTop: 12, fontSize: 14, color: '#6b7280', lineHeight: 1.8, paddingRight: 44 }}>{item.a}</p>
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   ENQUIRY FORM
-══════════════════════════════════════════════ */
-const enquiryTypes = ['Technical SEO','Content Strategy','Link Building','Local SEO','E-commerce SEO','Full SEO Package','Quick audit'];
+const enquiryTypes = ['Technical SEO', 'Content Strategy', 'Link Building', 'Local SEO', 'E-commerce SEO', 'Full SEO Package', 'Quick audit'];
 
 function EnquiryForm() {
-  const [form, setForm] = useState({name:'',email:'',phone:'',type:enquiryTypes[0],message:''});
+  const [form, setForm] = useState({ name: '', email: '', phone: '', type: enquiryTypes[0], message: '' });
   const [status, setStatus] = useState('idle');
-  const update = (k,v) => setForm(p=>({...p,[k]:v}));
+  const update = (k, v) => setForm(p => ({ ...p, [k]: v }));
   const handleSubmit = e => {
     e.preventDefault();
-    if(!form.name.trim()||!form.email.trim()||!form.message.trim())return;
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) return;
     setStatus('sending');
-    setTimeout(()=>setStatus('sent'),1100);
+    setTimeout(() => setStatus('sent'), 1100);
   };
-  if(status==='sent') return (
-    <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:14,minHeight:320,justifyContent:'center'}}>
-      <div style={{width:52,height:52,borderRadius:14,background:'rgba(34,197,94,0.15)',border:'1.5px solid rgba(34,197,94,0.3)',display:'flex',alignItems:'center',justifyContent:'center',color:'#4ade80',fontSize:24}}><i className="ti ti-check"/></div>
-      <h3 style={{fontFamily:'Playfair Display,serif',fontSize:22,fontWeight:800,color:'#fff'}}>Enquiry sent!</h3>
-      <p style={{fontSize:13.5,color:'rgba(255,255,255,0.55)',lineHeight:1.8,maxWidth:320}}>Thanks{form.name.trim()?`, ${form.name.trim().split(' ')[0]}`:''} — your SEO audit request is in. We reply within 4 hours.</p>
-      <button onClick={()=>{setStatus('idle');setForm({name:'',email:'',phone:'',type:enquiryTypes[0],message:''}); }} style={{background:'transparent',border:'1.5px solid rgba(34,197,94,0.4)',color:'#4ade80',borderRadius:10,padding:'10px 18px',fontFamily:'Poppins,sans-serif',fontWeight:600,fontSize:12,cursor:'pointer'}}>Send another</button>
+  if (status === 'sent') return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 14, minHeight: 320, justifyContent: 'center' }}>
+      <div style={{ width: 52, height: 52, borderRadius: 14, background: 'rgba(34,197,94,0.15)', border: '1.5px solid rgba(34,197,94,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4ade80', fontSize: 24 }}><i className="ti ti-check" /></div>
+      <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 22, fontWeight: 800, color: '#fff' }}>Enquiry sent!</h3>
+      <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.8, maxWidth: 320 }}>Thanks{form.name.trim() ? `, ${form.name.trim().split(' ')[0]}` : ''} — your SEO audit request is in. We reply within 4 hours.</p>
+      <button onClick={() => { setStatus('idle'); setForm({ name: '', email: '', phone: '', type: enquiryTypes[0], message: '' }); }} style={{ background: 'transparent', border: '1.5px solid rgba(34,197,94,0.4)', color: '#4ade80', borderRadius: 10, padding: '10px 18px', fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>Send another</button>
     </div>
   );
   return (
     <div>
-      <div style={{width:52,height:52,background:'rgba(22,163,74,0.15)',borderRadius:14,display:'flex',alignItems:'center',justifyContent:'center',color:'#4ade80',fontSize:24,marginBottom:20,border:'1.5px solid rgba(22,163,74,0.3)'}}><i className="ti ti-search"/></div>
-      <h3 style={{fontFamily:'Playfair Display,serif',fontSize:24,fontWeight:800,color:'#fff',marginBottom:8,letterSpacing:'-0.4px'}}>Request a Free SEO Audit</h3>
-      <p style={{fontSize:13.5,color:'rgba(255,255,255,0.55)',lineHeight:1.8,marginBottom:22,maxWidth:360}}>Tell us your URL and goals — we'll send a full technical + content audit within 48 hours.</p>
-      <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column',gap:12}}>
+      <div style={{ width: 52, height: 52, background: 'rgba(22,163,74,0.15)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4ade80', fontSize: 24, marginBottom: 20, border: '1.5px solid rgba(22,163,74,0.3)' }}><i className="ti ti-search" /></div>
+      <h3 style={{ fontFamily: 'Playfair Display,serif', fontSize: 24, fontWeight: 800, color: '#fff', marginBottom: 8, letterSpacing: '-0.4px' }}>Request a Free SEO Audit</h3>
+      <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.8, marginBottom: 22, maxWidth: 360 }}>Tell us your URL and goals — we'll send a full technical + content audit within 48 hours.</p>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div className="enq-row">
-          <input className="enq-input" type="text" placeholder="Full name" value={form.name} onChange={e=>update('name',e.target.value)} required/>
-          <input className="enq-input" type="email" placeholder="Email address" value={form.email} onChange={e=>update('email',e.target.value)} required/>
+          <input className="enq-input" type="text" placeholder="Full name" value={form.name} onChange={e => update('name', e.target.value)} required />
+          <input className="enq-input" type="email" placeholder="Email address" value={form.email} onChange={e => update('email', e.target.value)} required />
         </div>
         <div className="enq-row">
-          <input className="enq-input" type="url" placeholder="Your website URL" value={form.phone} onChange={e=>update('phone',e.target.value)}/>
+          <input className="enq-input" type="url" placeholder="Your website URL" value={form.phone} onChange={e => update('phone', e.target.value)} />
           <div className="enq-select-wrap">
-            <i className="ti ti-list-details enq-select-icon" aria-hidden="true"/>
-            <select className="enq-input enq-select" value={form.type} onChange={e=>update('type',e.target.value)}>
-              {enquiryTypes.map(t=><option key={t} value={t}>{t}</option>)}
+            <i className="ti ti-list-details enq-select-icon" aria-hidden="true" />
+            <select className="enq-input enq-select" value={form.type} onChange={e => update('type', e.target.value)}>
+              {enquiryTypes.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
-            <i className="ti ti-chevron-down enq-select-chevron" aria-hidden="true"/>
+            <i className="ti ti-chevron-down enq-select-chevron" aria-hidden="true" />
           </div>
         </div>
-        <textarea className="enq-input" placeholder="Tell us your current traffic situation and goals..." rows={4} value={form.message} onChange={e=>update('message',e.target.value)} required style={{resize:'vertical',fontFamily:'Poppins,sans-serif'}}/>
-        <button type="submit" disabled={status==='sending'} style={{background:'#22c55e',color:'#fff',padding:'13px 26px',borderRadius:12,fontFamily:'Poppins,sans-serif',fontWeight:700,fontSize:13,border:'none',cursor:status==='sending'?'default':'pointer',boxShadow:'0 6px 20px rgba(34,197,94,0.35)',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8,opacity:status==='sending'?0.75:1,marginTop:4}}>
-          {status==='sending'?'Sending…':'Get My Free Audit'}
-          {status!=='sending'&&<i className="ti ti-arrow-right" style={{fontSize:14}}/>}
+        <textarea className="enq-input" placeholder="Tell us your current traffic situation and goals..." rows={4} value={form.message} onChange={e => update('message', e.target.value)} required style={{ resize: 'vertical', fontFamily: 'Poppins,sans-serif' }} />
+        <button type="submit" disabled={status === 'sending'} style={{ background: '#22c55e', color: '#fff', padding: '13px 26px', borderRadius: 12, fontFamily: 'Poppins,sans-serif', fontWeight: 700, fontSize: 13, border: 'none', cursor: status === 'sending' ? 'default' : 'pointer', boxShadow: '0 6px 20px rgba(34,197,94,0.35)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: status === 'sending' ? 0.75 : 1, marginTop: 4 }}>
+          {status === 'sending' ? 'Sending…' : 'Get My Free Audit'}
+          {status !== 'sending' && <i className="ti ti-arrow-right" style={{ fontSize: 14 }} />}
         </button>
       </form>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   LIVE DASHBOARD
-══════════════════════════════════════════════ */
 function LiveDashboard() {
   const { ref, tilt } = useParallax(6);
   const [impressions, setImpressions] = useState(48220);
-  useEffect(()=>{
-    const id=setInterval(()=>setImpressions(v=>v+Math.floor(Math.random()*22)+3),1800);
-    return ()=>clearInterval(id);
-  },[]);
-  const bars=[46,68,38,82,58,94,72];
+  useEffect(() => {
+    const id = setInterval(() => setImpressions(v => v + Math.floor(Math.random() * 22) + 3), 1800);
+    return () => clearInterval(id);
+  }, []);
+  const bars = [46, 68, 38, 82, 58, 94, 72];
   return (
-    <div style={{display:'flex',justifyContent:'center'}}>
-      <div ref={ref} style={{width:260,transform:`perspective(900px) rotateX(${-tilt.y*0.5}deg) rotateY(${tilt.x*0.5}deg)`,transition:'transform 0.2s ease-out'}}>
-        <div style={{background:'linear-gradient(165deg,#0d1611,#0a120d)',border:'1px solid rgba(34,197,94,0.22)',borderRadius:16,padding:16,boxShadow:'0 28px 56px -16px rgba(0,0,0,0.55)',position:'relative',overflow:'hidden'}}>
-          <div style={{position:'absolute',top:-30,right:-30,width:110,height:110,background:'radial-gradient(circle,rgba(34,197,94,0.16) 0%,transparent 70%)',pointerEvents:'none'}}/>
-          <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:14}}>
-            <span style={{width:6,height:6,borderRadius:'50%',background:'#ff5f56'}}/><span style={{width:6,height:6,borderRadius:'50%',background:'#ffbd2e'}}/><span style={{width:6,height:6,borderRadius:'50%',background:'#27c93f'}}/>
-            <div style={{flex:1,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:5,padding:'3px 8px',fontSize:8.5,color:'rgba(255,255,255,0.35)',fontFamily:'JetBrains Mono,monospace'}}>search.google.com/search-console</div>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div ref={ref} style={{ width: '100%', maxWidth: 260, transform: `perspective(900px) rotateX(${-tilt.y * 0.5}deg) rotateY(${tilt.x * 0.5}deg)`, transition: 'transform 0.2s ease-out' }}>
+        <div style={{ background: 'linear-gradient(165deg,#0d1611,#0a120d)', border: '1px solid rgba(34,197,94,0.22)', borderRadius: 16, padding: 16, boxShadow: '0 28px 56px -16px rgba(0,0,0,0.55)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: -30, right: -30, width: 110, height: 110, background: 'radial-gradient(circle,rgba(34,197,94,0.16) 0%,transparent 70%)', pointerEvents: 'none' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ff5f56' }} /><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ffbd2e' }} /><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#27c93f' }} />
+            <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 5, padding: '3px 8px', fontSize: 8.5, color: 'rgba(255,255,255,0.35)', fontFamily: 'JetBrains Mono,monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>search.google.com/search-console</div>
           </div>
-          <div style={{display:'flex',justifyContent:'space-between',marginBottom:14}}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
             <div>
-              <div style={{fontSize:8,color:'rgba(255,255,255,0.4)',textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:4}}>Total Impressions</div>
-              <div style={{fontFamily:'JetBrains Mono,monospace',fontSize:18,fontWeight:700,color:'#fff'}}>{impressions.toLocaleString()}</div>
+              <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 4 }}>Total Impressions</div>
+              <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 18, fontWeight: 700, color: '#fff' }}>{impressions.toLocaleString()}</div>
             </div>
-            <div style={{display:'flex',alignItems:'center',gap:4,background:'rgba(74,222,128,0.12)',border:'1px solid rgba(74,222,128,0.25)',borderRadius:20,padding:'3px 8px',height:'fit-content'}}>
-              <span style={{width:5,height:5,borderRadius:'50%',background:'#4ade80',animation:'pulse 2s ease-in-out infinite'}}/><span style={{fontSize:7.5,color:'#4ade80',fontWeight:700}}>LIVE</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)', borderRadius: 20, padding: '3px 8px', height: 'fit-content' }}>
+              <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80', animation: 'pulse 2s ease-in-out infinite' }} /><span style={{ fontSize: 7.5, color: '#4ade80', fontWeight: 700 }}>LIVE</span>
             </div>
           </div>
-          <div style={{display:'flex',alignItems:'flex-end',gap:4,height:48,marginBottom:14}}>
-            {bars.map((h,i)=><div key={i} style={{flex:1,height:`${h}%`,borderRadius:'3px 3px 0 0',background:i===bars.length-1?'linear-gradient(180deg,#4ade80,#16a34a)':'rgba(74,222,128,0.2)'}}/>)}
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 48, marginBottom: 14 }}>
+            {bars.map((h, i) => <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '3px 3px 0 0', background: i === bars.length - 1 ? 'linear-gradient(180deg,#4ade80,#16a34a)' : 'rgba(74,222,128,0.2)' }} />)}
           </div>
-          {[{kw:'MVP dev studio',pos:'#1',delta:'↑3'},{kw:'startup AI agency',pos:'#2',delta:'↑7'},{kw:'react native dev',pos:'#1',delta:'↑1'}].map((row,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 8px',background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.05)',borderRadius:8,marginBottom:5}}>
-              <div style={{flex:1,fontSize:9,color:'rgba(255,255,255,0.75)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{row.kw}</div>
-              <div style={{fontSize:9,fontWeight:700,color:row.pos==='#1'?'#4ade80':'rgba(255,255,255,0.6)',flexShrink:0}}>{row.pos}</div>
-              <div style={{fontSize:8,color:'#4ade80',flexShrink:0}}>{row.delta}</div>
+          {[{ kw: 'MVP dev studio', pos: '#1', delta: '↑3' }, { kw: 'startup AI agency', pos: '#2', delta: '↑7' }, { kw: 'react native dev', pos: '#1', delta: '↑1' }].map((row, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 8, marginBottom: 5 }}>
+              <div style={{ flex: 1, fontSize: 9, color: 'rgba(255,255,255,0.75)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{row.kw}</div>
+              <div style={{ fontSize: 9, fontWeight: 700, color: row.pos === '#1' ? '#4ade80' : 'rgba(255,255,255,0.6)', flexShrink: 0 }}>{row.pos}</div>
+              <div style={{ fontSize: 8, color: '#4ade80', flexShrink: 0 }}>{row.delta}</div>
             </div>
           ))}
-          <div style={{marginTop:10,height:28,borderRadius:8,background:'linear-gradient(90deg,#16a34a,#22c55e)',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
-            <i className="ti ti-chart-bar" style={{fontSize:12,color:'#fff'}}/><span style={{fontSize:9,color:'#fff',fontWeight:700}}>Full Report Ready</span>
+          <div style={{ marginTop: 10, height: 28, borderRadius: 8, background: 'linear-gradient(90deg,#16a34a,#22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <i className="ti ti-chart-bar" style={{ fontSize: 12, color: '#fff' }} /><span style={{ fontSize: 9, color: '#fff', fontWeight: 700 }}>Full Report Ready</span>
           </div>
         </div>
       </div>
@@ -672,167 +529,26 @@ function LiveDashboard() {
   );
 }
 
-/* ══════════════════════════════════════════════
-   PAGE SECTIONS
-══════════════════════════════════════════════ */
-function Hero() {
-  return (
-    <div style={{position:'relative',overflow:'hidden',background:'#fafaf8'}}>
-      <AnimatedBg/>
-      <div style={{position:'absolute',inset:0,background:'linear-gradient(135deg,rgba(240,253,244,0.6) 0%,transparent 60%)',pointerEvents:'none',zIndex:1}}/>
-      <div style={{position:'absolute',bottom:0,left:0,right:0,height:120,background:'linear-gradient(to top,#fafaf8,transparent)',pointerEvents:'none',zIndex:1}}/>
-      <div className="seo-hero-grid" style={{maxWidth:1320,margin:'0 auto',padding:'80px 64px 72px',display:'grid',gridTemplateColumns:'1fr 1.1fr',gap:56,alignItems:'center',position:'relative',zIndex:2}}>
-        <div>
-          <div className="seo-reveal" style={{display:'inline-flex',alignItems:'center',gap:8,background:'#0a0a0a',color:'#fff',fontSize:11,fontWeight:600,padding:'7px 16px 7px 10px',borderRadius:30,marginBottom:26,border:'1px solid #222',letterSpacing:'0.06em',textTransform:'uppercase'}}>
-            <span style={{width:8,height:8,borderRadius:'50%',background:'#22c55e',boxShadow:'0 0 0 3px rgba(34,197,94,0.25)',display:'inline-block',flexShrink:0,animation:'pulseDot 2s ease-in-out infinite'}}/>
-            SEO & Search Growth
-          </div>
-          <h1 className="seo-reveal" style={{fontFamily:'Playfair Display,serif',fontSize:56,fontWeight:900,lineHeight:1.06,color:'#0a0a0a',letterSpacing:'-1.2px',marginBottom:20,animationDelay:'0.1s'}}>
-            Rank #1.<br/>
-            <span style={{background:'linear-gradient(135deg,#16a34a 0%,#22c55e 55%,#4ade80 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Stay There.</span>
-          </h1>
-          <p className="seo-reveal" style={{fontSize:15,color:'#1f2937',lineHeight:1.8,maxWidth:440,marginBottom:34,animationDelay:'0.18s'}}>
-            We engineer search dominance for startups — technical SEO, content architecture, and link strategies that compound month over month.
-          </p>
-          <div className="seo-reveal" style={{display:'flex',gap:12,marginBottom:44,flexWrap:'wrap',animationDelay:'0.26s'}}>
-            <button className="magnetic-btn" style={{background:'#0a0a0a',color:'#fff',padding:'14px 28px',borderRadius:12,fontFamily:'Poppins,sans-serif',fontWeight:600,fontSize:13,border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(0,0,0,0.18)'}}>Audit My Site →</button>
-            <a href="#contact" style={{textDecoration:'none'}}>
-              <button className="magnetic-btn-outline" style={{background:'#fff',color:'#0a0a0a',padding:'14px 28px',borderRadius:12,fontFamily:'Poppins,sans-serif',fontWeight:600,fontSize:13,border:'1.5px solid #e2e8f0',cursor:'pointer'}}>See Case Studies</button>
-            </a>
-          </div>
-          <div className="seo-reveal" style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:28,animationDelay:'0.32s'}}>
-            {[{icon:'ti-trending-up',value:'312%',label:'Avg. traffic lift'},{icon:'ti-clock',value:'90 days',label:'To page 1'},{icon:'ti-award',value:'38+',label:'Sites ranked #1'}].map(m=>(
-              <div key={m.label} style={{display:'flex',alignItems:'center',gap:8,padding:'10px 14px',borderRadius:12,background:'rgba(255,255,255,0.65)',border:'1px solid rgba(0,0,0,0.07)',backdropFilter:'blur(8px)'}}>
-                <div style={{width:32,height:32,borderRadius:8,background:'#f0fdf4',border:'1px solid #bbf7d0',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                  <i className={`ti ${m.icon}`} style={{fontSize:15,color:'#16a34a'}}/>
-                </div>
-                <div>
-                  <div style={{fontFamily:'Playfair Display,serif',fontSize:16,fontWeight:900,color:'#0a0a0a',lineHeight:1}}>{m.value}</div>
-                  <div style={{fontSize:10,color:'#6b7280',marginTop:1}}>{m.label}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="seo-reveal" style={{display:'flex',alignItems:'center',gap:10,paddingTop:24,borderTop:'1px solid #ece9e2',animationDelay:'0.38s'}}>
-            <div style={{display:'flex'}}>
-              {[IMAGES.founder1,IMAGES.founder2].map((src,i)=>(
-                <img key={i} src={src} alt="" style={{width:28,height:28,borderRadius:'50%',objectFit:'cover',border:'2px solid #fafaf8',marginLeft:i===0?0:-8}}/>
-              ))}
-            </div>
-            <span style={{fontSize:12,color:'#6b7280'}}>Trusted by <strong style={{color:'#0a0a0a'}}>40+ startup founders</strong> to own their search traffic</span>
-          </div>
-        </div>
-        {/* Scene always uses the same desktop design, but auto-scales */}
-        <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-          <SeoDeviceScene/>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function StatsBand() {
-  const stats=[
-    {icon:'ti ti-trending-up',num:312,suffix:'%',label:'Avg. organic traffic lift'},
-    {icon:'ti ti-clock',num:90,suffix:' days',label:'To first page-1 result'},
-    {icon:'ti ti-award',num:38,suffix:'+',label:'Keywords ranked #1'},
-    {icon:'ti ti-eye',num:40,suffix:'+',label:'Startups served'},
-  ];
-  return (
-    <div style={{background:'#0a0a0a',position:'relative',overflow:'hidden'}}>
-      <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'linear-gradient(90deg,transparent,#16a34a,#22c55e,#4ade80,#22c55e,#16a34a,transparent)',backgroundSize:'200% 100%',animation:'gradientMove 3s linear infinite'}}/>
-      <div style={{position:'absolute',inset:0,backgroundImage:'radial-gradient(circle,rgba(34,197,94,0.18) 1px,transparent 1px)',backgroundSize:'28px 28px',maskImage:'radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)',WebkitMaskImage:'radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)',pointerEvents:'none'}}/>
-      <div className="seo-stats-grid" style={{maxWidth:1320,margin:'0 auto',display:'grid',gridTemplateColumns:'repeat(4,1fr)',position:'relative',zIndex:1}}>
-        {stats.map((s,i)=><StatCell key={i} {...s}/>)}
-      </div>
-    </div>
-  );
-}
-
-function ServicesGrid() {
-  return (
-    <div style={{maxWidth:1320,margin:'96px auto',padding:'0 64px'}}>
-      <div style={{display:'inline-block',background:'#f0fdf4',color:'#15803d',fontSize:11,fontWeight:600,padding:'5px 16px',borderRadius:30,marginBottom:12,letterSpacing:'0.07em',textTransform:'uppercase',border:'1px solid #bbf7d0'}}>What We Do</div>
-      <h2 style={{fontFamily:'Playfair Display,serif',fontSize:38,fontWeight:900,color:'#0a0a0a',marginBottom:8,lineHeight:1.1,letterSpacing:'-1px'}}>SEO That Actually Compounds</h2>
-      <p style={{fontSize:15,color:'#6b7280',lineHeight:1.7,maxWidth:480,marginBottom:48}}>Every service is designed to stack on the last. Start with one. End up owning your category.</p>
-      <div className="seo-services-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:22}}>
-        {seoServices.map((svc,i)=><ServiceCard key={i} svc={svc} index={i}/>)}
-      </div>
-    </div>
-  );
-}
-
-function CaseStudies() {
-  return (
-    <div style={{background:'#fafaf8',padding:'88px 64px',borderTop:'1px solid #ece9e2',borderBottom:'1px solid #ece9e2'}}>
-      <div style={{maxWidth:1320,margin:'0 auto'}}>
-        <div style={{display:'inline-block',background:'#f0fdf4',color:'#15803d',fontSize:11,fontWeight:600,padding:'5px 16px',borderRadius:30,marginBottom:12,letterSpacing:'0.07em',textTransform:'uppercase',border:'1px solid #bbf7d0'}}>Case Studies</div>
-        <h2 style={{fontFamily:'Playfair Display,serif',fontSize:38,fontWeight:900,color:'#0a0a0a',marginBottom:8,lineHeight:1.1,letterSpacing:'-1px'}}>Results Speak Louder</h2>
-        <p style={{fontSize:15,color:'#6b7280',lineHeight:1.7,maxWidth:480,marginBottom:48}}>Three startups, three different categories — one outcome: search dominance.</p>
-        <div className="seo-cases-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:22}}>
-          {caseStudies.map((cs,i)=><CaseStudyCard key={i} cs={cs} index={i}/>)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function HowWeWork() {
-  return (
-    <div style={{background:'#0a0a0a',padding:'88px 64px',position:'relative',overflow:'hidden'}}>
-      <div style={{position:'absolute',top:'-40%',right:'-10%',width:'55%',height:'180%',background:'radial-gradient(ellipse,rgba(22,163,74,0.13) 0%,transparent 70%)',pointerEvents:'none'}}/>
-      <div style={{maxWidth:1320,margin:'0 auto',position:'relative',zIndex:1}}>
-        <div style={{display:'inline-block',background:'rgba(22,163,74,0.14)',color:'#4ade80',fontSize:11,fontWeight:600,padding:'5px 16px',borderRadius:30,marginBottom:12,letterSpacing:'0.07em',textTransform:'uppercase',border:'1px solid rgba(22,163,74,0.25)'}}>How We Work</div>
-        <h2 style={{fontFamily:'Playfair Display,serif',fontSize:38,fontWeight:900,color:'#fff',marginBottom:56,lineHeight:1.1,letterSpacing:'-1px'}}>Four Steps, Zero Guesswork</h2>
-        <div className="seo-process-grid" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:40,position:'relative'}}>
-          <div style={{position:'absolute',top:36,left:'12.5%',right:'12.5%',height:1,background:'linear-gradient(90deg,transparent,rgba(22,163,74,0.3),rgba(22,163,74,0.3),transparent)'}}/>
-          {processSteps.map((step,i)=><ProcessStep key={i} step={step} index={i}/>)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TrustBand() {
-  return (
-    <div style={{background:'#fff',padding:'40px 64px',borderBottom:'1px solid #ece9e2'}}>
-      <div style={{maxWidth:1320,margin:'0 auto'}}>
-        <div style={{fontSize:10,color:'#9ca3af',textTransform:'uppercase',letterSpacing:'0.1em',textAlign:'center',marginBottom:20,fontWeight:600}}>Trusted by founders at</div>
-        <div style={{display:'flex',justifyContent:'center',alignItems:'center',gap:48,flexWrap:'wrap'}}>
-          {['Nimbus','Forge','Quanta','Halo','Brisk'].map(n=>(
-            <span key={n} style={{fontSize:14,fontWeight:800,color:'#c9c9c9',letterSpacing:'-0.3px'}}>{n}</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Contact() {
+function ContactBlock() {
   const { ref, visible } = useReveal();
   return (
-    <div id="contact" style={{maxWidth:1320,margin:'96px auto',padding:'0 64px'}}>
-      <div style={{display:'inline-block',background:'#f0fdf4',color:'#15803d',fontSize:11,fontWeight:600,padding:'5px 16px',borderRadius:30,marginBottom:12,letterSpacing:'0.07em',textTransform:'uppercase',border:'1px solid #bbf7d0'}}>Get In Touch</div>
-      <h2 style={{fontFamily:'Playfair Display,serif',fontSize:38,fontWeight:900,color:'#0a0a0a',marginBottom:8,lineHeight:1.1,letterSpacing:'-1px'}}>Get Your Free SEO Audit</h2>
-      <p style={{fontSize:15,color:'#6b7280',lineHeight:1.7,maxWidth:460,marginBottom:48}}>No sales pitch, no fluff — just a real audit of your site's search performance and a clear plan to fix it.</p>
-      <div ref={ref} className="seo-contact-grid" style={{display:'grid',gridTemplateColumns:'1.15fr 1fr',gap:0,background:'#0a0a0a',borderRadius:24,overflow:'hidden',border:'1.5px solid rgba(22,163,74,0.25)',boxShadow:'0 24px 64px rgba(22,163,74,0.14)',opacity:visible?1:0,transform:visible?'translateY(0)':'translateY(24px)',transition:'opacity 0.6s ease,transform 0.6s ease'}}>
-        <div style={{padding:'44px 40px',borderRight:'1px solid rgba(255,255,255,0.07)',position:'relative'}}>
-          <div style={{position:'absolute',top:'-30%',left:'-20%',width:'70%',height:'160%',background:'radial-gradient(ellipse,rgba(22,163,74,0.16) 0%,transparent 70%)',pointerEvents:'none'}}/>
-          <div style={{position:'relative',zIndex:1}}><EnquiryForm/></div>
-        </div>
-        <div style={{padding:'40px 36px',background:'linear-gradient(165deg,#0d1410,#0a100c)',display:'flex',flexDirection:'column',position:'relative',overflow:'hidden'}}>
-          <div style={{position:'absolute',top:'-20%',right:'-30%',width:'80%',height:'80%',background:'radial-gradient(ellipse,rgba(22,163,74,0.14) 0%,transparent 70%)',pointerEvents:'none'}}/>
-          <div style={{position:'relative',zIndex:1}}>
-            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-              <span style={{width:7,height:7,borderRadius:'50%',background:'#4ade80',animation:'pulse 2s ease-in-out infinite'}}/>
-              <span style={{fontSize:11,color:'rgba(255,255,255,0.45)',fontWeight:600,letterSpacing:'0.09em',textTransform:'uppercase'}}>Live Search Console</span>
-            </div>
-            <p style={{fontSize:12.5,color:'rgba(255,255,255,0.45)',lineHeight:1.6,marginBottom:32,maxWidth:240}}>This is what your dashboard looks like after we take over your SEO.</p>
-            <LiveDashboard/>
-            <div style={{marginTop:28,paddingTop:20,borderTop:'1px solid rgba(255,255,255,0.07)',fontSize:12,color:'rgba(255,255,255,0.4)',display:'flex',alignItems:'center',gap:8}}>
-              <i className="ti ti-clock" style={{fontSize:14,color:'#4ade80'}}/>
-              Audit delivered within 48 hours
-            </div>
+    <div ref={ref} className="contact-grid" style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transition: 'opacity 0.6s ease,transform 0.6s ease' }}>
+      <div className="contact-form-col">
+        <div style={{ position: 'absolute', top: '-30%', left: '-20%', width: '70%', height: '160%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.16) 0%,transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}><EnquiryForm /></div>
+      </div>
+      <div className="contact-dashboard-col">
+        <div style={{ position: 'absolute', top: '-20%', right: '-30%', width: '80%', height: '80%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.14) 0%,transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80', animation: 'pulse 2s ease-in-out infinite' }} />
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', fontWeight: 600, letterSpacing: '0.09em', textTransform: 'uppercase' }}>Live Search Console</span>
+          </div>
+          <p style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 32, maxWidth: 240 }}>This is what your dashboard looks like after we take over your SEO.</p>
+          <LiveDashboard />
+          <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.07)', fontSize: 12, color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <i className="ti ti-clock" style={{ fontSize: 14, color: '#4ade80' }} />
+            Audit delivered within 48 hours
           </div>
         </div>
       </div>
@@ -840,46 +556,6 @@ function Contact() {
   );
 }
 
-function FAQ() {
-  return (
-    <div style={{background:'#fafaf8',padding:'88px 64px'}}>
-      <div style={{maxWidth:760,margin:'0 auto'}}>
-        <div style={{display:'inline-block',background:'#f0fdf4',color:'#15803d',fontSize:11,fontWeight:600,padding:'5px 16px',borderRadius:30,marginBottom:12,letterSpacing:'0.07em',textTransform:'uppercase',border:'1px solid #bbf7d0'}}>FAQ</div>
-        <h2 style={{fontFamily:'Playfair Display,serif',fontSize:38,fontWeight:900,color:'#0a0a0a',marginBottom:40,lineHeight:1.1,letterSpacing:'-1px'}}>Common Questions</h2>
-        {faqs.map((item,i)=><FaqItem key={i} item={item}/>)}
-      </div>
-    </div>
-  );
-}
-
-function CTA() {
-  return (
-    <div style={{background:'#0a0a0a',borderTop:'1px solid #1a1a1a',padding:'72px 64px',position:'relative',overflow:'hidden'}}>
-      <div style={{position:'absolute',top:'-50%',right:'-15%',width:'55%',height:'200%',background:'radial-gradient(ellipse,rgba(22,163,74,0.16) 0%,transparent 70%)',animation:'pulse 5s ease-in-out infinite'}}/>
-      <div className="seo-cta-inner" style={{maxWidth:1320,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',gap:32,flexWrap:'wrap',position:'relative',zIndex:1}}>
-        <div style={{display:'flex',alignItems:'center',gap:22}}>
-          <div style={{width:70,height:70,background:'rgba(22,163,74,0.15)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',color:'#4ade80',fontSize:32,flexShrink:0,border:'1.5px solid rgba(22,163,74,0.3)',animation:'floatIcon 3s ease-in-out infinite'}}>
-            <i className="ti ti-search"/>
-          </div>
-          <div>
-            <h2 style={{fontFamily:'Playfair Display,serif',fontSize:32,fontWeight:900,color:'#fff',marginBottom:8,letterSpacing:'-0.8px'}}>Ready to Rank?</h2>
-            <p style={{color:'rgba(255,255,255,0.6)',fontSize:15}}>Get your free audit — we'll map exactly what it takes to hit page 1.</p>
-          </div>
-        </div>
-        <div style={{display:'flex',gap:12,flexWrap:'wrap',flexShrink:0}}>
-          <a href="#contact" style={{textDecoration:'none'}}>
-            <button className="magnetic-btn" style={{background:'#22c55e',color:'#fff',padding:'14px 28px',borderRadius:12,fontFamily:'Poppins,sans-serif',fontWeight:700,fontSize:13,border:'none',cursor:'pointer',boxShadow:'0 6px 20px rgba(34,197,94,0.35)'}}>Get My Free Audit →</button>
-          </a>
-          <button className="magnetic-btn-outline" style={{background:'transparent',color:'#fff',padding:'14px 28px',borderRadius:12,fontFamily:'Poppins,sans-serif',fontWeight:600,fontSize:13,border:'1.5px solid rgba(255,255,255,0.2)',cursor:'pointer'}}>View Case Studies →</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   ROOT EXPORT
-══════════════════════════════════════════════ */
 export default function SeoPage() {
   return (
     <>
@@ -888,16 +564,15 @@ export default function SeoPage() {
         @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Poppins',sans-serif;background:#fafaf8;color:#0a0a0a;line-height:1.6;font-size:14px;}
-
         @keyframes pulseDot{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.25)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0.1)}}
         @keyframes gradientMove{0%{background-position:0%}100%{background-position:200%}}
         @keyframes pulse{0%,100%{transform:scale(1);opacity:0.8}50%{transform:scale(1.1);opacity:1}}
         @keyframes floatIcon{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
         @keyframes dashFlow{to{stroke-dashoffset:-18}}
-        @keyframes chipFloat1{0%,100%{transform:translateY(0px)}50%{transform:translateY(-7px)}}
-        @keyframes chipFloat2{0%,100%{transform:translateY(0px) rotate(-0.4deg)}50%{transform:translateY(-9px) rotate(0.4deg)}}
-        @keyframes chipFloat3{0%,100%{transform:translateY(0px)}50%{transform:translateY(-5px)}}
+        @keyframes chipFloat1{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+        @keyframes chipFloat2{0%,100%{transform:translateY(0) rotate(-0.4deg)}50%{transform:translateY(-9px) rotate(0.4deg)}}
+        @keyframes chipFloat3{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
         .chipFloat1{animation:chipFloat1 4.4s ease-in-out infinite;}
         .chipFloat2{animation:chipFloat2 5.2s ease-in-out infinite 0.6s;}
         .chipFloat3{animation:chipFloat3 4.8s ease-in-out infinite 1.1s;}
@@ -905,14 +580,50 @@ export default function SeoPage() {
         @keyframes sceneGlow2{0%,100%{opacity:0.4;transform:scale(1) translateY(0)}50%{opacity:0.9;transform:scale(1.12) translateY(-10px)}}
         @keyframes spinRing{from{stroke-dashoffset:0}to{stroke-dashoffset:-80}}
         @keyframes spinRingReverse{from{stroke-dashoffset:0}to{stroke-dashoffset:80}}
-        @keyframes burstRing{0%{r:68;opacity:0.8;stroke-width:4;}100%{r:110;opacity:0;stroke-width:1;}}
-
+        @keyframes burstRing{0%{r:68;opacity:0.8;stroke-width:4}100%{r:110;opacity:0;stroke-width:1}}
         .seo-reveal{animation:fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both;}
-        .magnetic-btn{transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease;}
-        .magnetic-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 30px rgba(34,197,94,0.3);}
-        .magnetic-btn-outline{transition:transform 0.25s ease,border-color 0.25s ease,color 0.25s ease;}
-        .magnetic-btn-outline:hover{transform:translateY(-3px);border-color:#16a34a !important;color:#16a34a !important;}
+        .section-pad{padding:88px 64px;}
+        .eyebrow{display:inline-block;background:#f0fdf4;color:#15803d;font-size:11px;font-weight:600;padding:5px 16px;border-radius:30px;margin-bottom:12px;letter-spacing:0.07em;text-transform:uppercase;border:1px solid #bbf7d0;}
+        .dark-eyebrow{background:rgba(22,163,74,0.14);color:#4ade80;border-color:rgba(22,163,74,0.25);}
+        .section-h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,38px);font-weight:900;color:#0a0a0a;margin-bottom:8px;line-height:1.1;letter-spacing:-1px;}
+        .white-h2{color:#fff;margin-bottom:56px;}
+        .section-sub{font-size:15px;color:#6b7280;line-height:1.7;max-width:480px;margin-bottom:48px;}
 
+        /* Desktop: side-by-side */
+        .hero-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:56px;align-items:center;padding:80px 64px 72px;}
+        /* The scene column — ALWAYS shown, never hidden at any breakpoint */
+        .hero-right{display:flex;justify-content:center;align-items:center;overflow:hidden;min-width:0;width:100%;}
+
+        .hero-btns{display:flex;gap:12px;margin-bottom:44px;flex-wrap:wrap;}
+        .hero-metrics{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+        .metric-chip{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.65);border:1px solid rgba(0,0,0,0.07);backdrop-filter:blur(8px);}
+        .metric-icon{width:32px;height:32px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;display:flex;align-items:center;justify-content:center;}
+        .hero-trust{display:flex;align-items:center;gap:10px;padding-top:24px;border-top:1px solid #ece9e2;}
+        .btn-dark{background:#0a0a0a;color:#fff;padding:14px 28px;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.18);white-space:nowrap;transition:transform 0.25s ease,box-shadow 0.25s ease;}
+        .btn-dark:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 30px rgba(34,197,94,0.3);}
+        .btn-outline{background:#fff;color:#0a0a0a;padding:14px 28px;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;border:1.5px solid #e2e8f0;cursor:pointer;white-space:nowrap;transition:transform 0.25s ease,border-color 0.25s ease;}
+        .btn-outline:hover{transform:translateY(-3px);border-color:#16a34a;color:#16a34a;}
+        .btn-green{background:#22c55e;color:#fff;padding:14px 28px;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(34,197,94,0.35);transition:transform 0.25s ease;}
+        .btn-green:hover{transform:translateY(-2px);}
+        .btn-ghost{background:transparent;color:#fff;padding:14px 28px;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;border:1.5px solid rgba(255,255,255,0.2);cursor:pointer;transition:border-color 0.25s ease;}
+        .btn-ghost:hover{border-color:rgba(255,255,255,0.5);}
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);}
+        .stat-cell{padding:44px 36px;border-right:1px solid rgba(255,255,255,0.06);display:flex;gap:18px;align-items:center;}
+        .stat-cell:last-child{border-right:none;}
+        .stat-icon-wrap{width:56px;height:56px;background:rgba(22,163,74,0.12);border-radius:16px;display:flex;align-items:center;justify-content:center;color:#22c55e;font-size:26px;flex-shrink:0;border:1px solid rgba(34,197,94,0.18);}
+        .stat-number{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;line-height:1;letter-spacing:-1px;background:linear-gradient(135deg,#ffffff 0%,#bbf7d0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+        .stat-label{font-size:11px;color:#6b7280;font-weight:500;margin-top:5px;text-transform:uppercase;letter-spacing:0.5px;}
+        .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+        .cases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+        .process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px;position:relative;}
+        .process-connector{position:absolute;top:36px;left:12.5%;right:12.5%;height:1px;background:linear-gradient(90deg,transparent,rgba(22,163,74,0.3),rgba(22,163,74,0.3),transparent);}
+        .dark-section{background:#0a0a0a;position:relative;overflow:hidden;}
+        .contact-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:0;background:#0a0a0a;border-radius:24px;overflow:hidden;border:1.5px solid rgba(22,163,74,0.25);box-shadow:0 24px 64px rgba(22,163,74,0.14);}
+        .contact-form-col{padding:44px 40px;border-right:1px solid rgba(255,255,255,0.07);position:relative;}
+        .contact-dashboard-col{padding:40px 36px;background:linear-gradient(165deg,#0d1410,#0a100c);display:flex;flex-direction:column;position:relative;overflow:hidden;}
+        .cta-section{background:#0a0a0a;border-top:1px solid #1a1a1a;padding:72px 64px;position:relative;overflow:hidden;}
+        .cta-inner{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;position:relative;z-index:1;}
+        .cta-btns{display:flex;gap:12px;flex-wrap:wrap;flex-shrink:0;}
         .enq-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
         .enq-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:12px 14px;color:#fff;font-size:13px;font-family:'Poppins',sans-serif;outline:none;transition:border-color 0.25s ease,background 0.25s ease;}
         .enq-input::placeholder{color:rgba(255,255,255,0.32);}
@@ -924,44 +635,213 @@ export default function SeoPage() {
         .enq-select-wrap:focus-within .enq-select-chevron{color:#4ade80;transform:rotate(180deg);}
         .enq-select option{background:#0d1410;color:#fff;}
 
-        /* ─── Tablet ─── */
+        @media(max-width:1280px){
+          .hero-grid{padding:72px 48px 64px;gap:40px;}
+          .section-pad{padding:80px 48px;}
+          .cta-section{padding:64px 48px;}
+        }
         @media(max-width:1024px){
-          .seo-hero-grid{grid-template-columns:1fr !important;padding:56px 40px 48px !important;gap:40px !important;}
-          .seo-stats-grid{grid-template-columns:repeat(2,1fr) !important;}
-          .seo-services-grid{grid-template-columns:repeat(2,1fr) !important;}
-          .seo-process-grid{grid-template-columns:repeat(2,1fr) !important;}
-          .seo-contact-grid{grid-template-columns:1fr !important;}
-          .seo-cases-grid{grid-template-columns:repeat(2,1fr) !important;}
+          /* Stack hero vertically on tablet */
+          .hero-grid{grid-template-columns:1fr !important;padding:60px 40px 52px !important;gap:32px !important;}
+          .hero-right{max-width:560px;margin-left:auto;margin-right:auto;}
+          .stats-grid{grid-template-columns:repeat(2,1fr) !important;}
+          .stat-cell{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);}
+          .stat-cell:nth-child(odd){border-right:1px solid rgba(255,255,255,0.06) !important;}
+          .stat-cell:last-child,.stat-cell:nth-last-child(2):nth-child(odd){border-bottom:none;}
+          .services-grid{grid-template-columns:repeat(2,1fr) !important;}
+          .cases-grid{grid-template-columns:repeat(2,1fr) !important;}
+          .process-grid{grid-template-columns:repeat(2,1fr) !important;gap:32px !important;}
+          .process-connector{display:none;}
+          .contact-grid{grid-template-columns:1fr !important;}
+          .contact-form-col{border-right:none;border-bottom:1px solid rgba(255,255,255,0.07);}
+          .section-pad{padding:72px 40px;}
+          .cta-section{padding:56px 40px;}
         }
-
-        /* ─── Mobile ─── */
+        @media(max-width:768px){
+          .hero-grid{padding:48px 24px 40px !important;}
+          .services-grid{grid-template-columns:1fr !important;}
+          .cases-grid{grid-template-columns:1fr !important;}
+          .section-pad{padding:60px 24px;}
+          .cta-section{padding:48px 24px;}
+          .cta-inner{flex-direction:column;align-items:flex-start;}
+          .stat-cell{padding:28px 24px !important;}
+          .stat-icon-wrap{width:44px !important;height:44px !important;font-size:20px !important;}
+          .stat-number{font-size:28px !important;}
+          .hero-btns{gap:10px;}
+        }
         @media(max-width:640px){
-          .seo-hero-grid{padding:40px 20px 36px !important;gap:28px !important;}
-          .seo-services-grid{grid-template-columns:1fr !important;}
-          .seo-process-grid{grid-template-columns:1fr 1fr !important;gap:24px !important;}
-          .seo-cases-grid{grid-template-columns:1fr !important;}
-          .seo-stats-grid{grid-template-columns:1fr 1fr !important;}
-          .seo-contact-grid{grid-template-columns:1fr !important;}
-          .seo-cta-inner{flex-direction:column !important;align-items:flex-start !important;}
+          .hero-grid{padding:36px 16px 32px !important;gap:24px !important;}
+          /* Scene is always shown — useSceneScale handles scaling down automatically */
+          .hero-right{max-width:100%;margin-left:0;margin-right:0;}
+          .hero-btns{flex-direction:column;align-items:stretch;}
+          .hero-btns button,.hero-btns a,.hero-btns a button{width:100% !important;text-align:center;}
+          .hero-metrics{gap:8px;}
+          .metric-chip{flex:1 1 calc(50% - 4px);}
+          .stats-grid{grid-template-columns:1fr 1fr !important;}
+          .stat-cell{padding:20px 16px !important;gap:12px !important;}
+          .stat-icon-wrap{width:36px !important;height:36px !important;font-size:17px !important;border-radius:10px !important;}
+          .stat-number{font-size:22px !important;}
+          .stat-label{font-size:9px !important;}
+          .section-pad{padding:52px 16px;}
+          .cta-section{padding:40px 16px;}
+          .cta-btns{width:100%;}
+          .cta-btns a,.cta-btns button{width:100% !important;text-align:center;}
+          .process-grid{grid-template-columns:1fr !important;}
           .enq-row{grid-template-columns:1fr !important;}
+          .contact-form-col{padding:28px 20px !important;}
+          .contact-dashboard-col{padding:28px 20px !important;}
+          .section-h2{letter-spacing:-0.5px;}
         }
-
         @media(max-width:400px){
-          .seo-process-grid{grid-template-columns:1fr !important;}
+          .hero-grid{padding:28px 12px 24px !important;}
+          .metric-chip{flex:1 1 100%;}
+          .section-pad{padding:44px 12px;}
+          .cta-section{padding:36px 12px;}
         }
-
         @media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}
       `}</style>
-      <div style={{fontFamily:'Poppins,sans-serif',background:'#fafaf8',color:'#0a0a0a',lineHeight:1.6,fontSize:14}}>
-        <Hero/>
-        <StatsBand/>
-        <TrustBand/>
-        <ServicesGrid/>
-        <CaseStudies/>
-        <HowWeWork/>
-        <Contact/>
-        <FAQ/>
-        <CTA/>
+
+      <div style={{ fontFamily: 'Poppins,sans-serif', background: '#fafaf8', color: '#0a0a0a', lineHeight: 1.6, fontSize: 14 }}>
+
+        {/* HERO */}
+        <div style={{ position: 'relative', overflow: 'hidden', background: '#fafaf8' }}>
+          <AnimatedBg />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,rgba(240,253,244,0.6) 0%,transparent 60%)', pointerEvents: 'none', zIndex: 1 }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(to top,#fafaf8,transparent)', pointerEvents: 'none', zIndex: 1 }} />
+          <div className="hero-grid" style={{ maxWidth: 1320, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+            <div className="hero-left">
+              <div className="seo-reveal" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#0a0a0a', color: '#fff', fontSize: 11, fontWeight: 600, padding: '7px 16px 7px 10px', borderRadius: 30, marginBottom: 26, border: '1px solid #222', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 0 3px rgba(34,197,94,0.25)', display: 'inline-block', flexShrink: 0, animation: 'pulseDot 2s ease-in-out infinite' }} />
+                SEO &amp; Search Growth
+              </div>
+              <h1 className="seo-reveal" style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(32px,5vw,56px)', fontWeight: 900, lineHeight: 1.06, color: '#0a0a0a', letterSpacing: '-1.2px', marginBottom: 20, animationDelay: '0.1s' }}>
+                Rank #1.<br />
+                <span style={{ background: 'linear-gradient(135deg,#16a34a 0%,#22c55e 55%,#4ade80 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Stay There.</span>
+              </h1>
+              <p className="seo-reveal" style={{ fontSize: 15, color: '#1f2937', lineHeight: 1.8, maxWidth: 440, marginBottom: 34, animationDelay: '0.18s' }}>
+                We engineer search dominance for startups — technical SEO, content architecture, and link strategies that compound month over month.
+              </p>
+              <div className="seo-reveal hero-btns" style={{ animationDelay: '0.26s' }}>
+                <button className="btn-dark">Audit My Site →</button>
+                <a href="#contact" style={{ textDecoration: 'none' }}><button className="btn-outline">See Case Studies</button></a>
+              </div>
+              <div className="seo-reveal hero-metrics" style={{ animationDelay: '0.32s' }}>
+                {[{ icon: 'ti-trending-up', value: '312%', label: 'Avg. traffic lift' }, { icon: 'ti-clock', value: '90 days', label: 'To page 1' }, { icon: 'ti-award', value: '38+', label: 'Sites ranked #1' }].map(m => (
+                  <div key={m.label} className="metric-chip">
+                    <div className="metric-icon"><i className={`ti ${m.icon}`} style={{ fontSize: 15, color: '#16a34a' }} /></div>
+                    <div>
+                      <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 16, fontWeight: 900, color: '#0a0a0a', lineHeight: 1 }}>{m.value}</div>
+                      <div style={{ fontSize: 10, color: '#6b7280', marginTop: 1 }}>{m.label}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="seo-reveal hero-trust" style={{ animationDelay: '0.38s', marginTop: 24 }}>
+                <div style={{ display: 'flex' }}>
+                  {[IMAGES.founder1, IMAGES.founder2].map((src, i) => (<img key={i} src={src} alt="" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', border: '2px solid #fafaf8', marginLeft: i === 0 ? 0 : -8 }} />))}
+                </div>
+                <span style={{ fontSize: 12, color: '#6b7280' }}>Trusted by <strong style={{ color: '#0a0a0a' }}>40+ startup founders</strong> to own their search traffic</span>
+              </div>
+            </div>
+
+            {/* ✅ Scene always shown — auto-scales via useSceneScale hook */}
+            <div className="hero-right">
+              <SeoDeviceScene />
+            </div>
+          </div>
+        </div>
+
+        {/* STATS */}
+        <div style={{ background: '#0a0a0a', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,transparent,#16a34a,#22c55e,#4ade80,#22c55e,#16a34a,transparent)', backgroundSize: '200% 100%', animation: 'gradientMove 3s linear infinite' }} />
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle,rgba(34,197,94,0.18) 1px,transparent 1px)', backgroundSize: '28px 28px', maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)', pointerEvents: 'none' }} />
+          <div className="stats-grid" style={{ maxWidth: 1320, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+            {[{ icon: 'ti ti-trending-up', num: 312, suffix: '%', label: 'Avg. organic traffic lift' }, { icon: 'ti ti-clock', num: 90, suffix: ' days', label: 'To first page-1 result' }, { icon: 'ti ti-award', num: 38, suffix: '+', label: 'Keywords ranked #1' }, { icon: 'ti ti-eye', num: 40, suffix: '+', label: 'Startups served' }].map((s, i) => <StatCell key={i} {...s} />)}
+          </div>
+        </div>
+
+        {/* TRUST */}
+        <div style={{ background: '#fff', padding: '40px 24px', borderBottom: '1px solid #ece9e2' }}>
+          <div style={{ maxWidth: 1320, margin: '0 auto' }}>
+            <div style={{ fontSize: 10, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 20, fontWeight: 600 }}>Trusted by founders at</div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 32, flexWrap: 'wrap' }}>
+              {['Nimbus', 'Forge', 'Quanta', 'Halo', 'Brisk'].map(n => (<span key={n} style={{ fontSize: 14, fontWeight: 800, color: '#c9c9c9', letterSpacing: '-0.3px' }}>{n}</span>))}
+            </div>
+          </div>
+        </div>
+
+        {/* SERVICES */}
+        <div className="section-pad" style={{ background: '#fafaf8' }}>
+          <div style={{ maxWidth: 1320, margin: '0 auto' }}>
+            <div className="eyebrow">What We Do</div>
+            <h2 className="section-h2">SEO That Actually Compounds</h2>
+            <p className="section-sub">Every service is designed to stack on the last. Start with one. End up owning your category.</p>
+            <div className="services-grid">{seoServices.map((svc, i) => <ServiceCard key={i} svc={svc} index={i} />)}</div>
+          </div>
+        </div>
+
+        {/* CASE STUDIES */}
+        <div className="section-pad" style={{ background: '#f4f4f0', borderTop: '1px solid #ece9e2', borderBottom: '1px solid #ece9e2' }}>
+          <div style={{ maxWidth: 1320, margin: '0 auto' }}>
+            <div className="eyebrow">Case Studies</div>
+            <h2 className="section-h2">Results Speak Louder</h2>
+            <p className="section-sub">Three startups, three different categories — one outcome: search dominance.</p>
+            <div className="cases-grid">{caseStudies.map((cs, i) => <CaseStudyCard key={i} cs={cs} index={i} />)}</div>
+          </div>
+        </div>
+
+        {/* PROCESS */}
+        <div className="section-pad dark-section">
+          <div style={{ position: 'absolute', top: '-40%', right: '-10%', width: '55%', height: '180%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.13) 0%,transparent 70%)', pointerEvents: 'none' }} />
+          <div style={{ maxWidth: 1320, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+            <div className="eyebrow dark-eyebrow">How We Work</div>
+            <h2 className="section-h2 white-h2">Four Steps, Zero Guesswork</h2>
+            <div className="process-grid">
+              <div className="process-connector" />
+              {processSteps.map((step, i) => <ProcessStep key={i} step={step} index={i} />)}
+            </div>
+          </div>
+        </div>
+
+        {/* CONTACT */}
+        <div id="contact" className="section-pad" style={{ background: '#fafaf8' }}>
+          <div style={{ maxWidth: 1320, margin: '0 auto' }}>
+            <div className="eyebrow">Get In Touch</div>
+            <h2 className="section-h2">Get Your Free SEO Audit</h2>
+            <p className="section-sub">No sales pitch, no fluff — just a real audit of your site's search performance and a clear plan to fix it.</p>
+            <ContactBlock />
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="section-pad" style={{ background: '#f4f4f0' }}>
+          <div style={{ maxWidth: 760, margin: '0 auto' }}>
+            <div className="eyebrow">FAQ</div>
+            <h2 className="section-h2">Common Questions</h2>
+            {faqs.map((item, i) => <FaqItem key={i} item={item} />)}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="cta-section">
+          <div style={{ position: 'absolute', top: '-50%', right: '-15%', width: '55%', height: '200%', background: 'radial-gradient(ellipse,rgba(22,163,74,0.16) 0%,transparent 70%)', animation: 'pulse 5s ease-in-out infinite' }} />
+          <div className="cta-inner">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
+              <div style={{ width: 70, height: 70, background: 'rgba(22,163,74,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4ade80', fontSize: 32, flexShrink: 0, border: '1.5px solid rgba(22,163,74,0.3)', animation: 'floatIcon 3s ease-in-out infinite' }}>
+                <i className="ti ti-search" />
+              </div>
+              <div>
+                <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(22px,3vw,32px)', fontWeight: 900, color: '#fff', marginBottom: 8, letterSpacing: '-0.8px' }}>Ready to Rank?</h2>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 15 }}>Get your free audit — we'll map exactly what it takes to hit page 1.</p>
+              </div>
+            </div>
+            <div className="cta-btns">
+              <a href="#contact" style={{ textDecoration: 'none' }}><button className="btn-green">Get My Free Audit →</button></a>
+              <button className="btn-ghost">View Case Studies →</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </>
   );

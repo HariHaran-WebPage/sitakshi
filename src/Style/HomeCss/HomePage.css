@@ -83,7 +83,13 @@
   max-width: 95%;
 }
 
-.home__cta-group { display: flex; margin-bottom: 1.8rem; }
+.home__cta-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 1.8rem;
+}
 
 /* ═══════════════════════════════════════
    STATS — Block: hero-stats
@@ -126,7 +132,7 @@
 }
 
 /* ═══════════════════════════════════════
-   BUTTON
+   BUTTONS
 ═══════════════════════════════════════ */
 .btn:hover { color: #fff !important; }
 
@@ -162,11 +168,37 @@
 }
 .home__cta-btn:hover {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 10px 28px rgba(0,163,77,0.45), 0 18px 40px rgba(0,163,77,0.3),
-    inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.15);
+  box-shadow:
+    0 10px 28px rgba(0,163,77,0.45),
+    0 18px 40px rgba(0,163,77,0.3),
+    inset 0 2px 0 rgba(255,255,255,0.3),
+    inset 0 -2px 0 rgba(0,0,0,0.15);
 }
 .home__cta-btn:hover::before { opacity: 1; }
 .home__cta-btn:active { transform: translateY(2px) scale(0.98); }
+
+/* Outline Button */
+.home__cta-btn-outline {
+  background: transparent;
+  color: #007a39;
+  padding: 13px 28px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: 2px solid #00a34d;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+.home__cta-btn-outline:hover {
+  background: linear-gradient(145deg, #00c356, #008a42);
+  color: #fff !important;
+  border-color: transparent;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 28px rgba(0,163,77,0.35);
+}
+.home__cta-btn-outline:active { transform: translateY(2px) scale(0.98); }
 
 /* ═══════════════════════════════════════
    HERO SLIDER — Block: hero-slider
@@ -443,7 +475,8 @@
   .home__heading--cursive { font-size: 1.8rem; }
   .home__heading--bold    { font-size: 1.8rem; }
   .home__description      { font-size: 0.92rem; }
-  .home__cta-btn          { padding: 11px 22px; font-size: 0.88rem; }
+  .home__cta-btn,
+  .home__cta-btn-outline  { padding: 11px 22px; font-size: 0.88rem; }
   .hero-stats__value      { font-size: 1.15rem; }
   .hero-slider            { padding: 3rem 0.5rem; }
 
@@ -465,4 +498,6 @@
 
   .hero-badge--top-right    { top: 16%;    right: 0; }
   .hero-badge--bottom-right { bottom: 22%; right: 0; }
+
+  .home__cta-group          { flex-direction: column; align-items: center; }
 }

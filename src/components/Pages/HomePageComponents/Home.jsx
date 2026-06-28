@@ -91,12 +91,12 @@ const BadgeItem = ({ badge, visible }) => {
   );
 };
 
-/* Left stat with count-up — triggers once on mount */
+/* ── Updated stat items ── */
 const statItems = [
-  { num: 48,  suffix: 'hr', label: 'Avg. Turnaround',    duration: 1200 },
+  { num: 120, suffix: '+',  label: 'Projects Delivered',  duration: 1200 },
   { num: 98,  suffix: '%',  label: 'Client Satisfaction', duration: 1400 },
-  { num: 15,  suffix: '+',  label: 'Tech Experts',        duration: 1000 },
-  { num: 24,  suffix: '/7', label: 'Support Available',   duration: 1300 },
+  { num: 15,  suffix: '+',  label: 'Technology Experts',  duration: 1000 },
+  { num: 24,  suffix: '/7', label: 'Technical Support',   duration: 1300 },
 ];
 
 const StatItem = ({ num, suffix, label, duration, active }) => {
@@ -170,20 +170,21 @@ const HomePage = () => {
           <div className="home__content">
             <p className="home__trusted-tag">
               <span className="home__trusted-dot" />
-              Trusted IT Partner For Growing Businesses
+              Trusted Technology Partner for Business Growth
             </p>
-            <h1 className="home__heading--cursive">Creative Thinking</h1>
+            <h1 className="home__heading--cursive">Build, Launch & Scale</h1>
             <h2 className="home__heading--bold">
-              Transform Ideas Into{' '}
-              <span className="home__heading--accent">Digital Success Stories.</span>
+              Your Business With{' '}
+              <span className="home__heading--accent">Digital Excellence.</span>
             </h2>
             <p className="home__description">
-              We build modern websites, scalable applications, cloud solutions,
-              and digital strategies that drive real business growth — with{' '}
-              <strong>Sitakshi</strong> by your side every step of the way.
+              Sitakshi Software Solutions empowers startups, SMEs, and enterprises with innovative
+              web development, mobile applications, AI-powered solutions, and digital marketing
+              services — delivering scalable, high-performance technology that drives measurable growth.
             </p>
             <div className="home__cta-group">
               <button className="btn home__cta-btn">Get Free Consultation →</button>
+              <button className="btn home__cta-btn-outline">Explore Services →</button>
             </div>
 
             {/* Stats row with count-up */}

@@ -6,16 +6,16 @@ const SERVICES = [
     desc: 'Smart AI solutions that automate processes, surface deep insights, and scale effortlessly with your business goals.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
-        <rect x="10" y="10" width="28" height="28" rx="6" stroke="#00a34d" strokeWidth="2.2"/>
-        <circle cx="24" cy="24" r="6" stroke="#00a34d" strokeWidth="2.2"/>
-        <line x1="24" y1="10" x2="24" y2="18" stroke="#00a34d" strokeWidth="2" strokeLinecap="round"/>
-        <line x1="24" y1="30" x2="24" y2="38" stroke="#00a34d" strokeWidth="2" strokeLinecap="round"/>
-        <line x1="10" y1="24" x2="18" y2="24" stroke="#00a34d" strokeWidth="2" strokeLinecap="round"/>
-        <line x1="30" y1="24" x2="38" y2="24" stroke="#00a34d" strokeWidth="2" strokeLinecap="round"/>
-        <line x1="14" y1="14" x2="20" y2="20" stroke="#00c45e" strokeWidth="1.6" strokeLinecap="round"/>
-        <line x1="28" y1="28" x2="34" y2="34" stroke="#00c45e" strokeWidth="1.6" strokeLinecap="round"/>
-        <line x1="34" y1="14" x2="28" y2="20" stroke="#00c45e" strokeWidth="1.6" strokeLinecap="round"/>
-        <line x1="14" y1="34" x2="20" y2="28" stroke="#00c45e" strokeWidth="1.6" strokeLinecap="round"/>
+        <rect x="10" y="10" width="28" height="28" rx="6" stroke="currentColor" strokeWidth="2.2"/>
+        <circle cx="24" cy="24" r="6" stroke="currentColor" strokeWidth="2.2"/>
+        <line x1="24" y1="10" x2="24" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="24" y1="30" x2="24" y2="38" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="10" y1="24" x2="18" y2="24" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="30" y1="24" x2="38" y2="24" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="14" y1="14" x2="20" y2="20" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.6"/>
+        <line x1="28" y1="28" x2="34" y2="34" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.6"/>
+        <line x1="34" y1="14" x2="28" y2="20" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.6"/>
+        <line x1="14" y1="34" x2="20" y2="28" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.6"/>
       </svg>
     ),
   },
@@ -24,12 +24,12 @@ const SERVICES = [
     desc: 'From wireframes to polished interfaces — user-centered design that feels intuitive from the very first click.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
-        <circle cx="12" cy="36" r="4" stroke="#00a34d" strokeWidth="2.2"/>
-        <circle cx="36" cy="12" r="4" stroke="#008040" strokeWidth="2.2"/>
-        <circle cx="36" cy="36" r="4" stroke="#00c45e" strokeWidth="2.2"/>
-        <path d="M16 33 Q24 20 32 15" stroke="#00a34d" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-        <path d="M32 33 L32 19" stroke="#00c45e" strokeWidth="2.2" strokeLinecap="round"/>
-        <circle cx="26" cy="24" r="2.5" fill="#00a34d"/>
+        <circle cx="12" cy="36" r="4" stroke="currentColor" strokeWidth="2.2"/>
+        <circle cx="36" cy="12" r="4" stroke="currentColor" strokeWidth="2.2"/>
+        <circle cx="36" cy="36" r="4" stroke="currentColor" strokeWidth="2.2" opacity="0.6"/>
+        <path d="M16 33 Q24 20 32 15" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+        <path d="M32 33 L32 19" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" opacity="0.6"/>
+        <circle cx="26" cy="24" r="2.5" fill="currentColor"/>
       </svg>
     ),
   },
@@ -38,12 +38,12 @@ const SERVICES = [
     desc: 'Scalable, performant web apps built with modern frameworks and production-grade engineering practices.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
-        <rect x="8" y="12" width="32" height="24" rx="4" stroke="#00a34d" strokeWidth="2.2"/>
-        <path d="M17 24 L22 29 L31 20" stroke="#00a34d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-        <line x1="8" y1="18" x2="40" y2="18" stroke="#00c45e" strokeWidth="1.5"/>
-        <circle cx="13" cy="15" r="1.5" fill="#00a34d"/>
-        <circle cx="18" cy="15" r="1.5" fill="#00c45e"/>
-        <circle cx="23" cy="15" r="1.5" fill="#e6f7ee"/>
+        <rect x="8" y="12" width="32" height="24" rx="4" stroke="currentColor" strokeWidth="2.2"/>
+        <path d="M17 24 L22 29 L31 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <line x1="8" y1="18" x2="40" y2="18" stroke="currentColor" strokeWidth="1.5" opacity="0.5"/>
+        <circle cx="13" cy="15" r="1.5" fill="currentColor"/>
+        <circle cx="18" cy="15" r="1.5" fill="currentColor" opacity="0.6"/>
+        <circle cx="23" cy="15" r="1.5" fill="currentColor" opacity="0.3"/>
       </svg>
     ),
   },
@@ -52,13 +52,13 @@ const SERVICES = [
     desc: 'SEO, paid ads, and social strategies that create measurable growth and drive qualified traffic consistently.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
-        <rect x="8" y="28" width="7" height="12" rx="2" fill="#00c45e" opacity="0.7"/>
-        <rect x="20" y="20" width="7" height="20" rx="2" fill="#00a34d" opacity="0.85"/>
-        <rect x="32" y="12" width="7" height="28" rx="2" fill="#008040"/>
-        <polyline points="11.5,26 23.5,18 35.5,10" stroke="#00c45e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        <circle cx="11.5" cy="26" r="2.5" fill="#00c45e"/>
-        <circle cx="23.5" cy="18" r="2.5" fill="#00c45e"/>
-        <circle cx="35.5" cy="10" r="2.5" fill="#00c45e"/>
+        <rect x="8" y="28" width="7" height="12" rx="2" fill="currentColor" opacity="0.4"/>
+        <rect x="20" y="20" width="7" height="20" rx="2" fill="currentColor" opacity="0.65"/>
+        <rect x="32" y="12" width="7" height="28" rx="2" fill="currentColor"/>
+        <polyline points="11.5,26 23.5,18 35.5,10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7"/>
+        <circle cx="11.5" cy="26" r="2.5" fill="currentColor" opacity="0.7"/>
+        <circle cx="23.5" cy="18" r="2.5" fill="currentColor" opacity="0.7"/>
+        <circle cx="35.5" cy="10" r="2.5" fill="currentColor"/>
       </svg>
     ),
   },
@@ -67,23 +67,21 @@ const SERVICES = [
     desc: 'Research-driven interfaces that reduce friction, boost engagement and delight users at every touchpoint.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
-        <rect x="8" y="8" width="14" height="14" rx="3" stroke="#00a34d" strokeWidth="2.2"/>
-        <rect x="26" y="8" width="14" height="14" rx="3" stroke="#00c45e" strokeWidth="2.2"/>
-        <rect x="8" y="26" width="14" height="14" rx="3" stroke="#00c45e" strokeWidth="2.2"/>
-        <rect x="26" y="26" width="14" height="14" rx="3" stroke="#00a34d" strokeWidth="2.2"/>
-        <circle cx="15" cy="15" r="3" fill="#e6f7ee"/>
-        <circle cx="33" cy="15" r="3" fill="#00a34d" opacity="0.4"/>
-        <circle cx="15" cy="33" r="3" fill="#00a34d" opacity="0.4"/>
-        <circle cx="33" cy="33" r="3" fill="#e6f7ee"/>
+        <rect x="8" y="8" width="14" height="14" rx="3" stroke="currentColor" strokeWidth="2.2"/>
+        <rect x="26" y="8" width="14" height="14" rx="3" stroke="currentColor" strokeWidth="2.2" opacity="0.6"/>
+        <rect x="8" y="26" width="14" height="14" rx="3" stroke="currentColor" strokeWidth="2.2" opacity="0.6"/>
+        <rect x="26" y="26" width="14" height="14" rx="3" stroke="currentColor" strokeWidth="2.2"/>
+        <circle cx="15" cy="15" r="3" fill="currentColor" opacity="0.25"/>
+        <circle cx="33" cy="15" r="3" fill="currentColor" opacity="0.5"/>
+        <circle cx="15" cy="33" r="3" fill="currentColor" opacity="0.5"/>
+        <circle cx="33" cy="33" r="3" fill="currentColor" opacity="0.25"/>
       </svg>
     ),
   },
 ];
 
-// Curve offsets per card index — used only on desktop (≥901px)
-// Active card always gets ACTIVE_OFFSET instead
-const CURVE_OFFSETS = [0, 14, 28, 6, 0];
-const ACTIVE_OFFSET = 50; // push active card furthest right
+const CURVE_OFFSETS = [0, 12, 22, 8, 0];
+const ACTIVE_OFFSET = 36;
 
 function useCountUp(target, duration = 1800, started = false) {
   const [count, setCount] = useState(0);
@@ -103,47 +101,85 @@ function useCountUp(target, duration = 1800, started = false) {
 }
 
 const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
   :root {
-    --primary:       #00a34d;
-    --primary-dark:  #008040;
-    --primary-light: #e6f7ee;
-    --text:          #2a2a2a;
-    --text-muted:    #6c757d;
-    --text-faint:    #a0a8b0;
-    --border:        #e9ecef;
-    --white:         #ffffff;
+    --p:        #00a34d;
+    --p-dark:   #007a39;
+    --p-deep:   #004d25;
+    --p-light:  rgba(0,163,77,0.12);
+    --p-glow:   rgba(0,163,77,0.25);
+    --white:    #ffffff;
+    --text:     #0f1a14;
+    --muted:    #4a5c51;
+    --faint:    #8aa894;
+    --border:   rgba(0,163,77,0.18);
+    --card-bg:  rgba(255,255,255,0.82);
   }
 
-  /* ─── Section wrapper ─── */
+  /* ═══ SECTION ═══ */
   .svc-section {
     width: 100%;
     position: relative;
     font-family: 'Inter', 'Segoe UI', sans-serif;
   }
 
-  /* ─── Sticky panel (desktop) ─── */
+  /* ═══ STICKY PANEL — full rich background ═══ */
   .svc-sticky {
     position: sticky;
     top: 0;
     width: 100%;
     height: 100vh;
-    overflow: hidden;
     display: flex;
     align-items: center;
-    background: var(--white);
+    overflow-x: hidden;
+    overflow-y: visible;
+
+    /* Layered background: deep green → mid → light with mesh */
+    background:
+      radial-gradient(ellipse 70% 60% at 80% 50%, rgba(0,163,77,0.13) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 80% at 10% 20%, rgba(0,77,37,0.18) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 50% at 50% 90%, rgba(0,122,57,0.10) 0%, transparent 60%),
+      linear-gradient(145deg, #f0faf4 0%, #e8f7ee 35%, #f5fcf7 65%, #edf8f2 100%);
   }
 
-  .svc-bg-dots {
+  /* Mesh grid overlay */
+  .svc-bg-mesh {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(0,163,77,0.13) 1px, transparent 1px);
-    background-size: 32px 32px;
-    opacity: 0.45;
+    background-image:
+      linear-gradient(rgba(0,163,77,0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,163,77,0.055) 1px, transparent 1px);
+    background-size: 44px 44px;
     pointer-events: none;
     z-index: 0;
   }
 
-  /* ─── Main grid ─── */
+  /* Floating orbs for depth */
+  .svc-bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(60px);
+  }
+  .svc-bg-orb--1 {
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(0,163,77,0.14) 0%, transparent 70%);
+    top: -80px; right: 10%;
+  }
+  .svc-bg-orb--2 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,77,37,0.12) 0%, transparent 70%);
+    bottom: -60px; left: 5%;
+  }
+  .svc-bg-orb--3 {
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,196,94,0.10) 0%, transparent 70%);
+    top: 40%; left: 42%;
+  }
+
+  /* ═══ INNER GRID ═══ */
   .svc-inner {
     max-width: 1440px;
     width: 94%;
@@ -151,269 +187,330 @@ const styles = `
     padding: 0 40px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 64px;
+    gap: 60px;
     align-items: center;
     position: relative;
     z-index: 1;
     height: 100%;
   }
 
-  /* ─── LEFT column ─── */
+  /* ═══ LEFT ═══ */
   .svc-left {
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 22px;
   }
 
   .svc-eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    font-size: 12px;
+    gap: 9px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--primary);
+    color: var(--p);
+    background: rgba(0,163,77,0.10);
+    border: 1px solid rgba(0,163,77,0.22);
+    padding: 6px 14px;
+    border-radius: 30px;
+    width: fit-content;
   }
   .svc-eyebrow-dot {
-    width: 7px;
-    height: 7px;
+    width: 6px; height: 6px;
     border-radius: 50%;
-    background: var(--primary);
+    background: var(--p);
     flex-shrink: 0;
+    animation: pulse-green 2s ease-in-out infinite;
+  }
+  @keyframes pulse-green {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,163,77,0.5); }
+    50%      { box-shadow: 0 0 0 5px rgba(0,163,77,0); }
   }
 
   .svc-heading {
     margin: 0;
-    font-size: clamp(32px, 3.4vw, 58px);
+    font-size: clamp(30px, 3.2vw, 54px);
     font-weight: 800;
-    line-height: 1.15;
+    line-height: 1.14;
     color: var(--text);
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
   }
   .svc-heading em {
     display: block;
     font-style: normal;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(135deg, #00c45e 0%, #00a34d 45%, #007a39 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-top: 6px;
+    margin-top: 4px;
   }
 
   .svc-body-text {
     margin: 0;
     font-size: 15px;
     line-height: 1.85;
-    color: var(--text-muted);
+    color: var(--muted);
+    max-width: 440px;
   }
 
-  /* ─── Stats ─── */
+  /* ═══ STATS ═══ */
   .svc-stats {
     display: flex;
     align-items: center;
-    gap: 24px;
-    padding: 16px 0 4px;
+    gap: 20px;
     flex-wrap: wrap;
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(0,163,77,0.15);
+    border-radius: 16px;
+    padding: 16px 20px;
+    backdrop-filter: blur(8px);
+    width: fit-content;
   }
-  .svc-stat { display: flex; flex-direction: column; gap: 4px; }
+  .svc-stat { display: flex; flex-direction: column; gap: 3px; }
   .svc-stat-value {
-    font-size: 36px;
+    font-size: 30px;
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: linear-gradient(135deg, #00c45e, #007a39);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .svc-stat-label {
     font-size: 10px;
-    font-weight: 700;
-    color: var(--text-faint);
+    font-weight: 600;
+    color: var(--faint);
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
   .svc-stat-divider {
-    width: 1.5px;
-    height: 44px;
-    background: linear-gradient(180deg, var(--primary), transparent);
+    width: 1px; height: 36px;
+    background: linear-gradient(180deg, rgba(0,163,77,0.4), transparent);
     flex-shrink: 0;
   }
 
-  /* ─── CTA ─── */
+  /* ═══ CTA ═══ */
   .svc-cta-link {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     font-size: 14px;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--white);
     text-decoration: none;
     padding: 13px 26px;
-    background: var(--primary-light);
+    background: linear-gradient(135deg, #00c45e, #00a34d, #007a39);
     border-radius: 50px;
     width: fit-content;
     transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0,163,77,0.32);
   }
   .svc-cta-link:hover {
-    background: var(--primary);
-    color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,163,77,0.22);
+    box-shadow: 0 12px 28px rgba(0,163,77,0.42);
   }
   .svc-cta-link svg { flex-shrink: 0; transition: transform 0.3s ease; }
   .svc-cta-link:hover svg { transform: translate(3px, -2px); }
 
-  /* ─── RIGHT: cards ─── */
+  /* ═══ CARDS COLUMN ═══ */
   .svc-cards-outer {
     position: relative;
     height: 100%;
     display: flex;
     align-items: center;
-    /* clip so shifted cards don't overflow viewport */
-    overflow: hidden;
-    padding-right: 0;
+    overflow: visible;
   }
 
   .svc-cards-track {
     display: flex;
     flex-direction: column;
-    gap: 8px;
     width: 100%;
-    padding: 16px 0;
-    /* leave room on right for active card offset */
-    padding-right: 8px;
+    height: calc(100vh - 80px);
+    justify-content: space-between;
+    padding: 4px 8px 4px 0;
+    box-sizing: border-box;
   }
 
+  /* ═══ CARD — glassmorphism with green accent ═══ */
   .svc-card {
-    background: var(--white);
-    border: 1.5px solid var(--border);
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.9);
     border-radius: 18px;
-    padding: 16px 20px;
+    padding: 14px 18px 14px 20px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 15px;
     position: relative;
     transition:
       transform    0.5s cubic-bezier(0.4, 0, 0.2, 1),
       border-color 0.35s ease,
-      box-shadow   0.35s ease;
+      box-shadow   0.35s ease,
+      background   0.35s ease;
     will-change: transform;
-    /* prevent card text from wrapping awkwardly when shifted */
     min-width: 0;
+    flex-shrink: 0;
+    /* Left accent bar */
+    overflow: hidden;
+    box-shadow:
+      0 2px 8px rgba(0,0,0,0.04),
+      0 1px 3px rgba(0,0,0,0.03),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  /* Left accent strip */
+  .svc-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, rgba(0,196,94,0.3), rgba(0,163,77,0.15));
+    border-radius: 18px 0 0 18px;
+    transition: background 0.35s ease;
   }
 
   .svc-card--active {
-    border-color: var(--primary);
-    box-shadow: 0 16px 48px rgba(0,163,77,0.18), 0 2px 10px rgba(0,163,77,0.10);
+    background: rgba(255,255,255,0.96);
+    border-color: rgba(0,163,77,0.35);
+    box-shadow:
+      0 16px 40px rgba(0,163,77,0.16),
+      0 4px 12px rgba(0,163,77,0.10),
+      0 1px 3px rgba(0,0,0,0.04),
+      inset 0 1px 0 rgba(255,255,255,1);
     z-index: 10;
+  }
+  .svc-card--active::before {
+    background: linear-gradient(180deg, #00c45e, #00a34d, #007a39);
+    width: 4px;
   }
 
   .svc-card-num {
     position: absolute;
-    top: 11px;
-    right: 13px;
-    font-size: 10px;
+    top: 9px; right: 12px;
+    font-size: 9px;
     font-weight: 800;
-    letter-spacing: 0.08em;
-    color: var(--primary);
-    opacity: 0.3;
+    letter-spacing: 0.1em;
+    color: var(--p);
+    opacity: 0.22;
+    font-variant-numeric: tabular-nums;
   }
+  .svc-card--active .svc-card-num { opacity: 0.45; }
 
+  /* ═══ ICON ═══ */
   .svc-card-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
+    width: 46px; height: 46px;
+    border-radius: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: var(--primary-light);
-    transition: background 0.35s ease;
+    background: rgba(0,163,77,0.08);
+    border: 1px solid rgba(0,163,77,0.14);
+    color: var(--p);
+    transition: all 0.35s ease;
   }
-  .svc-card-icon svg { width: 30px; height: 30px; }
-  .svc-card--active .svc-card-icon { background: var(--primary); }
-  .svc-card--active .svc-card-icon svg { filter: brightness(0) invert(1); }
+  .svc-card-icon svg { width: 25px; height: 25px; }
 
+  .svc-card--active .svc-card-icon {
+    background: linear-gradient(135deg, #00c45e, #00a34d);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0,163,77,0.35);
+  }
+
+  /* ═══ BODY ═══ */
   .svc-card-body {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 3px;
   }
 
   .svc-card-title {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 800;
     color: var(--text);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     line-height: 1.3;
   }
+  .svc-card--active .svc-card-title { color: #003d1e; }
 
   .svc-card-desc {
-    font-size: 12.5px;
-    line-height: 1.7;
-    color: var(--text-muted);
+    font-size: 11.5px;
+    line-height: 1.65;
+    color: var(--muted);
   }
 
   .svc-card-tag {
     display: inline-block;
     align-self: flex-start;
-    padding: 3px 10px;
+    padding: 2px 9px;
     border-radius: 20px;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 700;
     letter-spacing: 0.06em;
-    background: var(--primary-light);
-    color: var(--primary);
-    margin-top: 2px;
+    background: rgba(0,163,77,0.09);
+    color: var(--p-dark);
+    border: 1px solid rgba(0,163,77,0.16);
+    margin-top: 3px;
+    transition: all 0.35s ease;
+  }
+  .svc-card--active .svc-card-tag {
+    background: rgba(0,163,77,0.13);
+    border-color: rgba(0,163,77,0.28);
   }
 
+  /* ═══ ARROW BUTTON ═══ */
   .svc-card-arrow {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    border: 1.5px solid var(--border);
-    background: var(--white);
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    border: 1px solid rgba(0,163,77,0.15);
+    background: rgba(0,163,77,0.05);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-faint);
+    color: var(--faint);
     flex-shrink: 0;
     cursor: pointer;
     transition: all 0.3s ease;
   }
   .svc-card--active .svc-card-arrow {
-    background: var(--primary);
-    border-color: var(--primary);
+    background: linear-gradient(135deg, #00c45e, #00a34d);
+    border-color: transparent;
     color: var(--white);
+    box-shadow: 0 3px 10px rgba(0,163,77,0.3);
   }
 
-  /* ══════════════════════════════════════════
-     RESPONSIVE BREAKPOINTS
-  ══════════════════════════════════════════ */
+  /* ══════════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════════ */
+  @media (min-width: 1281px) {
+    .svc-card { padding: 15px 20px 15px 22px; gap: 16px; }
+    .svc-card-icon { width: 50px; height: 50px; }
+    .svc-card-icon svg { width: 27px; height: 27px; }
+    .svc-card-title { font-size: 14.5px; }
+    .svc-card-desc  { font-size: 12px; }
+  }
 
-  /* 1280px – large desktop */
   @media (max-width: 1280px) {
-    .svc-inner { gap: 48px; padding: 0 32px; }
+    .svc-inner { gap: 44px; padding: 0 32px; }
   }
 
-  /* 1100px – mid desktop */
   @media (max-width: 1100px) {
-    .svc-inner { gap: 36px; padding: 0 24px; }
-    .svc-heading { font-size: clamp(28px, 3vw, 48px); }
-    .svc-stat-value { font-size: 30px; }
-    .svc-card { padding: 13px 16px; gap: 12px; }
-    .svc-card-icon { width: 46px; height: 46px; }
-    .svc-card-icon svg { width: 26px; height: 26px; }
-    .svc-card-title { font-size: 14px; }
-    .svc-card-desc { font-size: 12px; }
-    .svc-cards-track { gap: 7px; }
+    .svc-inner { gap: 30px; padding: 0 24px; }
+    .svc-heading { font-size: clamp(26px, 2.8vw, 42px); }
+    .svc-stat-value { font-size: 24px; }
+    .svc-stat-divider { height: 30px; }
+    .svc-left { gap: 16px; }
+    .svc-body-text { font-size: 14px; line-height: 1.75; }
+    .svc-stats { padding: 13px 16px; gap: 16px; }
   }
 
-  /* 900px – switch to single-column, disable sticky */
+  /* ── Mobile ── */
   @media (max-width: 900px) {
     .svc-section { height: auto !important; }
 
@@ -432,76 +529,58 @@ const styles = `
       align-items: start;
     }
 
-    .svc-left {
-      text-align: center;
-      align-items: center;
-    }
-
+    .svc-left { text-align: center; align-items: center; gap: 20px; }
     .svc-body-text { max-width: 560px; }
+    .svc-stats { justify-content: center; width: auto; }
 
-    .svc-stats { justify-content: center; }
-
-    /* On mobile/tablet the cards stack normally – no translateX curve */
-    .svc-cards-outer {
-      overflow: visible;
-      height: auto;
-    }
-
+    .svc-cards-outer { overflow: visible; height: auto; }
     .svc-cards-track {
-      padding: 0;
+      height: auto;
+      justify-content: flex-start;
       gap: 10px;
+      padding: 0;
     }
 
-    /* Reset any JS-driven transforms on mobile via CSS override */
-    .svc-card {
-      transform: none !important;
-    }
-    /* Restore active state visuals (shadow/border) without transform */
-    .svc-card--active {
-      border-color: var(--primary);
-      box-shadow: 0 16px 48px rgba(0,163,77,0.18), 0 2px 10px rgba(0,163,77,0.10);
-    }
+    .svc-card { transform: none !important; padding: 13px 16px 13px 18px; gap: 12px; }
+    .svc-card-icon { width: 42px; height: 42px; }
+    .svc-card-icon svg { width: 22px; height: 22px; }
+    .svc-card-title { font-size: 13.5px; }
+    .svc-card-desc  { font-size: 11.5px; }
   }
 
-  /* 640px – small tablet / large phone */
   @media (max-width: 640px) {
     .svc-sticky { padding: 48px 0 60px; }
-    .svc-inner { padding: 0 16px; gap: 32px; }
-    .svc-heading { font-size: clamp(26px, 7vw, 38px); }
-    .svc-body-text { font-size: 14px; }
-    .svc-stat-value { font-size: 26px; }
-    .svc-stats { gap: 14px; padding: 12px 0 0; }
-    .svc-stat-divider { height: 36px; }
-    .svc-eyebrow { font-size: 11px; }
-    .svc-cta-link { font-size: 13px; padding: 11px 20px; }
-
-    .svc-card { padding: 12px 14px; gap: 12px; border-radius: 14px; }
-    .svc-card-icon { width: 42px; height: 42px; border-radius: 11px; }
-    .svc-card-icon svg { width: 24px; height: 24px; }
+    .svc-inner { padding: 0 16px; gap: 28px; }
+    .svc-heading { font-size: clamp(24px, 7vw, 34px); }
+    .svc-body-text { font-size: 13.5px; }
+    .svc-stat-value { font-size: 21px; }
+    .svc-stats { gap: 12px; padding: 12px 14px; }
+    .svc-stat-divider { height: 26px; }
+    .svc-card { padding: 11px 13px 11px 15px; gap: 10px; border-radius: 14px; }
+    .svc-card-icon { width: 38px; height: 38px; border-radius: 10px; }
+    .svc-card-icon svg { width: 20px; height: 20px; }
     .svc-card-title { font-size: 13px; }
-    .svc-card-desc { font-size: 11.5px; }
-    .svc-card-arrow { width: 32px; height: 32px; border-radius: 8px; }
+    .svc-card-desc { font-size: 11px; }
+    .svc-card-arrow { width: 28px; height: 28px; border-radius: 7px; }
     .svc-cards-track { gap: 8px; }
   }
 
-  /* 400px – small phone */
   @media (max-width: 400px) {
-    .svc-inner { padding: 0 12px; gap: 24px; }
-    .svc-heading { font-size: clamp(22px, 8.5vw, 32px); }
-    .svc-stat-value { font-size: 22px; }
-    .svc-card { padding: 10px 12px; gap: 10px; border-radius: 12px; }
-    .svc-card-icon { width: 38px; height: 38px; }
-    .svc-card-icon svg { width: 21px; height: 21px; }
+    .svc-inner { padding: 0 12px; gap: 20px; }
+    .svc-heading { font-size: clamp(21px, 8vw, 28px); }
+    .svc-stat-value { font-size: 18px; }
+    .svc-card { padding: 9px 11px 9px 13px; gap: 9px; border-radius: 12px; }
+    .svc-card-icon { width: 34px; height: 34px; }
+    .svc-card-icon svg { width: 18px; height: 18px; }
     .svc-card-title { font-size: 12.5px; }
-    .svc-card-desc { font-size: 11px; line-height: 1.6; }
-    .svc-card-arrow { width: 28px; height: 28px; }
+    .svc-card-desc { font-size: 10.5px; line-height: 1.55; }
+    .svc-card-arrow { width: 26px; height: 26px; }
     .svc-cards-track { gap: 6px; }
   }
 
-  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .svc-card { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-    .svc-cta-link { transition: none; }
+    .svc-cta-link, .svc-eyebrow-dot { animation: none; transition: none; }
   }
 `;
 
@@ -518,7 +597,6 @@ const ServicesSection = () => {
   const c98  = useCountUp(98,  1600, statsStarted);
   const c12  = useCountUp(12,  1400, statsStarted);
 
-  // Detect mobile breakpoint
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 900);
     check();
@@ -526,7 +604,6 @@ const ServicesSection = () => {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Trigger stat counter when stats row is visible
   useEffect(() => {
     if (!statsRef.current) return;
     const obs = new IntersectionObserver(
@@ -537,7 +614,6 @@ const ServicesSection = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Desktop: scroll-driven active card
   useEffect(() => {
     if (isMobile) return;
     const handleScroll = () => {
@@ -545,8 +621,7 @@ const ServicesSection = () => {
       const rect     = sectionRef.current.getBoundingClientRect();
       const scrolled = -rect.top;
       const vh       = window.innerHeight;
-      const rawIdx   = scrolled / vh;
-      const clamped  = Math.max(0, Math.min(SERVICES.length - 1, rawIdx));
+      const clamped  = Math.max(0, Math.min(SERVICES.length - 1, scrolled / vh));
       setActiveIndex(Math.round(clamped));
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -554,7 +629,6 @@ const ServicesSection = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  // Mobile: highlight card as it scrolls into centre view
   useEffect(() => {
     if (!isMobile) return;
     const observers = cardRefs.current.map((el, i) => {
@@ -569,7 +643,6 @@ const ServicesSection = () => {
     return () => observers.forEach(o => o && o.disconnect());
   }, [isMobile]);
 
-  // Section height: on desktop each card gets 1 scroll-page
   const sectionStyle = isMobile
     ? {}
     : { height: `${(SERVICES.length + 1) * 100}vh` };
@@ -579,7 +652,12 @@ const ServicesSection = () => {
       <style>{styles}</style>
       <section className="svc-section" ref={sectionRef} style={sectionStyle}>
         <div className="svc-sticky">
-          <div className="svc-bg-dots" />
+
+          {/* Rich layered background elements */}
+          <div className="svc-bg-mesh" />
+          <div className="svc-bg-orb svc-bg-orb--1" />
+          <div className="svc-bg-orb svc-bg-orb--2" />
+          <div className="svc-bg-orb svc-bg-orb--3" />
 
           <div className="svc-inner">
 
@@ -619,7 +697,7 @@ const ServicesSection = () => {
 
               <a href="#contact" className="svc-cta-link">
                 See What We Do
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M7 17L17 7M17 7H7M17 7v10"/>
                 </svg>
               </a>
@@ -629,12 +707,8 @@ const ServicesSection = () => {
             <div className="svc-cards-outer" role="region" aria-label="Services">
               <div className="svc-cards-track">
                 {SERVICES.map((s, i) => {
-                  const isActive = i === activeIndex;
-
-                  // On desktop apply wave-curve offsets; on mobile CSS overrides to none
+                  const isActive   = i === activeIndex;
                   const translateX = isActive ? ACTIVE_OFFSET : CURVE_OFFSETS[i];
-                  const translateY = isActive ? -6 : 0;
-                  const scale      = isActive ? 1.022 : 1;
 
                   return (
                     <div
@@ -642,9 +716,7 @@ const ServicesSection = () => {
                       ref={el => (cardRefs.current[i] = el)}
                       className={`svc-card${isActive ? ' svc-card--active' : ''}`}
                       aria-current={isActive ? 'true' : undefined}
-                      style={{
-                        transform: `translateX(${translateX}px) translateY(${translateY}px) scale(${scale})`,
-                      }}
+                      style={{ transform: `translateX(${translateX}px)` }}
                     >
                       <span className="svc-card-num">0{i + 1}</span>
 
@@ -660,7 +732,7 @@ const ServicesSection = () => {
                         className="svc-card-arrow"
                         aria-label={`Learn more about ${s.title}`}
                       >
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M7 17L17 7M17 7H7M17 7v10"/>
                         </svg>
                       </button>
