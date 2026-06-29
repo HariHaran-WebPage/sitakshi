@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 /* ══════════════════════════════════════════════
-   DESIGN TOKENS — mirrors Social Media page
+   DESIGN TOKENS
 ══════════════════════════════════════════════ */
 const T = {
   primary:      '#00a34d',
@@ -178,11 +178,7 @@ function AnimatedBg() {
 ══════════════════════════════════════════════ */
 function FlyingEnvelope({ style, delay = '0s', size = 36 }) {
   return (
-    <div style={{
-      width: size, height: size,
-      animation: `floatEnv 4s ease-in-out infinite ${delay}`,
-      ...style,
-    }}>
+    <div style={{ width: size, height: size, animation: `floatEnv 4s ease-in-out infinite ${delay}`, ...style }}>
       <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
         <rect x="2" y="7" width="32" height="22" rx="3" fill="rgba(255,255,255,0.9)" stroke="#00a34d" strokeWidth="1.5"/>
         <path d="M2 10 L18 21 L34 10" stroke="#00a34d" strokeWidth="1.5" fill="none"/>
@@ -194,17 +190,16 @@ function FlyingEnvelope({ style, delay = '0s', size = 36 }) {
 }
 
 /* ══════════════════════════════════════════════
-   HERO RIGHT — Email-specific animated visual
+   HERO RIGHT — Fully responsive via CSS scale
 ══════════════════════════════════════════════ */
 function HeroRight() {
-  const [openRate, setOpenRate] = useState(42);
+  const [openRate] = useState(42);
   const [sends, setSends] = useState(18420);
-  const [notifVis, setNotifVis] = useState(true);
   const [activeEmail, setActiveEmail] = useState(0);
   const miniBarHeights = [35, 52, 44, 68, 56, 90, 78];
 
   const emailPreviews = [
-    { from: 'Your Brand', subject: '🎉 Welcome! Your gift is inside', preview: 'Hi {{first_name}}, we\'ve been waiting for you...', tag: 'Welcome Flow', color: '#00a34d' },
+    { from: 'Your Brand', subject: '🎉 Welcome! Your gift is inside', preview: "Hi {{first_name}}, we've been waiting for you...", tag: 'Welcome Flow', color: '#00a34d' },
     { from: 'Your Brand', subject: 'You left something behind 👀', preview: 'The items in your cart are almost gone...', tag: 'Abandoned Cart', color: '#7c3aed' },
     { from: 'Your Brand', subject: 'Made for you this week ✨', preview: 'Based on your last order, we picked these...', tag: 'Personalised', color: '#0891b2' },
   ];
@@ -215,183 +210,171 @@ function HeroRight() {
   }, []);
 
   useEffect(() => {
-    const id = setInterval(() => setNotifVis(v => !v), 4000);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
     const id = setInterval(() => setActiveEmail(v => (v + 1) % emailPreviews.length), 3200);
     return () => clearInterval(id);
   }, []);
 
   return (
-    <div style={{ position: 'relative', width: 600, height: 560 }}>
+    <div className="hero-right-outer">
+      <div className="hero-right-inner">
+        {/* Connection lines */}
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 600 560">
+          <line x1="90" y1="130" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
+          <line x1="90" y1="250" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
+          <line x1="90" y1="370" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
+          <line x1="510" y1="130" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
+          <line x1="510" y1="250" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
+          <line x1="510" y1="370" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
+        </svg>
 
-      {/* Connection lines */}
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 600 560">
-        <line x1="90" y1="130" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-        <line x1="90" y1="250" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-        <line x1="90" y1="370" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-        <line x1="510" y1="130" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-        <line x1="510" y1="250" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-        <line x1="510" y1="370" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-      </svg>
-
-      {/* ── ROW 1: Top stat cards ── */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', gap: 8, zIndex: 8, animation: 'slideInLeftEM 0.7s ease 0.2s both' }}>
-        {[
-          { label: 'Open Rate', value: `${openRate}%`, sub: '▲ industry avg 21%', bars: miniBarHeights },
-          { label: 'Click Rate', value: '8.3%', sub: '▲ 3× industry avg' },
-          { label: 'Revenue/Email', value: '$4.20', sub: '▲ per send' },
-          { label: 'List Growth', value: '+2.8K', sub: '▲ this month' },
-        ].map((s, i) => (
-          <div key={i} style={{ flex: 1, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(14px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 12, padding: '10px 12px', boxShadow: '0 4px 16px rgba(0,0,0,0.07)' }}>
-            <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{s.label}</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: T.primary, lineHeight: 1.1, marginTop: 2 }}>{s.value}</div>
-            <div style={{ fontSize: 9, color: T.primary, fontWeight: 600, marginTop: 2 }}>{s.sub}</div>
-            {s.bars && (
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 24, marginTop: 5 }}>
-                {s.bars.map((h, j) => (
-                  <div key={j} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: j === s.bars.length - 1 ? 'linear-gradient(180deg,#33c972,#00a34d)' : 'rgba(0,163,77,0.18)' }}/>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* ── Floating envelopes ── */}
-      <FlyingEnvelope style={{ position: 'absolute', top: 120, left: 20, zIndex: 5 }} delay="0s" size={40}/>
-      <FlyingEnvelope style={{ position: 'absolute', top: 220, left: 8, zIndex: 5 }} delay="0.8s" size={34}/>
-      <FlyingEnvelope style={{ position: 'absolute', top: 320, left: 18, zIndex: 5 }} delay="1.6s" size={38}/>
-      <FlyingEnvelope style={{ position: 'absolute', top: 120, right: 20, zIndex: 5 }} delay="0.4s" size={36}/>
-      <FlyingEnvelope style={{ position: 'absolute', top: 220, right: 8, zIndex: 5 }} delay="1.2s" size={42}/>
-      <FlyingEnvelope style={{ position: 'absolute', top: 320, right: 18, zIndex: 5 }} delay="2.0s" size={34}/>
-
-      {/* ── Outer glow ── */}
-      <div style={{ position: 'absolute', left: '50%', top: 265, transform: 'translate(-50%,-50%)', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(0,163,77,0.15) 0%, rgba(0,163,77,0.04) 55%, transparent 75%)', animation: 'glowPulseEM 2.8s ease-in-out infinite', zIndex: 1, pointerEvents: 'none' }}/>
-
-      {/* ── Orbital rings ── */}
-      <div style={{ position: 'absolute', left: '50%', top: 265, transform: 'translate(-50%,-50%)', width: 290, height: 290, zIndex: 2, pointerEvents: 'none' }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1.5px solid rgba(0,163,77,0.28)', transform: 'rotateX(70deg)', animation: 'spinRingEM 9s linear infinite', transformStyle: 'preserve-3d' }}/>
-        <div style={{ position: 'absolute', inset: '8px', borderRadius: '50%', border: '1.5px dashed rgba(0,163,77,0.2)', transform: 'rotateX(50deg) rotateY(20deg)', animation: 'spinRingEM2 13s linear infinite reverse', transformStyle: 'preserve-3d' }}/>
-        <div style={{ position: 'absolute', inset: '16px', borderRadius: '50%', border: '1px solid rgba(0,128,64,0.14)', transform: 'rotateX(82deg) rotateZ(45deg)', animation: 'spinRingEM 18s linear infinite reverse', transformStyle: 'preserve-3d' }}/>
-      </div>
-
-      {/* ── CENTER: Email inbox visual ── */}
-      <div style={{ position: 'absolute', left: '50%', top: 265, transform: 'translate(-50%,-50%)', width: 220, height: 220, zIndex: 3 }}>
-        {/* Outer shell */}
-        <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'radial-gradient(ellipse at 34% 27%, #ffffff 0%, #e4f8ef 30%, #aadfc5 60%, #268c52 85%, #006b30 100%)', boxShadow: '10px 16px 48px rgba(0,100,40,0.32), inset -14px -10px 30px rgba(0,80,30,0.16), inset 10px 8px 24px rgba(255,255,255,0.55)', position: 'relative', overflow: 'hidden' }}>
-          {/* Highlight */}
-          <div style={{ position: 'absolute', top: '12%', left: '14%', width: '40%', height: '32%', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.15) 60%, transparent 100%)', pointerEvents: 'none' }}/>
-          {/* Center content */}
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 2 }}>
-            <svg width="44" height="36" viewBox="0 0 44 36" fill="none" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,255,0.3))' }}>
-              <rect x="1" y="1" width="42" height="34" rx="4" fill="rgba(255,255,255,0.92)" stroke="#00a34d" strokeWidth="1.5"/>
-              <path d="M1 6 L22 21 L43 6" stroke="#00a34d" strokeWidth="1.8" fill="none"/>
-              <path d="M1 35 L16 22" stroke="#00a34d" strokeWidth="1" opacity="0.4"/>
-              <path d="M43 35 L28 22" stroke="#00a34d" strokeWidth="1" opacity="0.4"/>
-            </svg>
-            <span style={{ fontFamily: "'Arial Black', Arial, sans-serif", fontSize: 9, fontWeight: 900, letterSpacing: 2.5, color: '#008040', textShadow: '0 0 12px rgba(0,163,77,0.5)', marginTop: 4 }}>EMAIL</span>
-            <span style={{ fontFamily: "'Arial Black', Arial, sans-serif", fontSize: 7, fontWeight: 800, letterSpacing: 2, color: '#0055aa', textShadow: '0 0 8px rgba(0,163,77,0.3)' }}>MARKETING</span>
-          </div>
-          {/* Shadow */}
-          <div style={{ position: 'absolute', bottom: -18, left: '50%', transform: 'translateX(-50%)', width: '72%', height: 22, borderRadius: '50%', background: 'rgba(0,40,180,0.16)', filter: 'blur(8px)', zIndex: -1 }}/>
-        </div>
-      </div>
-
-      {/* ── Animated email preview card (cycling) ── */}
-      <div style={{ position: 'absolute', top: 310, left: '50%', marginLeft: -195, zIndex: 7, width: 170 }}>
-        {emailPreviews.map((ep, i) => (
-          <div key={i} style={{
-            position: 'absolute', top: 0, left: 0, width: '100%',
-            background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)',
-            border: `1px solid ${ep.color}33`, borderRadius: 12, padding: '8px 11px',
-            boxShadow: '0 4px 18px rgba(0,0,0,0.10)',
-            opacity: activeEmail === i ? 1 : 0,
-            transform: activeEmail === i ? 'translateY(-2px)' : 'translateY(6px)',
-            transition: 'opacity 0.5s ease, transform 0.5s ease',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-              <div style={{ width: 20, height: 20, borderRadius: '50%', background: ep.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><rect x="1" y="3" width="18" height="14" rx="2" fill="white" opacity="0.9"/><path d="M1 6L10 12L19 6" stroke={ep.color} strokeWidth="1.5"/></svg>
-              </div>
-              <div>
-                <div style={{ fontSize: 8.5, fontWeight: 700, color: T.text }}>{ep.from}</div>
-                <div style={{ fontSize: 7.5, color: T.textLighter }}>{ep.tag}</div>
-              </div>
+        {/* ── ROW 1: Top stat cards ── */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', gap: 8, zIndex: 8, animation: 'slideInLeftEM 0.7s ease 0.2s both' }}>
+          {[
+            { label: 'Open Rate', value: `${openRate}%`, sub: '▲ industry avg 21%', bars: miniBarHeights },
+            { label: 'Click Rate', value: '8.3%', sub: '▲ 3× industry avg' },
+            { label: 'Revenue/Email', value: '$4.20', sub: '▲ per send' },
+            { label: 'List Growth', value: '+2.8K', sub: '▲ this month' },
+          ].map((s, i) => (
+            <div key={i} style={{ flex: 1, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(14px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 12, padding: '10px 12px', boxShadow: '0 4px 16px rgba(0,0,0,0.07)' }}>
+              <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{s.label}</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: T.primary, lineHeight: 1.1, marginTop: 2 }}>{s.value}</div>
+              <div style={{ fontSize: 9, color: T.primary, fontWeight: 600, marginTop: 2 }}>{s.sub}</div>
+              {s.bars && (
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 24, marginTop: 5 }}>
+                  {s.bars.map((h, j) => (
+                    <div key={j} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: j === s.bars.length - 1 ? 'linear-gradient(180deg,#33c972,#00a34d)' : 'rgba(0,163,77,0.18)' }}/>
+                  ))}
+                </div>
+              )}
             </div>
-            <div style={{ fontSize: 9.5, fontWeight: 700, color: T.text, marginBottom: 2 }}>{ep.subject}</div>
-            <div style={{ fontSize: 8.5, color: T.textLighter, lineHeight: 1.4 }}>{ep.preview}</div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* ── Sends counter ── */}
-      <div style={{ position: 'absolute', top: 310, left: '50%', marginLeft: 28, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 14, padding: '8px 12px', zIndex: 7, boxShadow: '0 4px 18px rgba(0,0,0,0.09)', animation: 'slideInRightEM 0.7s ease 1.1s both', minWidth: 150 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, color: T.primary }}>📬 Sends Today</div>
-        <div style={{ fontSize: 19, fontWeight: 800, color: T.text, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sends.toLocaleString()}</div>
-        <div style={{ fontSize: 9, color: T.textLighter, marginTop: 2 }}>avg. open rate <span style={{ color: T.primary, fontWeight: 700 }}>42%</span></div>
-      </div>
+        {/* ── Floating envelopes ── */}
+        <FlyingEnvelope style={{ position: 'absolute', top: 120, left: 20, zIndex: 5 }} delay="0s" size={40}/>
+        <FlyingEnvelope style={{ position: 'absolute', top: 220, left: 8, zIndex: 5 }} delay="0.8s" size={34}/>
+        <FlyingEnvelope style={{ position: 'absolute', top: 320, left: 18, zIndex: 5 }} delay="1.6s" size={38}/>
+        <FlyingEnvelope style={{ position: 'absolute', top: 120, right: 20, zIndex: 5 }} delay="0.4s" size={36}/>
+        <FlyingEnvelope style={{ position: 'absolute', top: 220, right: 8, zIndex: 5 }} delay="1.2s" size={42}/>
+        <FlyingEnvelope style={{ position: 'absolute', top: 320, right: 18, zIndex: 5 }} delay="2.0s" size={34}/>
 
-      {/* ── ROW 3: Bottom metric cards ── */}
-      <div style={{ position: 'absolute', top: 390, left: 0, right: 0, display: 'flex', gap: 10, zIndex: 8 }}>
-        {/* Deliverability */}
-        <div style={{ flex: 1, background: 'rgba(10,14,30,0.94)', backdropFilter: 'blur(14px)', border: '1px solid rgba(0,163,77,0.28)', borderRadius: 14, padding: '11px 13px', boxShadow: '0 8px 32px rgba(0,0,0,0.28)', animation: 'slideInLeftEM 0.7s ease 0.6s both' }}>
-          <div style={{ fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.8px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
-            <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#33c972', animation: 'pulseDotEM 1.8s ease-in-out infinite' }}/>
-            Deliverability
-          </div>
-          <div style={{ fontSize: 19, fontWeight: 800, color: '#fff' }}>99.2%</div>
-          <div style={{ fontSize: 9, color: '#33c972', fontWeight: 700, marginTop: 1 }}>↑ inbox rate</div>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 28, marginTop: 7 }}>
-            {[72, 81, 88, 91, 95, 99].map((h, i) => (
-              <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: i === 5 ? 'linear-gradient(180deg,#33c972,#00a34d)' : 'rgba(0,163,77,0.22)' }}/>
-            ))}
+        {/* ── Outer glow ── */}
+        <div style={{ position: 'absolute', left: '50%', top: 265, transform: 'translate(-50%,-50%)', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(0,163,77,0.15) 0%, rgba(0,163,77,0.04) 55%, transparent 75%)', animation: 'glowPulseEM 2.8s ease-in-out infinite', zIndex: 1, pointerEvents: 'none' }}/>
+
+        {/* ── Orbital rings ── */}
+        <div style={{ position: 'absolute', left: '50%', top: 265, transform: 'translate(-50%,-50%)', width: 290, height: 290, zIndex: 2, pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1.5px solid rgba(0,163,77,0.28)', transform: 'rotateX(70deg)', animation: 'spinRingEM 9s linear infinite', transformStyle: 'preserve-3d' }}/>
+          <div style={{ position: 'absolute', inset: '8px', borderRadius: '50%', border: '1.5px dashed rgba(0,163,77,0.2)', transform: 'rotateX(50deg) rotateY(20deg)', animation: 'spinRingEM2 13s linear infinite reverse', transformStyle: 'preserve-3d' }}/>
+          <div style={{ position: 'absolute', inset: '16px', borderRadius: '50%', border: '1px solid rgba(0,128,64,0.14)', transform: 'rotateX(82deg) rotateZ(45deg)', animation: 'spinRingEM 18s linear infinite reverse', transformStyle: 'preserve-3d' }}/>
+        </div>
+
+        {/* ── CENTER: Globe ── */}
+        <div style={{ position: 'absolute', left: '50%', top: 265, transform: 'translate(-50%,-50%)', width: 220, height: 220, zIndex: 3 }}>
+          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'radial-gradient(ellipse at 34% 27%, #ffffff 0%, #e4f8ef 30%, #aadfc5 60%, #268c52 85%, #006b30 100%)', boxShadow: '10px 16px 48px rgba(0,100,40,0.32), inset -14px -10px 30px rgba(0,80,30,0.16), inset 10px 8px 24px rgba(255,255,255,0.55)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: '12%', left: '14%', width: '40%', height: '32%', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.15) 60%, transparent 100%)', pointerEvents: 'none' }}/>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 2 }}>
+              <svg width="44" height="36" viewBox="0 0 44 36" fill="none" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,255,0.3))' }}>
+                <rect x="1" y="1" width="42" height="34" rx="4" fill="rgba(255,255,255,0.92)" stroke="#00a34d" strokeWidth="1.5"/>
+                <path d="M1 6 L22 21 L43 6" stroke="#00a34d" strokeWidth="1.8" fill="none"/>
+                <path d="M1 35 L16 22" stroke="#00a34d" strokeWidth="1" opacity="0.4"/>
+                <path d="M43 35 L28 22" stroke="#00a34d" strokeWidth="1" opacity="0.4"/>
+              </svg>
+              <span style={{ fontFamily: "'Arial Black', Arial, sans-serif", fontSize: 9, fontWeight: 900, letterSpacing: 2.5, color: '#008040', textShadow: '0 0 12px rgba(0,163,77,0.5)', marginTop: 4 }}>EMAIL</span>
+              <span style={{ fontFamily: "'Arial Black', Arial, sans-serif", fontSize: 7, fontWeight: 800, letterSpacing: 2, color: '#0055aa', textShadow: '0 0 8px rgba(0,163,77,0.3)' }}>MARKETING</span>
+            </div>
           </div>
         </div>
-        {/* Subscribers */}
-        <div style={{ flex: 1, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 14, padding: '11px 13px', boxShadow: '0 5px 20px rgba(0,0,0,0.08)', animation: 'slideInRightEM 0.7s ease 0.8s both' }}>
-          <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>Subscribers</div>
-          <div style={{ fontSize: 19, fontWeight: 800, color: T.primary }}>+2.8K</div>
-          <div style={{ fontSize: 9, color: T.textLighter, marginTop: 1 }}>this month</div>
-          <div style={{ marginTop: 8, height: 5, background: T.border, borderRadius: 99, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: '68%', background: 'linear-gradient(90deg,#00a34d,#33c972)', borderRadius: 99 }}/>
-          </div>
-          <div style={{ marginTop: 8, fontSize: 9, color: T.textLighter }}>Churn: <span style={{ color: T.primary, fontWeight: 700 }}>0.8%</span> · Growth: <span style={{ color: T.primary, fontWeight: 700 }}>↑12%</span></div>
-        </div>
-        {/* Revenue */}
-        <div style={{ flex: 1, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 14, padding: '11px 13px', boxShadow: '0 5px 20px rgba(0,0,0,0.08)', animation: 'slideInRightEM 0.7s ease 1.0s both' }}>
-          <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>Flow Revenue</div>
-          <div style={{ fontSize: 19, fontWeight: 800, color: '#005c24' }}>$180K</div>
-          <div style={{ fontSize: 9, color: T.textLighter, marginTop: 1 }}>attributed this quarter</div>
-          <div style={{ display: 'flex', gap: 4, marginTop: 8, flexWrap: 'wrap' }}>
-            {['3.8× ROI', '100+ Flows'].map(b => (
-              <span key={b} style={{ fontSize: 8.5, background: T.primaryLight, color: T.primaryDark, borderRadius: 6, padding: '2px 7px', fontWeight: 600, border: '1px solid #b3f0cc' }}>{b}</span>
-            ))}
-          </div>
-        </div>
-      </div>
 
-      {/* ── ROW 4: Badge strip ── */}
-      <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8, zIndex: 8, animation: 'slideInLeftEM 0.7s ease 1s both', whiteSpace: 'nowrap' }}>
-        {[
-          { val: '42%', label: 'Avg. Open Rate' },
-          { val: '8.3%', label: 'Click-Through Rate' },
-          { val: '3.8×', label: 'Average ROI' },
-        ].map(b => (
-          <div key={b.label} style={{ background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 10, padding: '6px 12px', textAlign: 'center', boxShadow: '0 3px 12px rgba(0,0,0,0.07)' }}>
-            <div style={{ fontSize: 12, fontWeight: 800, color: T.primary }}>{b.val}</div>
-            <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600 }}>{b.label}</div>
+        {/* ── Animated email preview card (cycling) ── */}
+        <div style={{ position: 'absolute', top: 310, left: '50%', marginLeft: -195, zIndex: 7, width: 170 }}>
+          {emailPreviews.map((ep, i) => (
+            <div key={i} style={{
+              position: 'absolute', top: 0, left: 0, width: '100%',
+              background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)',
+              border: `1px solid ${ep.color}33`, borderRadius: 12, padding: '8px 11px',
+              boxShadow: '0 4px 18px rgba(0,0,0,0.10)',
+              opacity: activeEmail === i ? 1 : 0,
+              transform: activeEmail === i ? 'translateY(-2px)' : 'translateY(6px)',
+              transition: 'opacity 0.5s ease, transform 0.5s ease',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <div style={{ width: 20, height: 20, borderRadius: '50%', background: ep.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><rect x="1" y="3" width="18" height="14" rx="2" fill="white" opacity="0.9"/><path d="M1 6L10 12L19 6" stroke={ep.color} strokeWidth="1.5"/></svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: 8.5, fontWeight: 700, color: T.text }}>{ep.from}</div>
+                  <div style={{ fontSize: 7.5, color: T.textLighter }}>{ep.tag}</div>
+                </div>
+              </div>
+              <div style={{ fontSize: 9.5, fontWeight: 700, color: T.text, marginBottom: 2 }}>{ep.subject}</div>
+              <div style={{ fontSize: 8.5, color: T.textLighter, lineHeight: 1.4 }}>{ep.preview}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Sends counter ── */}
+        <div style={{ position: 'absolute', top: 310, left: '50%', marginLeft: 28, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 14, padding: '8px 12px', zIndex: 7, boxShadow: '0 4px 18px rgba(0,0,0,0.09)', animation: 'slideInRightEM 0.7s ease 1.1s both', minWidth: 150 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: T.primary }}>📬 Sends Today</div>
+          <div style={{ fontSize: 19, fontWeight: 800, color: T.text, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sends.toLocaleString()}</div>
+          <div style={{ fontSize: 9, color: T.textLighter, marginTop: 2 }}>avg. open rate <span style={{ color: T.primary, fontWeight: 700 }}>42%</span></div>
+        </div>
+
+        {/* ── ROW 3: Bottom metric cards ── */}
+        <div style={{ position: 'absolute', top: 390, left: 0, right: 0, display: 'flex', gap: 10, zIndex: 8 }}>
+          <div style={{ flex: 1, background: 'rgba(10,14,30,0.94)', backdropFilter: 'blur(14px)', border: '1px solid rgba(0,163,77,0.28)', borderRadius: 14, padding: '11px 13px', boxShadow: '0 8px 32px rgba(0,0,0,0.28)', animation: 'slideInLeftEM 0.7s ease 0.6s both' }}>
+            <div style={{ fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.8px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+              <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#33c972', animation: 'pulseDotEM 1.8s ease-in-out infinite' }}/>
+              Deliverability
+            </div>
+            <div style={{ fontSize: 19, fontWeight: 800, color: '#fff' }}>99.2%</div>
+            <div style={{ fontSize: 9, color: '#33c972', fontWeight: 700, marginTop: 1 }}>↑ inbox rate</div>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 28, marginTop: 7 }}>
+              {[72, 81, 88, 91, 95, 99].map((h, i) => (
+                <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: i === 5 ? 'linear-gradient(180deg,#33c972,#00a34d)' : 'rgba(0,163,77,0.22)' }}/>
+              ))}
+            </div>
           </div>
-        ))}
+          <div style={{ flex: 1, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 14, padding: '11px 13px', boxShadow: '0 5px 20px rgba(0,0,0,0.08)', animation: 'slideInRightEM 0.7s ease 0.8s both' }}>
+            <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>Subscribers</div>
+            <div style={{ fontSize: 19, fontWeight: 800, color: T.primary }}>+2.8K</div>
+            <div style={{ fontSize: 9, color: T.textLighter, marginTop: 1 }}>this month</div>
+            <div style={{ marginTop: 8, height: 5, background: T.border, borderRadius: 99, overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: '68%', background: 'linear-gradient(90deg,#00a34d,#33c972)', borderRadius: 99 }}/>
+            </div>
+            <div style={{ marginTop: 8, fontSize: 9, color: T.textLighter }}>Churn: <span style={{ color: T.primary, fontWeight: 700 }}>0.8%</span> · Growth: <span style={{ color: T.primary, fontWeight: 700 }}>↑12%</span></div>
+          </div>
+          <div style={{ flex: 1, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 14, padding: '11px 13px', boxShadow: '0 5px 20px rgba(0,0,0,0.08)', animation: 'slideInRightEM 0.7s ease 1.0s both' }}>
+            <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>Flow Revenue</div>
+            <div style={{ fontSize: 19, fontWeight: 800, color: '#005c24' }}>$180K</div>
+            <div style={{ fontSize: 9, color: T.textLighter, marginTop: 1 }}>attributed this quarter</div>
+            <div style={{ display: 'flex', gap: 4, marginTop: 8, flexWrap: 'wrap' }}>
+              {['3.8× ROI', '100+ Flows'].map(b => (
+                <span key={b} style={{ fontSize: 8.5, background: T.primaryLight, color: T.primaryDark, borderRadius: 6, padding: '2px 7px', fontWeight: 600, border: '1px solid #b3f0cc' }}>{b}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── ROW 4: Badge strip ── */}
+        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8, zIndex: 8, animation: 'slideInLeftEM 0.7s ease 1s both', whiteSpace: 'nowrap' }}>
+          {[
+            { val: '42%', label: 'Avg. Open Rate' },
+            { val: '8.3%', label: 'Click-Through Rate' },
+            { val: '3.8×', label: 'Average ROI' },
+          ].map(b => (
+            <div key={b.label} style={{ background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 10, padding: '6px 12px', textAlign: 'center', boxShadow: '0 3px 12px rgba(0,0,0,0.07)' }}>
+              <div style={{ fontSize: 12, fontWeight: 800, color: T.primary }}>{b.val}</div>
+              <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600 }}>{b.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
 /* ══════════════════════════════════════════════
-   SERVICE CARD (same structure, blue palette)
+   SERVICE CARD
 ══════════════════════════════════════════════ */
 const accentMap = {
   dark: {
@@ -491,7 +474,7 @@ function ServiceCard({ svc, index }) {
 function StatCell({ icon, num, suffix, label }) {
   const { ref, count } = useCountUp(num);
   return (
-    <div ref={ref} style={{ padding: '44px 36px', borderRight: `1px solid rgba(255,255,255,0.06)`, display: 'flex', gap: 18, alignItems: 'center' }}>
+    <div ref={ref} className="stat-cell">
       <div style={{ width: 56, height: 56, background: 'rgba(0,163,77,0.14)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#33c972', fontSize: 26, flexShrink: 0, border: '1px solid rgba(0,163,77,0.22)' }}>
         <i className={icon}/>
       </div>
@@ -630,7 +613,7 @@ function LiveDashboard() {
   const bars = [38, 55, 42, 70, 58, 85, 72];
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <div ref={ref} style={{ width: 260, transform: `perspective(900px) rotateX(${-tilt.y * 0.5}deg) rotateY(${tilt.x * 0.5}deg)`, transition: 'transform 0.2s ease-out' }}>
+      <div ref={ref} style={{ width: '100%', maxWidth: 260, transform: `perspective(900px) rotateX(${-tilt.y * 0.5}deg) rotateY(${tilt.x * 0.5}deg)`, transition: 'transform 0.2s ease-out' }}>
         <div style={{ background: 'linear-gradient(165deg,#0a140e,#040b14)', border: '1px solid rgba(0,163,77,0.22)', borderRadius: 16, padding: 16, boxShadow: '0 28px 56px -16px rgba(0,0,0,0.55)', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: -30, right: -30, width: 110, height: 110, background: 'radial-gradient(circle,rgba(0,163,77,0.16) 0%,transparent 70%)', pointerEvents: 'none' }}/>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
@@ -681,7 +664,7 @@ function Hero() {
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: T.primary, boxShadow: `0 0 0 3px rgba(0,163,77,0.25)`, display: 'inline-block', flexShrink: 0, animation: 'pulseDotEM 2s ease-in-out infinite' }}/>
             ✉️ Email Marketing Agency
           </div>
-          <h1 className="em-reveal" style={{ fontFamily: 'Playfair Display,serif', fontSize: 56, fontWeight: 900, lineHeight: 1.06, color: T.text, letterSpacing: '-1.2px', marginBottom: 20, animationDelay: '0.1s' }}>
+          <h1 className="em-reveal" style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(32px,4.5vw,56px)', fontWeight: 900, lineHeight: 1.06, color: T.text, letterSpacing: '-1.2px', marginBottom: 20, animationDelay: '0.1s' }}>
             Turn Your Email List Into<br/>
             <span style={{ background: `linear-gradient(135deg,${T.primaryDark} 0%,${T.primary} 55%,#33c972 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Your Best Sales Channel</span>
           </h1>
@@ -762,9 +745,9 @@ function StatsBand() {
 
 function ServicesGrid() {
   return (
-    <div id="services" style={{ maxWidth: 1320, margin: '96px auto', padding: '0 64px' }}>
+    <div id="services" style={{ maxWidth: 1320, margin: '96px auto', padding: '0 24px' }}>
       <div style={{ display: 'inline-block', background: T.primaryLight, color: T.primaryDark, fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: `1px solid #b3f0cc` }}>What We Do</div>
-      <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 38, fontWeight: 900, color: T.text, marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Email That Actually Earns</h2>
+      <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(26px,3vw,38px)', fontWeight: 900, color: T.text, marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Email That Actually Earns</h2>
       <p style={{ fontSize: 15, color: T.textLight, lineHeight: 1.7, maxWidth: 480, marginBottom: 48 }}>Every service is built to stack. Start with strategy, end with an email programme that runs and earns on its own.</p>
       <div className="em-services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22 }}>
         {emServices.map((svc, i) => <ServiceCard key={i} svc={svc} index={i}/>)}
@@ -775,10 +758,10 @@ function ServicesGrid() {
 
 function CaseStudies() {
   return (
-    <div id="work" style={{ background: T.bgLight, padding: '88px 64px', borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
+    <div id="work" style={{ background: T.bgLight, padding: '88px 24px', borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
       <div style={{ maxWidth: 1320, margin: '0 auto' }}>
         <div style={{ display: 'inline-block', background: T.primaryLight, color: T.primaryDark, fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: `1px solid #b3f0cc` }}>Case Studies</div>
-        <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 38, fontWeight: 900, color: T.text, marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Inboxes Into Revenue</h2>
+        <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(26px,3vw,38px)', fontWeight: 900, color: T.text, marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Inboxes Into Revenue</h2>
         <p style={{ fontSize: 15, color: T.textLight, lineHeight: 1.7, maxWidth: 480, marginBottom: 48 }}>Three brands, three different problems — one outcome: email that generates real, attributable money.</p>
         <div className="em-cases-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22 }}>
           {caseStudies.map((cs, i) => <CaseStudyCard key={i} cs={cs} index={i}/>)}
@@ -790,11 +773,11 @@ function CaseStudies() {
 
 function HowWeWork() {
   return (
-    <div id="process" style={{ background: T.text, padding: '88px 64px', position: 'relative', overflow: 'hidden' }}>
+    <div id="process" style={{ background: T.text, padding: '88px 24px', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: '-40%', right: '-10%', width: '55%', height: '180%', background: `radial-gradient(ellipse,rgba(0,163,77,0.11) 0%,transparent 70%)`, pointerEvents: 'none' }}/>
       <div style={{ maxWidth: 1320, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'inline-block', background: 'rgba(0,163,77,0.16)', color: '#33c972', fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: '1px solid rgba(0,163,77,0.28)' }}>How We Work</div>
-        <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 38, fontWeight: 900, color: '#fff', marginBottom: 56, lineHeight: 1.1, letterSpacing: '-1px' }}>Four Steps, Zero Guesswork</h2>
+        <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(26px,3vw,38px)', fontWeight: 900, color: '#fff', marginBottom: 56, lineHeight: 1.1, letterSpacing: '-1px' }}>Four Steps, Zero Guesswork</h2>
         <div className="em-process-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 40, position: 'relative' }}>
           <div style={{ position: 'absolute', top: 36, left: '12.5%', right: '12.5%', height: 1, background: `linear-gradient(90deg,transparent,rgba(0,163,77,0.28),rgba(0,163,77,0.28),transparent)` }}/>
           {processSteps.map((step, i) => <ProcessStep key={i} step={step} index={i}/>)}
@@ -806,10 +789,10 @@ function HowWeWork() {
 
 function PlatformBand() {
   return (
-    <div style={{ background: '#fff', padding: '40px 64px', borderBottom: `1px solid ${T.border}` }}>
+    <div style={{ background: '#fff', padding: '40px 24px', borderBottom: `1px solid ${T.border}` }}>
       <div style={{ maxWidth: 1320, margin: '0 auto' }}>
         <div style={{ fontSize: 10, color: T.textLighter, textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center', marginBottom: 20, fontWeight: 600 }}>Platforms we work with</div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 48, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 32, flexWrap: 'wrap' }}>
           {platforms.map(p => (
             <span key={p.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 700, color: T.textLighter, letterSpacing: '-0.3px' }}>
               <i className={p.icon} style={{ fontSize: 18 }}/>{p.label}
@@ -824,9 +807,9 @@ function PlatformBand() {
 function Contact() {
   const { ref, visible } = useReveal();
   return (
-    <div id="contact" style={{ maxWidth: 1320, margin: '96px auto', padding: '0 64px' }}>
+    <div id="contact" style={{ maxWidth: 1320, margin: '96px auto', padding: '0 24px' }}>
       <div style={{ display: 'inline-block', background: T.primaryLight, color: T.primaryDark, fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: `1px solid #b3f0cc` }}>Get In Touch</div>
-      <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 38, fontWeight: 900, color: T.text, marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Get Your Free Email Audit</h2>
+      <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(26px,3vw,38px)', fontWeight: 900, color: T.text, marginBottom: 8, lineHeight: 1.1, letterSpacing: '-1px' }}>Get Your Free Email Audit</h2>
       <p style={{ fontSize: 15, color: T.textLight, lineHeight: 1.7, maxWidth: 460, marginBottom: 48 }}>No pitch, no fluff — just a real audit of your deliverability and revenue opportunity, delivered in 48 hours.</p>
       <div ref={ref} className="em-contact-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 0, background: T.text, borderRadius: 24, overflow: 'hidden', border: '1.5px solid rgba(0,163,77,0.28)', boxShadow: '0 24px 64px rgba(0,163,77,0.12)', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transition: 'opacity 0.6s ease,transform 0.6s ease' }}>
         <div style={{ padding: '44px 40px', borderRight: '1px solid rgba(255,255,255,0.07)', position: 'relative' }}>
@@ -855,10 +838,10 @@ function Contact() {
 
 function FAQ() {
   return (
-    <div id="faq" style={{ background: T.bgLight, padding: '88px 64px' }}>
+    <div id="faq" style={{ background: T.bgLight, padding: '88px 24px' }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
         <div style={{ display: 'inline-block', background: T.primaryLight, color: T.primaryDark, fontSize: 11, fontWeight: 600, padding: '5px 16px', borderRadius: 30, marginBottom: 12, letterSpacing: '0.07em', textTransform: 'uppercase', border: `1px solid #b3f0cc` }}>FAQ</div>
-        <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 38, fontWeight: 900, color: T.text, marginBottom: 40, lineHeight: 1.1, letterSpacing: '-1px' }}>Common Questions</h2>
+        <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(26px,3vw,38px)', fontWeight: 900, color: T.text, marginBottom: 40, lineHeight: 1.1, letterSpacing: '-1px' }}>Common Questions</h2>
         {faqs.map((item, i) => <FaqItem key={i} item={item}/>)}
       </div>
     </div>
@@ -867,7 +850,7 @@ function FAQ() {
 
 function CTA() {
   return (
-    <div style={{ background: T.text, borderTop: `1px solid rgba(255,255,255,0.06)`, padding: '72px 64px', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ background: T.text, borderTop: `1px solid rgba(255,255,255,0.06)`, padding: '72px 24px', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: '-50%', right: '-15%', width: '55%', height: '200%', background: `radial-gradient(ellipse,rgba(0,163,77,0.14) 0%,transparent 70%)` }}/>
       <div className="em-cta-inner" style={{ maxWidth: 1320, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
@@ -875,7 +858,7 @@ function CTA() {
             <i className="ti ti-mail"/>
           </div>
           <div>
-            <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 32, fontWeight: 900, color: '#fff', marginBottom: 8, letterSpacing: '-0.8px' }}>Ready to Own Your Inbox?</h2>
+            <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: 'clamp(22px,2.5vw,32px)', fontWeight: 900, color: '#fff', marginBottom: 8, letterSpacing: '-0.8px' }}>Ready to Own Your Inbox?</h2>
             <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 15 }}>Get your free audit — we'll map exactly what it takes to turn your list into your best revenue channel.</p>
           </div>
         </div>
@@ -901,8 +884,31 @@ export default function EmailMarketingPage() {
         @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
-        body{font-family:'Poppins',sans-serif;background:#f8f9fa;color:#2a2a2a;line-height:1.6;font-size:14px;}
+        body{font-family:'Poppins',sans-serif;background:#f8f9fa;color:#2a2a2a;line-height:1.6;font-size:14px;overflow-x:hidden;}
         #services,#work,#process,#faq{scroll-margin-top:90px;}
+
+        /* ── HeroRight responsive wrapper ── */
+        .hero-right-outer {
+          width: 100%;
+          max-width: 600px;
+          overflow: hidden;
+        }
+        .hero-right-inner {
+          position: relative;
+          width: 600px;
+          height: 560px;
+          transform-origin: top left;
+        }
+
+        /* ── Stat cell base ── */
+        .stat-cell {
+          padding: 44px 36px;
+          border-right: 1px solid rgba(255,255,255,0.06);
+          display: flex;
+          gap: 18px;
+          align-items: center;
+        }
+        .stat-cell:last-child { border-right: none; }
 
         @keyframes glowPulseEM{0%,100%{opacity:0.55}50%{opacity:0.88}}
         @keyframes spinRingEM{from{transform:rotateX(70deg) rotateZ(0deg)}to{transform:rotateX(70deg) rotateZ(360deg)}}
@@ -931,27 +937,80 @@ export default function EmailMarketingPage() {
         .enq-select-wrap:focus-within .enq-select-chevron{color:#00a34d;transform:rotate(180deg);}
         .enq-select option{background:#0a140e;color:#fff;}
 
+        /* ══ LARGE DESKTOP (1280px+) ══ */
+        @media(min-width:1281px){
+          .hero-right-inner{transform:scale(1);}
+        }
+
+        /* ══ 1100–1280px ══ */
+        @media(max-width:1280px){
+          .hero-right-outer{max-width:520px;}
+          .hero-right-inner{transform:scale(calc(520/600));height:calc(560px * 520/600);}
+          .em-hero-grid{padding:64px 40px 56px !important;gap:32px !important;}
+        }
+
+        /* ══ 1025–1100px ══ */
+        @media(max-width:1100px){
+          .hero-right-outer{max-width:460px;}
+          .hero-right-inner{transform:scale(calc(460/600));height:calc(560px * 460/600);}
+        }
+
+        /* ══ TABLET (769–1024px): switch hero to single column ══ */
         @media(max-width:1024px){
-          .em-hero-grid{grid-template-columns:1fr !important;padding:56px 40px 48px !important;gap:40px !important;}
+          .em-hero-grid{grid-template-columns:1fr !important;padding:56px 32px 48px !important;gap:40px !important;}
+          .hero-right-outer{max-width:560px;margin:0 auto;}
+          .hero-right-inner{transform:scale(calc(560/600));height:calc(560px * 560/600);}
           .em-stats-grid{grid-template-columns:repeat(2,1fr) !important;}
+          .stat-cell{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);padding:32px 28px;}
+          .stat-cell:nth-child(odd){border-right:1px solid rgba(255,255,255,0.06) !important;}
+          .stat-cell:last-child,.stat-cell:nth-last-child(-n+2){border-bottom:none;}
           .em-services-grid{grid-template-columns:repeat(2,1fr) !important;}
           .em-process-grid{grid-template-columns:repeat(2,1fr) !important;}
           .em-contact-grid{grid-template-columns:1fr !important;}
           .em-cases-grid{grid-template-columns:repeat(2,1fr) !important;}
         }
-        @media(max-width:640px){
+
+        /* ══ MOBILE (481–768px) ══ */
+        @media(max-width:768px){
           .em-hero-grid{padding:40px 20px 36px !important;gap:28px !important;}
+          .hero-right-outer{max-width:400px;}
+          .hero-right-inner{transform:scale(calc(400/600));height:calc(560px * 400/600);}
           .em-services-grid{grid-template-columns:1fr !important;}
-          .em-process-grid{grid-template-columns:1fr 1fr !important;gap:24px !important;}
           .em-cases-grid{grid-template-columns:1fr !important;}
-          .em-stats-grid{grid-template-columns:1fr 1fr !important;}
-          .em-contact-grid{grid-template-columns:1fr !important;}
           .em-cta-inner{flex-direction:column !important;align-items:flex-start !important;}
           .enq-row{grid-template-columns:1fr !important;}
+          #work{padding:60px 20px !important;}
+          #process{padding:60px 20px !important;}
+          #faq{padding:60px 20px !important;}
         }
+
+        /* ══ SMALL MOBILE (≤480px) ══ */
+        @media(max-width:480px){
+          .hero-right-outer{max-width:calc(100vw - 40px);}
+          .hero-right-inner{
+            transform:scale(calc((100vw - 40px)/600));
+            height:calc(560px * (100vw - 40px)/600);
+          }
+          .em-stats-grid{grid-template-columns:1fr 1fr !important;}
+          .stat-cell{padding:24px 16px !important;}
+          .stat-cell:nth-child(odd){border-right:1px solid rgba(255,255,255,0.06) !important;}
+          .em-process-grid{grid-template-columns:1fr !important;gap:32px !important;}
+          .em-contact-grid{grid-template-columns:1fr !important;}
+          .em-hero-grid{padding:32px 16px 28px !important;}
+        }
+
+        /* ══ VERY SMALL (≤360px) ══ */
+        @media(max-width:360px){
+          .hero-right-outer{max-width:calc(100vw - 32px);}
+          .hero-right-inner{
+            transform:scale(calc((100vw - 32px)/600));
+            height:calc(560px * (100vw - 32px)/600);
+          }
+        }
+
         @media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}
       `}</style>
-      <div id="top" style={{ fontFamily: 'Poppins,sans-serif', background: '#f8f9fa', color: T.text, lineHeight: 1.6, fontSize: 14 }}>
+      <div id="top" style={{ fontFamily: 'Poppins,sans-serif', background: '#f8f9fa', color: T.text, lineHeight: 1.6, fontSize: 14, overflowX: 'hidden' }}>
         <Hero/>
         <StatsBand/>
         <PlatformBand/>
