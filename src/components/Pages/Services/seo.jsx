@@ -141,21 +141,42 @@ function AnimatedBg() {
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} />;
 }
 
+/* ══════════════════════════════════════════════════
+   SPEEDOMETER — rebuilt as a realistic automotive-style
+   performance gauge: brushed-metal bezel, glass highlight,
+   printed tick marks with numerals, a weighted two-tone
+   needle with a metal hub, and a small digital readout
+   strip underneath the dial (the way a real dashboard
+   pairs an analog gauge with a digital trip computer).
+
+   NEEDLE FIX: the needle polygon is now drawn pointing
+   straight UP from the hub (130,130) toward (130,32) in
+   its own local coordinate space — i.e. before rotation.
+   Because the rotation convention used by toRad()/ptOn()
+   treats 0deg as "up" (12 o'clock) and increases clockwise,
+   a needle that points up locally will land exactly on the
+   tick matching needleDeg once rotated. The old polygon ran
+   sideways (along the X axis) instead of up, so the visible
+   needle was ~90° off from the score it was meant to show.
+══════════════════════════════════════════════════ */
 function Speedometer() {
   const [score, setScore] = useState(0);
-  const [needleDeg, setNeedleDeg] = useState(-90);
+  const [needleDeg, setNeedleDeg] = useState(-120);
   const [phase, setPhase] = useState('spin');
   const [glowPulse, setGlowPulse] = useState(false);
   const TARGET = 93;
-  const TARGET_DEG = -90 + (TARGET / 100) * 180;
+  const START_DEG = -120;
+  const END_DEG = 120;
+  const TARGET_DEG = START_DEG + (TARGET / 100) * (END_DEG - START_DEG);
+
   useEffect(() => {
-    const SPIN_DURATION = 1000, SPIN_END_DEG = -90 + 360 * 1.5;
+    const SPIN_DURATION = 950, SPIN_END_DEG = START_DEG + 360 * 1.4;
     const t0 = performance.now() + 200;
     const easeIn = t => t * t * t;
     let raf;
     const spinStep = now => {
       const p = Math.min(Math.max((now - t0) / SPIN_DURATION, 0), 1);
-      const deg = -90 + easeIn(p) * (SPIN_END_DEG + 90);
+      const deg = START_DEG + easeIn(p) * (SPIN_END_DEG - START_DEG);
       setNeedleDeg(deg);
       if (p < 1) { raf = requestAnimationFrame(spinStep); } else {
         setPhase('settle');
@@ -163,59 +184,126 @@ function Speedometer() {
         const easeOut = t => 1 - Math.pow(-2 * t + 2, 3) / 8;
         const startDeg = deg;
         const settleStep = now2 => {
-          const p2 = Math.min((now2 - t1) / 1800, 1);
+          const p2 = Math.min((now2 - t1) / 1700, 1);
           const e = easeOut(p2);
           setNeedleDeg(startDeg + (TARGET_DEG - startDeg) * e);
           setScore(Math.round(e * TARGET));
           if (p2 < 1) raf = requestAnimationFrame(settleStep);
-          else { setGlowPulse(true); setTimeout(() => setGlowPulse(false), 600); }
+          else { setGlowPulse(true); setTimeout(() => setGlowPulse(false), 650); }
         };
         raf = requestAnimationFrame(settleStep);
       }
     };
     raf = requestAnimationFrame(spinStep);
     return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const cx = 110, cy = 110, R = 90;
-  const arcSeg = (s, e) => {
-    const sr = s * Math.PI / 180, er = e * Math.PI / 180;
-    const x1 = cx + R * Math.cos(sr), y1 = cy + R * Math.sin(sr);
-    const x2 = cx + R * Math.cos(er), y2 = cy + R * Math.sin(er);
-    return `M${x1},${y1} A${R},${R} 0 ${e - s > 180 ? 1 : 0} 1 ${x2},${y2}`;
+
+  const cx = 130, cy = 130, R = 102;
+  const toRad = d => (d - 90) * Math.PI / 180; // 0deg = top
+  const ptOn = (r, deg) => [cx + r * Math.cos(toRad(deg)), cy + r * Math.sin(toRad(deg))];
+  const arcPath = (r, d1, d2) => {
+    const [x1, y1] = ptOn(r, d1), [x2, y2] = ptOn(r, d2);
+    const large = d2 - d1 > 180 ? 1 : 0;
+    return `M${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2}`;
   };
-  const innerR = 68;
+  // colour zones across the 240° sweep (-120..120)
+  const zones = [
+    { from: -120, to: -64, color: '#dc2626' },
+    { from: -64, to: -8, color: '#f59e0b' },
+    { from: -8, to: 48, color: '#eab308' },
+    { from: 48, to: 120, color: '#22c55e' },
+  ];
+  const ticks = Array.from({ length: 13 }, (_, i) => START_DEG + (i / 12) * (END_DEG - START_DEG));
+  const innerR = 78;
+  const grade = score >= 90 ? 'A+' : score >= 80 ? 'A' : score >= 60 ? 'B' : score >= 40 ? 'C' : 'D';
+
   return (
-    <div style={{ position: 'relative', width: 280, height: 178, flexShrink: 0 }}>
-      <svg width="280" height="178" viewBox="0 0 220 140" style={{ overflow: 'visible' }}>
-        <defs>
-          <radialGradient id="discGrad" cx="50%" cy="70%" r="60%"><stop offset="0%" stopColor="#ffffff" /><stop offset="100%" stopColor="#e8f5e9" /></radialGradient>
-          <radialGradient id="discGradSpin" cx="50%" cy="50%" r="60%"><stop offset="0%" stopColor="#d1fae5" /><stop offset="100%" stopColor="#a7f3d0" /></radialGradient>
-          <filter id="needleGlow"><feGaussianBlur stdDeviation="3" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-          <filter id="gaugeGlow"><feGaussianBlur stdDeviation="4" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-        </defs>
-        <circle cx={cx} cy={cy} r={R + 12} fill="none" stroke={phase === 'spin' ? 'rgba(34,197,94,0.5)' : (glowPulse ? 'rgba(34,197,94,0.6)' : 'rgba(34,197,94,0.18)')} strokeWidth={phase === 'spin' ? 8 : 6} strokeDasharray={phase === 'spin' ? '20 8' : 'none'} style={{ transition: 'stroke 0.4s ease', animation: phase === 'spin' ? 'spinRing 0.4s linear infinite' : 'none' }} />
-        {phase === 'spin' && <circle cx={cx} cy={cy} r={R + 20} fill="none" stroke="rgba(74,222,128,0.2)" strokeWidth="2" strokeDasharray="6 10" style={{ animation: 'spinRingReverse 0.6s linear infinite' }} />}
-        <path d={arcSeg(180, 210)} fill="none" stroke="#e53935" strokeWidth="14" strokeLinecap="butt" />
-        <path d={arcSeg(210, 240)} fill="none" stroke="#ef6c00" strokeWidth="14" strokeLinecap="butt" />
-        <path d={arcSeg(240, 270)} fill="none" stroke="#fdd835" strokeWidth="14" strokeLinecap="butt" />
-        <path d={arcSeg(270, 315)} fill="none" stroke="#8bc34a" strokeWidth="14" strokeLinecap="butt" />
-        <path d={arcSeg(315, 360)} fill="none" stroke="#22c55e" strokeWidth="14" strokeLinecap="butt" />
-        <circle cx={cx} cy={cy} r={innerR} fill={phase === 'spin' ? 'url(#discGradSpin)' : 'url(#discGrad)'} filter="url(#gaugeGlow)" style={{ transition: 'fill 0.5s ease' }} />
-        <circle cx={cx} cy={cy} r={innerR} fill="none" stroke={phase === 'spin' ? 'rgba(34,197,94,0.5)' : 'rgba(34,197,94,0.15)'} strokeWidth="1.5" style={{ transition: 'stroke 0.5s ease' }} />
-        {[180, 210, 240, 270, 315, 360].map((deg, i) => {
-          const rad = deg * Math.PI / 180;
-          return <line key={i} x1={cx + (R - 8) * Math.cos(rad)} y1={cy + (R - 8) * Math.sin(rad)} x2={cx + (R + 2) * Math.cos(rad)} y2={cy + (R + 2) * Math.sin(rad)} stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" />;
-        })}
-        <text x={cx} y={cy - 8} textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 28, fontWeight: 900, fill: phase === 'spin' ? '#16a34a' : '#15803d', transition: 'fill 0.3s' }}>{phase === 'spin' ? '?' : score}</text>
-        <text x={cx} y={cy + 16} textAnchor="middle" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 9, fontWeight: 700, fill: '#16a34a', letterSpacing: '0.1em' }}>{phase === 'spin' ? 'SCAN…' : 'SCORE'}</text>
-        <g style={{ transformOrigin: `${cx}px ${cy}px`, transform: `rotate(${needleDeg}deg)`, transition: phase === 'spin' ? 'none' : 'transform 0.02s linear' }} filter="url(#needleGlow)">
-          <line x1={cx} y1={cy} x2={cx + 62} y2={cy} stroke={phase === 'spin' ? '#4ade80' : '#22c55e'} strokeWidth={phase === 'spin' ? 3 : 2.5} strokeLinecap="round" />
-          <circle cx={cx} cy={cy} r={phase === 'spin' ? 9 : 7} fill={phase === 'spin' ? '#16a34a' : '#22c55e'} style={{ filter: phase === 'spin' ? 'drop-shadow(0 0 8px rgba(34,197,94,0.8))' : 'none', transition: 'filter 0.3s' }} />
-          <circle cx={cx} cy={cy} r={3.5} fill="#ffffff" />
-        </g>
-        {glowPulse && <circle cx={cx} cy={cy} r={innerR + 10} fill="none" stroke="rgba(34,197,94,0.6)" strokeWidth="3" style={{ animation: 'burstRing 0.6s ease-out forwards' }} />}
-        <line x1={cx - R} y1={cy} x2={cx + R} y2={cy} stroke="rgba(34,197,94,0.2)" strokeWidth="1" strokeDasharray="3 3" />
-      </svg>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 264, flexShrink: 0 }}>
+      {/* outer brushed bezel */}
+      <div style={{
+        position: 'relative', width: 252, height: 252, borderRadius: '50%',
+        background: 'conic-gradient(from 0deg,#3a4a3f,#0e1410,#3a4a3f,#1a221c,#3a4a3f,#0e1410,#3a4a3f)',
+        boxShadow: glowPulse
+          ? '0 0 0 1px rgba(74,222,128,0.5),0 0 36px rgba(34,197,94,0.55),0 18px 36px rgba(0,0,0,0.5),inset 0 2px 4px rgba(255,255,255,0.18)'
+          : '0 0 0 1px rgba(34,197,94,0.18),0 18px 36px rgba(0,0,0,0.45),inset 0 2px 4px rgba(255,255,255,0.14)',
+        padding: 10, transition: 'box-shadow 0.4s ease',
+      }}>
+        {/* inner dark face */}
+        <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '50%', background: 'radial-gradient(circle at 38% 32%,#15201a 0%,#0a0f0c 62%,#060907 100%)', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.7), inset 0 -1px 2px rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+          <svg width="100%" height="100%" viewBox="0 0 260 260" style={{ position: 'absolute', inset: 0 }}>
+            <defs>
+              <filter id="needleShadow"><feDropShadow dx="0" dy="1.5" stdDeviation="1.4" floodColor="#000" floodOpacity="0.55" /></filter>
+              <radialGradient id="hubGrad" cx="38%" cy="32%" r="70%"><stop offset="0%" stopColor="#e8f5ea" /><stop offset="55%" stopColor="#8fae97" /><stop offset="100%" stopColor="#34433a" /></radialGradient>
+              <linearGradient id="needleMain" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#ff5c4d" /><stop offset="100%" stopColor="#e23b2e" /></linearGradient>
+              <linearGradient id="needleCounter" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#8a9690" /><stop offset="100%" stopColor="#cfd8d2" /></linearGradient>
+            </defs>
+            {/* zones, centered properly at 130,130 */}
+            {zones.map((z, i) => {
+              const a = (d, r) => { const rad = (d - 90) * Math.PI / 180; return [130 + r * Math.cos(rad), 130 + r * Math.sin(rad)]; };
+              const [x1, y1] = a(z.from, 102), [x2, y2] = a(z.to, 102);
+              const large = z.to - z.from > 180 ? 1 : 0;
+              return <path key={`z${i}`} d={`M${x1},${y1} A102,102 0 ${large} 1 ${x2},${y2}`} fill="none" stroke={z.color} strokeWidth="9" strokeLinecap="butt" opacity="0.95" />;
+            })}
+            {/* fine recessed groove just inside the band */}
+            <circle cx="130" cy="130" r="90" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+            {/* tick marks + numerals (0–100 scale, but printed as plain ticks) */}
+            {ticks.map((deg, i) => {
+              const rad = (deg - 90) * Math.PI / 180;
+              const major = i % 3 === 0;
+              const r1 = major ? 90 : 93;
+              const r2 = 98;
+              const x1 = 130 + r1 * Math.cos(rad), y1 = 130 + r1 * Math.sin(rad);
+              const x2 = 130 + r2 * Math.cos(rad), y2 = 130 + r2 * Math.sin(rad);
+              const lx = 130 + 76 * Math.cos(rad), ly = 130 + 76 * Math.sin(rad);
+              return (
+                <g key={i}>
+                  <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(255,255,255,0.75)" strokeWidth={major ? 1.6 : 1} strokeLinecap="round" />
+                  {major && <text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize="8.5" fontFamily="JetBrains Mono, monospace" fontWeight="700" fill="rgba(255,255,255,0.55)">{Math.round(i * (100 / 12))}</text>}
+                </g>
+              );
+            })}
+            {/* PERFORMANCE legend, printed dial style */}
+            <text x="130" y="64" textAnchor="middle" fontSize="7" fontFamily="Poppins, sans-serif" fontWeight="700" letterSpacing="2.5" fill="rgba(187,247,208,0.55)">PERFORMANCE</text>
+
+            {/* inner recessed disc behind needle */}
+            <circle cx="130" cy="130" r={innerR} fill="rgba(0,0,0,0.25)" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+
+            {/* digital score readout, embedded in dial */}
+            <text x="130" y="139" textAnchor="middle" dominantBaseline="middle" fontFamily="'Playfair Display', serif" fontWeight="900" fontSize="40" fill={phase === 'spin' ? 'rgba(187,247,208,0.5)' : '#eafff1'} style={{ transition: 'fill 0.3s' }}>
+              {phase === 'spin' ? '–' : score}
+            </text>
+            <text x="130" y="163" textAnchor="middle" fontFamily="Poppins, sans-serif" fontSize="8.5" fontWeight="700" letterSpacing="1.5" fill="#4ade80">
+              {phase === 'spin' ? 'SCANNING' : `GRADE ${grade}`}
+            </text>
+
+            {/* needle group — points straight UP locally; rotation places the tip on the correct tick */}
+            <g style={{ transformOrigin: '130px 130px', transform: `rotate(${needleDeg}deg)`, transition: phase === 'spin' ? 'none' : 'transform 0.02s linear' }} filter="url(#needleShadow)">
+              {/* counterweight tail (short, points down/opposite the tip) */}
+              <polygon points="130,130 125,130 124,152 130,158 136,152 135,130" fill="url(#needleCounter)" />
+              {/* main pointer (long, tapered, points up toward the tip) */}
+              <polygon points="130,130 127,128 124,42 130,32 136,42 133,128" fill="url(#needleMain)" />
+            </g>
+
+            {/* hub */}
+            <circle cx="130" cy="130" r="11" fill="url(#hubGrad)" stroke="rgba(0,0,0,0.4)" strokeWidth="0.6" />
+            <circle cx="130" cy="130" r="4.5" fill="#1c2620" stroke="rgba(255,255,255,0.15)" strokeWidth="0.6" />
+
+            {glowPulse && <circle cx="130" cy="130" r={innerR + 6} fill="none" stroke="rgba(34,197,94,0.55)" strokeWidth="3" style={{ animation: 'burstRing 0.65s ease-out forwards' }} />}
+          </svg>
+          {/* glass highlight overlay */}
+          <div style={{ position: 'absolute', top: '4%', left: '10%', width: '55%', height: '38%', borderRadius: '50%', background: 'linear-gradient(135deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.02) 60%,transparent 100%)', pointerEvents: 'none', transform: 'rotate(-18deg)' }} />
+        </div>
+      </div>
+
+      {/* digital readout strip below the dial, like a trip computer */}
+      <div style={{ marginTop: 14, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, background: 'rgba(8,20,12,0.85)', border: '1px solid rgba(34,197,94,0.22)', borderRadius: 10, padding: '8px 12px', backdropFilter: 'blur(10px)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: phase === 'spin' ? '#fbbf24' : '#4ade80', animation: 'pulse 1.6s ease-in-out infinite' }} />
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.04em' }}>{phase === 'spin' ? 'RUNNING LIGHTHOUSE…' : 'PAGESPEED INSIGHTS'}</span>
+        </div>
+        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9.5, fontWeight: 700, color: phase === 'spin' ? 'rgba(255,255,255,0.4)' : '#4ade80' }}>{phase === 'spin' ? '···' : '0.9s LCP'}</span>
+      </div>
     </div>
   );
 }
@@ -307,7 +395,7 @@ function SeoDeviceScene() {
           <SeoChip icon="ti ti-alert-square" label="404 Error" sub="Detection & fix" animClass="chipFloat3" danger style={{ top: 272, left: 22 }} />
           <SeoChip icon="ti ti-shield-check" label="Site Verification" sub="Google & Bing" animClass="chipFloat1" style={{ top: 400, left: 18 }} />
           <SeoChip icon="ti ti-search" label="Search Appearance" sub="SERP preview" animClass="chipFloat2" style={{ bottom: 20, left: '38%' }} />
-          <div style={{ position: 'absolute', bottom: 200, right: 80, zIndex: 6, animation: 'chipFloat3 6s ease-in-out infinite' }}>
+          <div style={{ position: 'absolute', bottom: 170, right: 50, zIndex: 6, animation: 'chipFloat3 6s ease-in-out infinite' }}>
             <Speedometer />
           </div>
           <RankBadge />
@@ -578,9 +666,7 @@ export default function SeoPage() {
         .chipFloat3{animation:chipFloat3 4.8s ease-in-out infinite 1.1s;}
         @keyframes sceneGlow{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
         @keyframes sceneGlow2{0%,100%{opacity:0.4;transform:scale(1) translateY(0)}50%{opacity:0.9;transform:scale(1.12) translateY(-10px)}}
-        @keyframes spinRing{from{stroke-dashoffset:0}to{stroke-dashoffset:-80}}
-        @keyframes spinRingReverse{from{stroke-dashoffset:0}to{stroke-dashoffset:80}}
-        @keyframes burstRing{0%{r:68;opacity:0.8;stroke-width:4}100%{r:110;opacity:0;stroke-width:1}}
+        @keyframes burstRing{0%{r:78;opacity:0.8;stroke-width:4}100%{r:118;opacity:0;stroke-width:1}}
         .seo-reveal{animation:fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both;}
         .section-pad{padding:88px 64px;}
         .eyebrow{display:inline-block;background:#f0fdf4;color:#15803d;font-size:11px;font-weight:600;padding:5px 16px;border-radius:30px;margin-bottom:12px;letter-spacing:0.07em;text-transform:uppercase;border:1px solid #bbf7d0;}

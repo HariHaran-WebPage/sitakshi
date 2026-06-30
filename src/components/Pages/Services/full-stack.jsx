@@ -68,35 +68,139 @@ const enquiryTypes = [
 ];
 
 /* ══════════════════════════════════════════════════
-   LETTER DATA — 9 letters for FULL-STACK
+   HOW IT'S BUILT — the hero's signature element.
+   A plain-language walk-through of the six layers that
+   make a product work, written for someone who has never
+   touched code: what each layer is, in their own words,
+   connected as one continuous hand-off from tap to server.
 ══════════════════════════════════════════════════ */
-const LETTER_DATA = [
-  { letter: 'F', word: 'FRONTEND',  side: 'top',    icon: 'ti ti-layout-dashboard', from: '#00E8CC', to: '#00CDB4' },
-  { letter: 'U', word: 'UI / UX',   side: 'bottom', icon: 'ti ti-palette',          from: '#00D4B8', to: '#00BAA0' },
-  { letter: 'L', word: 'LOGIC',     side: 'top',    icon: 'ti ti-brain',            from: '#00C0A4', to: '#00A88E' },
-  { letter: 'L', word: 'LAYERS',    side: 'bottom', icon: 'ti ti-stack-2',          from: '#00AC92', to: '#009E84' },
-  { letter: 'S', word: 'SCALABLE',  side: 'top',    icon: 'ti ti-trending-up',      from: '#009E82', to: '#1A8FCC' },
-  { letter: 'T', word: 'TESTING',   side: 'bottom', icon: 'ti ti-test-pipe',        from: '#1898D8', to: '#2878E0' },
-  { letter: 'A', word: 'APIS',      side: 'top',    icon: 'ti ti-api',              from: '#2868E8', to: '#3858E8' },
-  { letter: 'C', word: 'CLOUD',     side: 'bottom', icon: 'ti ti-cloud',            from: '#3A50E0', to: '#4840D8' },
-  { letter: 'K', word: 'KNOWLEDGE', side: 'top',    icon: 'ti ti-bulb',             from: '#5030CC', to: '#6020C0' },
+const BUILD_LAYERS = [
+  { type: 'frontend', title: 'Web & Mobile',  detail: 'Same site, every screen size' },
+  { type: 'api',       title: 'API Gateway',  detail: 'Routes every request safely' },
+  { type: 'server',    title: 'Backend Server', detail: 'Runs the business logic' },
+  { type: 'database',  title: 'Database',     detail: 'Stores every record safely' },
+  { type: 'ai',         title: 'AI Engine',    detail: 'Scores, predicts, generates' },
+  { type: 'cloud',      title: 'Cloud Deploy', detail: 'Ships it live, watches uptime' },
 ];
 
-const PARTICLES = Array.from({ length: 24 }, (_, i) => ({
-  id: i, x: (i * 41 + 13) % 100, y: (i * 57 + 9) % 100,
-  r: 0.8 + (i % 3) * 0.5, dur: 3 + (i % 4), delay: (i * 0.35) % 4,
-  opacity: 0.1 + (i % 4) * 0.04,
-}));
-
-/* ── Hooks ── */
-function useWindowWidth() {
-  const [w, setW] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
-  useEffect(() => {
-    const handle = () => setW(window.innerWidth);
-    window.addEventListener('resize', handle);
-    return () => window.removeEventListener('resize', handle);
-  }, []);
-  return w;
+/* Realistic, type-specific glyphs — each one reads as the actual
+   thing (a browser window, a server rack, a database cylinder...)
+   instead of a generic icon-in-a-circle. Drawn centered at 0,0,
+   so callers just translate(x,y). Each has its own idle motion. */
+function ComponentGlyph({ type, delay }) {
+  const stroke = '#4ade80';
+  const dim = 'rgba(74,222,128,0.35)';
+  switch (type) {
+    case 'frontend':
+      return (
+        <g>
+          {/* device frame */}
+          <rect x="-22" y="-17" width="44" height="34" rx="4" fill="#0d1410" stroke={stroke} strokeWidth="1.4" />
+          {/* browser chrome bar */}
+          <rect x="-22" y="-17" width="44" height="8" rx="4" fill="rgba(74,222,128,0.05)" />
+          <line x1="-22" y1="-9" x2="22" y2="-9" stroke={dim} strokeWidth="0.7" />
+          <circle cx="-18" cy="-13" r="1" fill="#f87171" />
+          <circle cx="-14.5" cy="-13" r="1" fill="#fbbf24" />
+          <circle cx="-11" cy="-13" r="1" fill="#4ade80" />
+          <rect x="-4" y="-15" width="22" height="4" rx="2" fill="none" stroke={dim} strokeWidth="0.8" />
+          <circle cx="-1.3" cy="-13" r="0.7" fill={dim} />
+          {/* nav row */}
+          <rect x="-18" y="-6.5" width="9" height="1.8" rx="0.9" fill={dim} />
+          <rect x="-7" y="-6.5" width="9" height="1.8" rx="0.9" fill={dim} />
+          <rect x="4" y="-6.5" width="9" height="1.8" rx="0.9" fill={dim} />
+          {/* hero banner */}
+          <rect x="-18" y="-3.2" width="36" height="6.6" rx="1.4" fill={stroke} opacity="0.5">
+            <animate attributeName="opacity" values="0.35;0.65;0.35" dur="2.4s" begin={`${delay}s`} repeatCount="indefinite" />
+          </rect>
+          {/* content cards */}
+          <rect x="-18" y="4.2" width="16" height="6.4" rx="1.2" fill="none" stroke={dim} strokeWidth="0.8" />
+          <rect x="-16" y="6.2" width="9" height="1.4" rx="0.7" fill={dim} />
+          <rect x="2" y="4.2" width="16" height="6.4" rx="1.2" fill="none" stroke={dim} strokeWidth="0.8" />
+          <rect x="4" y="6.2" width="9" height="1.4" rx="0.7" fill={dim} />
+          {/* CTA button */}
+          <rect x="-7" y="11.6" width="14" height="3.6" rx="1.8" fill={stroke}>
+            <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" begin={`${delay}s`} repeatCount="indefinite" />
+          </rect>
+          {/* tapping cursor */}
+          <path d="M 9,17 L 9,24.5 L 10.6,22.9 L 12.1,26.2 L 13.4,25.6 L 11.9,22.3 L 14.3,21.9 Z"
+            fill="#e5fbe9" stroke="#0d1410" strokeWidth="0.5" transform="translate(-9,-8) scale(0.85)">
+            <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.55;0.65;0.9;1" dur="2.6s" begin={`${delay}s`} repeatCount="indefinite" />
+          </path>
+        </g>
+      );
+    case 'api':
+      return (
+        <g>
+          <rect x="-16" y="-16" width="32" height="32" rx="9" fill="#0d1410" stroke={stroke} strokeWidth="1.4" />
+          <text x="0" y="6" textAnchor="middle" fontSize="17" fontFamily="JetBrains Mono, monospace" fontWeight="700" fill={stroke}>{'{ }'}</text>
+          <line x1="-16" y1="0" x2="-23" y2="0" stroke={dim} strokeWidth="1.3" />
+          <line x1="16" y1="0" x2="23" y2="0" stroke={dim} strokeWidth="1.3" />
+          <circle cx="-23" cy="0" r="2.1" fill={dim} />
+          <circle cx="23" cy="0" r="2.1" fill={stroke}>
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" begin={`${delay}s`} repeatCount="indefinite" />
+          </circle>
+          <path d="M 18,-19 a4,4 0 0 1 4,4" fill="none" stroke={dim} strokeWidth="1.1" strokeLinecap="round" />
+          <path d="M 18,-22 a7,7 0 0 1 7,7" fill="none" stroke={dim} strokeWidth="1.1" strokeLinecap="round" opacity="0.6" />
+        </g>
+      );
+    case 'server':
+      return (
+        <g>
+          <rect x="-16" y="-16" width="32" height="32" rx="3" fill="#0d1410" stroke={stroke} strokeWidth="1.4" />
+          {[-9, -1, 7].map((y, i) => (
+            <g key={i}>
+              <rect x="-12" y={y} width="24" height="6" rx="1.2" fill="none" stroke={dim} strokeWidth="1" />
+              <circle cx="-8.5" cy={y + 3} r="1.1" fill={i === 1 ? stroke : dim}>
+                {i === 1 && <animate attributeName="opacity" values="1;0.2;1" dur="1.1s" begin={`${delay}s`} repeatCount="indefinite" />}
+              </circle>
+            </g>
+          ))}
+        </g>
+      );
+    case 'database':
+      return (
+        <g>
+          <ellipse cx="0" cy="-11" rx="15" ry="5" fill="#0d1410" stroke={stroke} strokeWidth="1.4" />
+          <path d="M -15,-11 L -15,9 A 15,5 0 0 0 15,9 L 15,-11" fill="#0d1410" stroke={stroke} strokeWidth="1.4" />
+          <path d="M -15,-2 A 15,5 0 0 0 15,-2" fill="none" stroke={dim} strokeWidth="1" />
+          <ellipse cx="0" cy="9" rx="15" ry="5" fill="none" stroke={dim} strokeWidth="1">
+            <animate attributeName="ry" values="5;5.6;5" dur="2s" begin={`${delay}s`} repeatCount="indefinite" />
+          </ellipse>
+        </g>
+      );
+    case 'ai':
+      return (
+        <g>
+          <rect x="-14" y="-14" width="28" height="28" rx="5" fill="#0d1410" stroke={stroke} strokeWidth="1.4" />
+          {[-9, 0, 9].map(p => (
+            <g key={p}>
+              <line x1={p} y1="-14" x2={p} y2="-18" stroke={dim} strokeWidth="1.2" />
+              <line x1={p} y1="14" x2={p} y2="18" stroke={dim} strokeWidth="1.2" />
+              <line x1="-14" y1={p} x2="-18" y2={p} stroke={dim} strokeWidth="1.2" />
+              <line x1="14" y1={p} x2="18" y2={p} stroke={dim} strokeWidth="1.2" />
+            </g>
+          ))}
+          <circle cx="0" cy="0" r="6" fill="none" stroke={stroke} strokeWidth="1.4">
+            <animate attributeName="r" values="5;7;5" dur="1.6s" begin={`${delay}s`} repeatCount="indefinite" />
+            <animate attributeName="opacity" values="1;0.4;1" dur="1.6s" begin={`${delay}s`} repeatCount="indefinite" />
+          </circle>
+        </g>
+      );
+    case 'cloud':
+      return (
+        <g>
+          <path d="M -14,6 a7,7 0 0 1 1,-13.9 a9,9 0 0 1 17,-1.5 a6.5,6.5 0 0 1 2,14.4 z"
+            fill="#0d1410" stroke={stroke} strokeWidth="1.4" strokeLinejoin="round" />
+          <circle cx="-5" cy="1" r="1.1" fill={dim} />
+          <circle cx="2" cy="1" r="1.1" fill={dim}>
+            <animate attributeName="fill" values={`${dim};${stroke};${dim}`} dur="1.8s" begin={`${delay}s`} repeatCount="indefinite" />
+          </circle>
+          <circle cx="9" cy="1" r="1.1" fill={dim} />
+        </g>
+      );
+    default:
+      return null;
+  }
 }
 
 function useReveal() {
@@ -113,323 +217,149 @@ function useReveal() {
   return { ref, visible };
 }
 
-function useCountUp(target, duration = 1800) {
-  const [count, setCount] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef(null);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setStarted(true); obs.disconnect(); } }, { threshold: 0.5 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  useEffect(() => {
-    if (!started || target === null) return;
-    const start = performance.now();
-    const ease = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    const step = now => {
-      const p = Math.min((now - start) / duration, 1);
-      setCount(Math.round(ease(p) * target));
-      if (p < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [started, target, duration]);
-  return { ref, count };
-}
+/* Animated signal-through-the-stack illustration.
+   A pulse drops from a phone at the top, travels down a winding
+   path through 6 glowing nodes (one per layer), lighting each
+   node up as it passes, then loops. Pure SVG + CSS animation —
+   no text-heavy list, the motion itself tells the story. */
+function BuildAnimation() {
+  const { ref, visible } = useReveal();
+  const n = BUILD_LAYERS.length;
+  const vw = 780;
+  const vh = 260;
+  const centerY = 132;
+  const leftPad = 78;
+  const rightPad = 78;
+  const stepX = (vw - leftPad - rightPad) / (n - 1);
+  const amp = 46; // vertical wiggle of the path
 
-function useParallax(strength = 14) {
-  const ref = useRef(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    const onMove = e => {
-      const el = ref.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width - 0.5;
-      const py = (e.clientY - r.top) / r.height - 0.5;
-      setTilt({ x: px * strength, y: py * strength });
-    };
-    window.addEventListener('mousemove', onMove);
-    return () => window.removeEventListener('mousemove', onMove);
-  }, [strength]);
-  return { ref, tilt };
-}
+  const nodeX = i => leftPad + i * stepX;
+  const nodeY = i => centerY + (i % 2 === 0 ? -amp : amp);
+  // frontend (first node) gets a bigger glyph, so give it more ring radius
+  const ringR = i => (BUILD_LAYERS[i].type === 'frontend' ? 30 : 22);
 
-/* ── Arrow helpers ── */
-function ArrowDown({ color, h = 18 }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ width: 0, height: 0, borderLeft: '3px solid transparent', borderRight: '3px solid transparent', borderBottom: `5px solid ${color}` }} />
-      <div style={{ width: 1, height: h, background: color, opacity: 0.55 }} />
-    </div>
-  );
-}
-function ArrowUp({ color, h = 18 }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ width: 1, height: h, background: color, opacity: 0.55 }} />
-      <div style={{ width: 0, height: 0, borderLeft: '3px solid transparent', borderRight: '3px solid transparent', borderTop: `5px solid ${color}` }} />
-    </div>
-  );
-}
+  // build a smooth horizontal path, weaving up/down through every node
+  let d = `M 14 ${centerY} L ${nodeX(0)} ${nodeY(0)}`;
+  for (let i = 1; i < n; i++) {
+    const px = nodeX(i - 1), py = nodeY(i - 1);
+    const x = nodeX(i), y = nodeY(i);
+    const midX = (px + x) / 2;
+    d += ` C ${midX} ${py}, ${midX} ${y}, ${x} ${y}`;
+  }
+  d += ` L ${vw - 14} ${centerY}`;
 
-/* ══════════════════════════════════════════════════
-   LETTER BLOCK — scales via containerWidth
-══════════════════════════════════════════════════ */
-function LetterBlock({ data, index, containerWidth }) {
-  const [hovered, setHovered] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 100 + index * 50);
-    return () => clearTimeout(t);
-  }, [index]);
-
-  // Derive sizing purely from containerWidth
-  // 9 letters + 1 dash = 10 columns; each column = containerWidth/10
-  const colW = containerWidth / 10;
-
-  // Scale tokens relative to column width
-  const labelSize  = Math.max(0,  Math.floor(colW * 0.18));
-  const iconSize   = Math.max(0,  Math.floor(colW * 0.22));
-  const arrowH     = Math.max(4,  Math.floor(colW * 0.35));
-  const annotH     = Math.max(16, Math.floor(colW * 1.4));
-  const pillPadV   = Math.max(1,  Math.floor(colW * 0.07));
-  const pillPadH   = Math.max(3,  Math.floor(colW * 0.18));
-  const pillGap    = Math.max(1,  Math.floor(colW * 0.08));
-  const showLabel  = colW >= 38;
-  const showIcon   = colW >= 30;
-
-  const gradId = `lg-${index}`;
-  const shimId = `sh-${index}`;
-  const clipId = `cl-${index}`;
-  const isTop  = data.side === 'top';
-
-  const Pill = () => (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: pillGap,
-      background: `${data.from}18`,
-      border: `1px solid ${data.from}44`,
-      borderRadius: 20,
-      padding: `${pillPadV}px ${pillPadH}px`,
-      boxShadow: hovered ? `0 0 10px ${data.from}44` : 'none',
-      transition: 'box-shadow 0.3s',
-    }}>
-      {showIcon && <i className={data.icon} style={{ fontSize: iconSize, color: data.from }} />}
-      {showLabel && (
-        <span style={{
-          fontFamily: 'Poppins, sans-serif',
-          fontSize: labelSize,
-          fontWeight: 700,
-          letterSpacing: '0.06em',
-          textTransform: 'uppercase',
-          color: data.from,
-          whiteSpace: 'nowrap',
-        }}>{data.word}</span>
-      )}
-      {!showLabel && !showIcon && (
-        <span style={{ width: 4, height: 4, borderRadius: '50%', background: data.from, display: 'inline-block' }} />
-      )}
-    </div>
-  );
+  const cycle = n * 1.1;
 
   return (
     <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
-        opacity: mounted ? 1 : 0,
-        transform: mounted
-          ? hovered ? 'translateY(-4px) scale(1.04)' : 'translateY(0)'
-          : 'translateY(20px)',
-        transition: `opacity 0.5s ease ${index * 50}ms, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)`,
-        cursor: 'default',
-        minWidth: 0,
-        overflow: 'visible',
-      }}
-    >
-      {/* TOP annotation */}
-      {isTop ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: pillGap, height: annotH, justifyContent: 'flex-end', paddingBottom: 2 }}>
-          <Pill />
-          <ArrowDown color={data.from} h={arrowH} />
-        </div>
-      ) : (
-        <div style={{ height: annotH }} />
-      )}
-
-      {/* Letter SVG — fills the column width */}
-      <div style={{ position: 'relative', width: '100%' }}>
-        <div style={{
-          position: 'absolute', bottom: -2, left: '50%', transform: 'translateX(-50%)',
-          width: '70%', height: 6,
-          background: `radial-gradient(ellipse, ${data.from}88 0%, transparent 70%)`,
-          opacity: hovered ? 1 : 0, transition: 'opacity 0.3s',
-          filter: 'blur(4px)', pointerEvents: 'none',
-        }} />
-        <svg viewBox="0 0 56 76" width="100%" style={{ display: 'block', overflow: 'visible' }}>
-          <defs>
-            <linearGradient id={gradId} x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={data.from} />
-              <stop offset="100%" stopColor={data.to} />
-            </linearGradient>
-            <linearGradient id={shimId} x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"   stopColor="transparent" />
-              <stop offset="45%"  stopColor="rgba(255,255,255,0.4)" />
-              <stop offset="55%"  stopColor="rgba(255,255,255,0.4)" />
-              <stop offset="100%" stopColor="transparent" />
-            </linearGradient>
-            <clipPath id={clipId}>
-              <text x="28" y="70" textAnchor="middle" fontFamily="Poppins,sans-serif" fontSize="78" fontWeight="900">{data.letter}</text>
-            </clipPath>
-          </defs>
-          <text x="28" y="70" textAnchor="middle" fontFamily="Poppins,sans-serif" fontSize="78" fontWeight="900" fill={`url(#${gradId})`}>{data.letter}</text>
-          <rect x="-56" y="0" width="112" height="76" fill={`url(#${shimId})`} clipPath={`url(#${clipId})`}>
-            <animateTransform attributeName="transform" type="translate" values="-112,0;112,0;112,0" dur="4s" begin={`${0.5 + index * 0.22}s`} repeatCount="indefinite" />
-          </rect>
-        </svg>
-      </div>
-
-      {/* BOTTOM annotation */}
-      {!isTop ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: pillGap, height: annotH, justifyContent: 'flex-start', paddingTop: 2 }}>
-          <ArrowUp color={data.from} h={arrowH} />
-          <Pill />
-        </div>
-      ) : (
-        <div style={{ height: annotH }} />
-      )}
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════════
-   FULL-STACK WORD MAP — measures its own width
-══════════════════════════════════════════════════ */
-function FullStackWordMap() {
-  const { ref: revealRef, visible } = useReveal();
-  const containerRef = useRef(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-
-  // Measure container width and update on resize
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const ro = new ResizeObserver(entries => {
-      for (const entry of entries) {
-        setContainerWidth(entry.contentRect.width);
-      }
-    });
-    ro.observe(containerRef.current);
-    // Initial measure
-    setContainerWidth(containerRef.current.offsetWidth);
-    return () => ro.disconnect();
-  }, []);
-
-  // Dash takes 1 column, letters take 9 columns → 10 total
-  const colW = containerWidth > 0 ? containerWidth / 10 : 0;
-  const dashFontSize = Math.max(10, colW * 0.65);
-  const dashPadV = containerWidth > 0
-    ? (() => {
-        const annotH = Math.max(16, Math.floor(colW * 1.4));
-        return annotH;
-      })()
-    : 40;
-
-  return (
-    <div
-      ref={revealRef}
+      ref={ref}
       style={{
         width: '100%',
-        background: '#080808',
+        background: 'linear-gradient(180deg,#0a0f0c 0%,#070a08 100%)',
         borderRadius: 22,
-        padding: '16px 10px 12px',
+        border: '1px solid rgba(34,197,94,0.16)',
+        boxShadow: '0 24px 60px -16px rgba(0,0,0,0.55)',
         position: 'relative',
         overflow: 'hidden',
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(28px)',
         transition: 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1)',
-        border: '1px solid rgba(255,255,255,0.07)',
-        boxShadow: '0 24px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05)',
       }}
     >
-      {/* Particles */}
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} preserveAspectRatio="none">
-        {visible && PARTICLES.map(p => (
-          <circle key={p.id} cx={`${p.x}%`} cy={`${p.y}%`} r={p.r} fill="white" opacity={p.opacity}>
-            <animate attributeName="opacity" values={`${p.opacity};${p.opacity * 2.5};${p.opacity}`} dur={`${p.dur}s`} begin={`${p.delay}s`} repeatCount="indefinite" />
-          </circle>
-        ))}
-      </svg>
+      <div style={{ position: 'absolute', top: '-10%', left: '-20%', width: '70%', height: '45%', background: 'radial-gradient(ellipse, rgba(34,197,94,0.16) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      {/* Glow */}
-      <div style={{
-        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-        width: '95%', height: '55%',
-        background: 'linear-gradient(90deg,rgba(0,232,204,0.06) 0%,rgba(88,48,200,0.06) 100%)',
-        filter: 'blur(28px)', pointerEvents: 'none', zIndex: 0,
-      }} />
-
-      {/* Grid — measured container */}
-      <div
-        ref={containerRef}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(10, 1fr)`,
-          alignItems: 'center',
-          position: 'relative',
-          zIndex: 2,
-          width: '100%',
-        }}
-      >
-        {Array.from({ length: 10 }).map((_, col) => {
-          // Col 4 = dash separator
-          if (col === 4) {
-            return (
-              <div key="dash" style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                paddingTop: dashPadV, paddingBottom: dashPadV,
-              }}>
-                <span style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: dashFontSize,
-                  fontWeight: 200,
-                  color: 'rgba(255,255,255,0.32)',
-                  lineHeight: 1,
-                  userSelect: 'none',
-                }}>–</span>
-              </div>
-            );
-          }
-          const slot = col < 4 ? col : col - 1;
-          return (
-            <LetterBlock
-              key={col}
-              data={LETTER_DATA[slot]}
-              index={slot}
-              containerWidth={containerWidth}
-            />
-          );
-        })}
+      {/* header */}
+      <div style={{ padding: '22px 24px 4px', position: 'relative', zIndex: 2 }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: 'rgba(34,197,94,0.12)', color: '#4ade80', fontSize: 10.5, fontWeight: 700, padding: '5px 12px', borderRadius: 20, letterSpacing: '0.06em', textTransform: 'uppercase', border: '1px solid rgba(34,197,94,0.28)', marginBottom: 12 }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', display: 'inline-block', animation: visible ? 'pulseDot 2s ease-in-out infinite' : 'none' }} />
+          How It's Built
+        </span>
+        <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.3px' }}>
+          Watch It Move, Layer by Layer
+        </h3>
       </div>
 
-      {/* Divider */}
-      <div style={{
-        height: 1, margin: '4px 0 8px',
-        background: 'linear-gradient(90deg,transparent,rgba(0,232,204,0.22) 25%,rgba(88,48,200,0.22) 75%,transparent)',
-        position: 'relative', zIndex: 2,
-      }} />
+      {/* the animated stack */}
+      <svg viewBox={`0 0 ${vw} ${vh}`} width="100%" style={{ display: 'block' }}>
+        <defs>
+          <radialGradient id="pulseGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#86efac" stopOpacity="1" />
+            <stop offset="100%" stopColor="#86efac" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id="pathFade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.2" />
+            <stop offset="50%" stopColor="#22c55e" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.2" />
+          </linearGradient>
+        </defs>
 
-      {/* Tagline */}
-      <div style={{
-        textAlign: 'center',
-        fontFamily: 'JetBrains Mono, monospace',
-        fontSize: Math.max(7, Math.min(9.5, (containerWidth || 300) * 0.025)),
-        color: 'rgba(255,255,255,0.18)',
-        letterSpacing: '0.18em',
-        textTransform: 'uppercase',
-        position: 'relative', zIndex: 2,
-      }}>
-        One team &nbsp;·&nbsp; Every layer &nbsp;·&nbsp; End to end
+        {/* connecting path */}
+        <path d={d} fill="none" stroke="url(#pathFade)" strokeWidth="2" strokeLinecap="round" />
+
+        {/* tap-to-start glyph */}
+        <g transform={`translate(14, ${centerY})`} opacity="0.8">
+          <circle r="9" fill="none" stroke="#4ade80" strokeWidth="1.3" />
+          <circle r="2.4" fill="#4ade80" />
+        </g>
+
+        {/* nodes */}
+        {BUILD_LAYERS.map((layer, i) => {
+          const x = nodeX(i), y = nodeY(i);
+          const delay = (i / n) * cycle;
+          const above = y < centerY;
+          return (
+            <g key={layer.title}>
+              <circle
+                cx={x} cy={y} r={ringR(i) + 8}
+                fill="url(#pulseGlow)"
+                opacity="0"
+                style={{ animation: visible ? `nodeFlash ${cycle}s ease-in-out infinite` : 'none', animationDelay: `${delay}s` }}
+              />
+              <circle
+                cx={x} cy={y} r={ringR(i)}
+                fill="#0a0f0c" stroke="#22c55e" strokeWidth="1.4" strokeOpacity="0.5"
+                style={{ animation: visible ? `nodeRing ${cycle}s ease-in-out infinite` : 'none', animationDelay: `${delay}s`, transformOrigin: `${x}px ${y}px` }}
+              />
+              <g transform={`translate(${x}, ${y})`}>
+                <ComponentGlyph type={layer.type} delay={visible ? delay : -1} />
+              </g>
+              <text
+                x={x} y={above ? y - ringR(i) - 16 : y + ringR(i) + 22}
+                textAnchor="middle"
+                fill="#e5fbe9" fontSize="12.5" fontFamily="Poppins, sans-serif" fontWeight="700"
+              >
+                {layer.title}
+              </text>
+              <text
+                x={x} y={above ? y - ringR(i) - 4 : y + ringR(i) + 35}
+                textAnchor="middle"
+                fill="rgba(229,251,233,0.42)" fontSize="8.7" fontFamily="Poppins, sans-serif"
+              >
+                {layer.detail.length > 26 ? layer.detail.slice(0, 24) + '…' : layer.detail}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* live / done glyph */}
+        <g transform={`translate(${vw - 14}, ${centerY})`} opacity="0.85">
+          <circle r="9" fill="none" stroke="#4ade80" strokeWidth="1.3" />
+          <path d="M -3.4,0 L -0.8,3 L 3.6,-3.4" fill="none" stroke="#4ade80" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </g>
+
+        {/* travelling pulse dot */}
+        {visible && (
+          <circle r="5" fill="#bbf7d0" style={{ filter: 'drop-shadow(0 0 6px #4ade80)' }}>
+            <animateMotion path={d} dur={`${cycle}s`} repeatCount="indefinite" rotate="auto" />
+          </circle>
+        )}
+      </svg>
+
+      {/* footer */}
+      <div style={{ padding: '14px 24px 20px', position: 'relative', zIndex: 2 }}>
+        <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11.5, color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
+          One signal, six layers, zero handoffs.
+        </span>
       </div>
     </div>
   );
@@ -578,7 +508,26 @@ function FaqItem({ item }) {
 }
 
 function StatCell({ icon, num, suffix, label, isLast }) {
-  const { ref, count } = useCountUp(num);
+  const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setStarted(true); obs.disconnect(); } }, { threshold: 0.5 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!started || num === null) return;
+    const duration = 1800;
+    const start = performance.now();
+    const ease = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const step = now => {
+      const p = Math.min((now - start) / duration, 1);
+      setCount(Math.round(ease(p) * num));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [started, num]);
   return (
     <div ref={ref} style={{ padding:'44px 36px', borderRight:isLast?'none':'1px solid rgba(255,255,255,0.06)', display:'flex', gap:18, alignItems:'center' }}>
       <div style={{ width:56, height:56, background:'rgba(22,163,74,0.12)', borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', color:'#22c55e', fontSize:26, flexShrink:0, border:'1px solid rgba(34,197,94,0.18)' }}>
@@ -592,6 +541,24 @@ function StatCell({ icon, num, suffix, label, isLast }) {
       </div>
     </div>
   );
+}
+
+function useParallax(strength = 14) {
+  const ref = useRef(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  useEffect(() => {
+    const onMove = e => {
+      const el = ref.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      setTilt({ x: px * strength, y: py * strength });
+    };
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, [strength]);
+  return { ref, tilt };
 }
 
 function DeviceShowcase() {
@@ -692,8 +659,18 @@ function EnquiryForm() {
 }
 
 /* ══════════════════════════════════════════════════
-   HERO — fully responsive, word map never clips
+   HERO — fully responsive, layer card never clips
 ══════════════════════════════════════════════════ */
+function useWindowWidth() {
+  const [w, setW] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  useEffect(() => {
+    const handle = () => setW(window.innerWidth);
+    window.addEventListener('resize', handle);
+    return () => window.removeEventListener('resize', handle);
+  }, []);
+  return w;
+}
+
 function Hero() {
   const winW = useWindowWidth();
   const isMobile = winW < 768;
@@ -705,8 +682,8 @@ function Hero() {
       margin: '0 auto',
       padding: isMobile ? '40px 16px 36px' : isTablet ? '64px 40px 56px' : '88px 64px 80px',
       display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr' : '1fr 1.4fr',
-      gap: isMobile ? 32 : isTablet ? 44 : 48,
+      gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr' : '1fr 1fr',
+      gap: isMobile ? 32 : isTablet ? 44 : 56,
       alignItems: 'center',
     }}>
       {/* LEFT — copy */}
@@ -766,17 +743,15 @@ function Hero() {
         </div>
       </div>
 
-      {/* RIGHT — Word Map: always full width of its column, never clips */}
+      {/* RIGHT — How It's Built: always full width of its column, never clips */}
       <div className="reveal-up" style={{
         width: '100%',
-        /* On mobile/tablet it stacks below copy; constrain max so it doesn't go tiny */
-        maxWidth: isMobile ? '100%' : isTablet ? 640 : '100%',
-        margin: isMobile ? '0 auto' : isTablet ? '0 auto' : 0,
+        maxWidth: isMobile ? '100%' : isTablet ? 620 : 540,
+        margin: isMobile ? '0 auto' : isTablet ? '0 auto' : '0 0 0 auto',
         animationDelay: '0.18s',
-        /* overflow visible so annotation pills outside the box aren't clipped */
         overflow: 'visible',
       }}>
-        <FullStackWordMap />
+        <BuildAnimation />
       </div>
     </div>
   );
@@ -909,23 +884,25 @@ export default function FullStackServicesPage() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Poppins', sans-serif; background: #fafaf8; color: #0a0a0a; line-height: 1.6; font-size: 14px; }
 
-        @keyframes pulseDot    { 0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.25)} 50%{box-shadow:0 0 0 6px rgba(34,197,94,0.12)} }
-        @keyframes gradientMove{ 0%{background-position:0%} 100%{background-position:200%} }
-        @keyframes pulse       { 0%,100%{transform:scale(1);opacity:.8} 50%{transform:scale(1.12);opacity:1} }
-        @keyframes floatIcon   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-        @keyframes fadeUp      { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes barGrow     { from{transform:scaleY(0)} to{transform:scaleY(1)} }
-        @keyframes barShimmer  { 0%,100%{opacity:.6} 50%{opacity:1} }
+        @keyframes pulseDot     { 0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.25)} 50%{box-shadow:0 0 0 6px rgba(34,197,94,0.12)} }
+        @keyframes nodeFlash    { 0%,92%,100%{opacity:0} 4%,8%{opacity:0.9} }
+        @keyframes nodeRing     { 0%,92%,100%{stroke:#22c55e; transform:scale(1)} 4%{stroke:#bbf7d0; transform:scale(1.18)} 10%{stroke:#22c55e; transform:scale(1)} }
+        @keyframes gradientMove { 0%{background-position:0%} 100%{background-position:200%} }
+        @keyframes pulse        { 0%,100%{transform:scale(1);opacity:.8} 50%{transform:scale(1.12);opacity:1} }
+        @keyframes floatIcon    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+        @keyframes fadeUp       { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes barGrow      { from{transform:scaleY(0)} to{transform:scaleY(1)} }
+        @keyframes barShimmer   { 0%,100%{opacity:.6} 50%{opacity:1} }
         @keyframes deviceFloatLaptop { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
-        @keyframes shieldRing  { 0%{transform:scale(.9);opacity:.5} 100%{transform:scale(1.5);opacity:0} }
+        @keyframes shieldRing   { 0%{transform:scale(.9);opacity:.5} 100%{transform:scale(1.5);opacity:0} }
 
         .reveal-up           { animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
-        .float-icon          { animation: floatIcon 3s ease-in-out infinite; }
-        .mock-bar            { animation: barShimmer 2.2s ease-in-out infinite; }
-        .mock-bar-grow       { transform-origin: bottom; animation: barGrow 0.7s cubic-bezier(0.22,1,0.36,1) both; }
-        .mock-pulse-dot      { animation: pulse 2s ease-in-out infinite; }
-        .mock-shield-ring    { animation: shieldRing 2.4s ease-out infinite; }
-        .device-laptop-float { animation: deviceFloatLaptop 4.4s ease-in-out infinite; }
+        .float-icon           { animation: floatIcon 3s ease-in-out infinite; }
+        .mock-bar             { animation: barShimmer 2.2s ease-in-out infinite; }
+        .mock-bar-grow        { transform-origin: bottom; animation: barGrow 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+        .mock-pulse-dot       { animation: pulse 2s ease-in-out infinite; }
+        .mock-shield-ring     { animation: shieldRing 2.4s ease-out infinite; }
+        .device-laptop-float  { animation: deviceFloatLaptop 4.4s ease-in-out infinite; }
 
         .magnetic-btn, .magnetic-btn-outline {
           transition: transform .25s cubic-bezier(0.34,1.56,0.64,1), box-shadow .25s ease, background .25s ease, color .25s ease, border-color .25s ease;
