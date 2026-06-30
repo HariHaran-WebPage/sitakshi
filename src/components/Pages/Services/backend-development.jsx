@@ -369,7 +369,7 @@ function PostmanPanel() {
 ══════════════════════════════════════════════════ */
 function MacBookMockup() {
   return (
-    <div style={{ width: '100%', maxWidth: 580, position: 'relative', transform: 'perspective(1600px) rotateY(-8deg) rotateX(4deg)', transformOrigin: 'center center' }}>
+    <div style={{ width: '100%', maxWidth: 580, margin: '0 auto', position: 'relative', transform: 'perspective(1600px) rotateY(-8deg) rotateX(4deg)', transformOrigin: 'center center' }}>
       <div style={{ background: 'linear-gradient(175deg,#3d4047 0%,#2c2f36 18%,#23262d 50%,#1c1f26 80%,#18191f 100%)', borderRadius: '14px 14px 4px 4px', position: 'relative', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18),inset 0 -1px 0 rgba(0,0,0,0.55),0 2px 6px rgba(0,0,0,0.4)' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '45%', background: 'linear-gradient(180deg,rgba(255,255,255,0.09) 0%,transparent 100%)', borderRadius: '14px 14px 0 0', pointerEvents: 'none' }} />
         <div style={{ margin: '7px 7px 0', background: '#0a0b0f', borderRadius: '9px 9px 0 0', padding: '10px 10px 0', position: 'relative', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.8),inset 0 2px 4px rgba(0,0,0,0.6)' }}>
@@ -673,30 +673,20 @@ function EnquiryForm() {
 function Hero() {
   return (
     <div style={{ background: '#fafaf8', overflow: 'hidden', paddingTop: 64 }}>
-      <div className="hero-grid" style={{ maxWidth: 1280, margin: '0 auto', padding: '72px 56px 80px', display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 56, alignItems: 'center' }}>
+      <div className="hero-grid" style={{ maxWidth: 1280, margin: '0 auto', padding: '72px 56px 80px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.2fr)', gap: 56, alignItems: 'center' }}>
         <div>
           <div className="hero-item" style={{ animationDelay: '0.04s', marginBottom: 24 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 100, padding: '6px 14px 6px 8px', fontSize: 11, fontWeight: 600, color: '#374151', letterSpacing: '.05em', textTransform: 'uppercase' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#0a0a0a', borderRadius: 100, padding: '8px 18px 8px 12px', fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '.04em', textTransform: 'uppercase' }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', display: 'block', flexShrink: 0, animation: 'dotPulse 2s ease-in-out infinite' }} />
-              Backend Development
+              What We Build
             </div>
           </div>
-          <h1 className="hero-item hero-h1" style={{ animationDelay: '0.12s', fontFamily: "'Playfair Display',serif", fontSize: 52, fontWeight: 900, lineHeight: 1.07, color: '#0a0a0a', letterSpacing: '-1.2px', marginBottom: 18 }}>
-            Systems Built<br />to <span style={{ background: 'linear-gradient(135deg,#16a34a 0%,#22c55e 55%,#4ade80 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Stay Up</span>
+          <h1 className="hero-item hero-h1" style={{ animationDelay: '0.12s', fontFamily: "'Playfair Display',serif", fontSize: 52, fontWeight: 900, lineHeight: 1.08, color: '#0a0a0a', letterSpacing: '-1.2px', marginBottom: 18 }}>
+            Services Built<br />for <span style={{ background: 'linear-gradient(135deg,#16a34a 0%,#22c55e 55%,#4ade80 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Startup Speed</span>
           </h1>
-          <p className="hero-item" style={{ animationDelay: '0.20s', fontSize: 14.5, color: '#374151', lineHeight: 1.85, maxWidth: 420, marginBottom: 28 }}>
-            APIs, databases, and infrastructure engineered for real traffic — not just a demo. We build the backend, then make sure it holds.
+          <p className="hero-item" style={{ animationDelay: '0.20s', fontSize: 15, color: '#374151', lineHeight: 1.85, maxWidth: 440, marginBottom: 32 }}>
+            From MVP to scale — we offer the exact services growing startups need, without the agency bloat. Pick what fits your stage and move fast.
           </p>
-          <div className="hero-item" style={{ animationDelay: '0.26s', display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 32, alignItems: 'center' }}>
-            {[{ icon: 'ti-send', label: 'Your app sends a request', light: false }, { icon: 'ti-cpu', label: 'We process it', light: true }, { icon: 'ti-package-import', label: 'Clean data back', light: false }].map((chip, i) => (
-              <React.Fragment key={i}>
-                {i > 0 && <i className="ti ti-arrow-right" style={{ fontSize: 12, color: '#9ca3af' }} />}
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: chip.light ? '#f0fdf4' : '#fff', border: `1px solid ${chip.light ? '#bbf7d0' : '#e2e8f0'}`, borderRadius: 100, padding: '6px 12px 6px 8px', fontSize: 12, fontWeight: 500, color: chip.light ? '#15803d' : '#374151' }}>
-                  <i className={`ti ${chip.icon}`} style={{ fontSize: 13, color: chip.light ? '#16a34a' : '#6b7280' }} />{chip.label}
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
           <div className="hero-item" style={{ animationDelay: '0.32s', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href="#services" style={{ textDecoration: 'none' }}>
               <button className="hero-btn-primary">Explore Services <i className="ti ti-arrow-right" style={{ fontSize: 14 }} /></button>
@@ -714,7 +704,7 @@ function Hero() {
           </div>
         </div>
 
-        <div className="hero-device-col" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', position: 'relative' }}>
+        <div className="hero-device-col" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', position: 'relative', width: '100%', minWidth: 0, overflow: 'visible' }}>
           <div style={{ position: 'absolute', top: '5%', left: '0%', right: '0%', bottom: '0%', background: 'radial-gradient(ellipse at 55% 55%,rgba(34,197,94,0.13) 0%,rgba(59,130,246,0.06) 40%,transparent 72%)', filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0 }} />
           <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
             <div className="hero-badge-a" style={{ position: 'absolute', top: -22, right: 4, zIndex: 20, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
@@ -953,6 +943,7 @@ export default function BackendServicesPage() {
 
         /* RESPONSIVE — 768px */
         @media (max-width: 768px) {
+          .hero-device-float > div { transform: perspective(1600px) rotateY(0deg) rotateX(0deg) !important; }
           .hero-grid        { padding:40px 20px 36px !important; gap:36px !important; }
           .hero-h1          { font-size:36px !important; letter-spacing:-0.6px !important; }
           .stats-grid       { grid-template-columns:repeat(2,1fr) !important; }

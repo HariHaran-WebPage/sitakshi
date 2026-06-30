@@ -2,40 +2,33 @@ import React, { useEffect, useRef, useState } from 'react';
 
 const SERVICES = [
   {
-    id: 1, tag: 'AI & ML', title: 'Artificial Intelligence',
-    desc: 'Smart AI solutions that automate processes, surface deep insights, and scale effortlessly with your business goals.',
+    id: 1, tag: 'Web Dev', title: 'Frontend Development', path: '/services/frontend-development',
+    desc: 'Pixel-perfect, responsive interfaces built with modern frameworks and a sharp eye for detail.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
-        <rect x="10" y="10" width="28" height="28" rx="6" stroke="currentColor" strokeWidth="2.2"/>
-        <circle cx="24" cy="24" r="6" stroke="currentColor" strokeWidth="2.2"/>
-        <line x1="24" y1="10" x2="24" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-        <line x1="24" y1="30" x2="24" y2="38" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-        <line x1="10" y1="24" x2="18" y2="24" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-        <line x1="30" y1="24" x2="38" y2="24" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-        <line x1="14" y1="14" x2="20" y2="20" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.6"/>
-        <line x1="28" y1="28" x2="34" y2="34" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.6"/>
-        <line x1="34" y1="14" x2="28" y2="20" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.6"/>
-        <line x1="14" y1="34" x2="20" y2="28" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.6"/>
+        <polyline points="16,14 6,24 16,34" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        <polyline points="32,14 42,24 32,34" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        <line x1="27" y1="10" x2="21" y2="38" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" opacity="0.7"/>
       </svg>
     ),
   },
   {
-    id: 2, tag: 'Creative', title: 'Product Design',
-    desc: 'From wireframes to polished interfaces — user-centered design that feels intuitive from the very first click.',
+    id: 2, tag: 'Web Dev', title: 'Backend Development', path: '/services/backend-development',
+    desc: 'Robust APIs, databases, and server architecture engineered for speed, security, and scale.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
-        <circle cx="12" cy="36" r="4" stroke="currentColor" strokeWidth="2.2"/>
-        <circle cx="36" cy="12" r="4" stroke="currentColor" strokeWidth="2.2"/>
-        <circle cx="36" cy="36" r="4" stroke="currentColor" strokeWidth="2.2" opacity="0.6"/>
-        <path d="M16 33 Q24 20 32 15" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-        <path d="M32 33 L32 19" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" opacity="0.6"/>
-        <circle cx="26" cy="24" r="2.5" fill="currentColor"/>
+        <rect x="9" y="9" width="30" height="11" rx="3" stroke="currentColor" strokeWidth="2.2"/>
+        <rect x="9" y="28" width="30" height="11" rx="3" stroke="currentColor" strokeWidth="2.2" opacity="0.7"/>
+        <circle cx="15" cy="14.5" r="1.6" fill="currentColor"/>
+        <circle cx="15" cy="33.5" r="1.6" fill="currentColor" opacity="0.7"/>
+        <line x1="21" y1="14.5" x2="33" y2="14.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.5"/>
+        <line x1="21" y1="33.5" x2="33" y2="33.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.5"/>
       </svg>
     ),
   },
   {
-    id: 3, tag: 'Engineering', title: 'Web Development',
-    desc: 'Scalable, performant web apps built with modern frameworks and production-grade engineering practices.',
+    id: 3, tag: 'Web Dev', title: 'Full Stack Development', path: '/services/full-stack',
+    desc: 'Scalable, performant web apps built end-to-end with production-grade engineering practices.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
         <rect x="8" y="12" width="32" height="24" rx="4" stroke="currentColor" strokeWidth="2.2"/>
@@ -48,46 +41,74 @@ const SERVICES = [
     ),
   },
   {
-    id: 4, tag: 'Growth', title: 'Digital Marketing',
-    desc: 'SEO, paid ads, and social strategies that create measurable growth and drive qualified traffic consistently.',
+    id: 4, tag: 'Marketing', title: 'SEO Optimization', path: '/services/seo',
+    desc: 'Keyword strategy and on-page, off-page optimisation that lifts you up the search rankings.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
-        <rect x="8" y="28" width="7" height="12" rx="2" fill="currentColor" opacity="0.4"/>
-        <rect x="20" y="20" width="7" height="20" rx="2" fill="currentColor" opacity="0.65"/>
-        <rect x="32" y="12" width="7" height="28" rx="2" fill="currentColor"/>
-        <polyline points="11.5,26 23.5,18 35.5,10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.7"/>
-        <circle cx="11.5" cy="26" r="2.5" fill="currentColor" opacity="0.7"/>
-        <circle cx="23.5" cy="18" r="2.5" fill="currentColor" opacity="0.7"/>
-        <circle cx="35.5" cy="10" r="2.5" fill="currentColor"/>
+        <circle cx="21" cy="21" r="11" stroke="currentColor" strokeWidth="2.2"/>
+        <line x1="29" y1="29" x2="40" y2="40" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"/>
+        <path d="M16 21 L19 24 L27 16" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.8"/>
       </svg>
     ),
   },
   {
-    id: 5, tag: 'Experience', title: 'UI / UX Design',
-    desc: 'Research-driven interfaces that reduce friction, boost engagement and delight users at every touchpoint.',
+    id: 5, tag: 'Marketing', title: 'Social Media Marketing', path: '/services/social-media',
+    desc: 'Platform-native content and community strategy that builds an audience that actually engages.',
     icon: (
       <svg viewBox="0 0 48 48" fill="none">
-        <rect x="8" y="8" width="14" height="14" rx="3" stroke="currentColor" strokeWidth="2.2"/>
-        <rect x="26" y="8" width="14" height="14" rx="3" stroke="currentColor" strokeWidth="2.2" opacity="0.6"/>
-        <rect x="8" y="26" width="14" height="14" rx="3" stroke="currentColor" strokeWidth="2.2" opacity="0.6"/>
-        <rect x="26" y="26" width="14" height="14" rx="3" stroke="currentColor" strokeWidth="2.2"/>
-        <circle cx="15" cy="15" r="3" fill="currentColor" opacity="0.25"/>
-        <circle cx="33" cy="15" r="3" fill="currentColor" opacity="0.5"/>
-        <circle cx="15" cy="33" r="3" fill="currentColor" opacity="0.5"/>
-        <circle cx="33" cy="33" r="3" fill="currentColor" opacity="0.25"/>
+        <circle cx="12" cy="24" r="5" stroke="currentColor" strokeWidth="2.2"/>
+        <circle cx="36" cy="11" r="5" stroke="currentColor" strokeWidth="2.2" opacity="0.65"/>
+        <circle cx="36" cy="37" r="5" stroke="currentColor" strokeWidth="2.2" opacity="0.65"/>
+        <line x1="16.5" y1="21.5" x2="31.5" y2="13.5" stroke="currentColor" strokeWidth="2" opacity="0.6"/>
+        <line x1="16.5" y1="26.5" x2="31.5" y2="34.5" stroke="currentColor" strokeWidth="2" opacity="0.6"/>
+      </svg>
+    ),
+  },
+  {
+    id: 6, tag: 'Marketing', title: 'Pay-Per-Click Ads', path: '/services/ppc',
+    desc: 'Google, Meta and Shopping campaigns built to maximise ROAS, not just clicks.',
+    icon: (
+      <svg viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="14" stroke="currentColor" strokeWidth="2.2"/>
+        <circle cx="24" cy="24" r="7" stroke="currentColor" strokeWidth="2.2" opacity="0.7"/>
+        <circle cx="24" cy="24" r="2" fill="currentColor"/>
+        <line x1="24" y1="4" x2="24" y2="10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+        <line x1="38" y1="10" x2="33.5" y2="14.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+      </svg>
+    ),
+  },
+  {
+    id: 7, tag: 'Marketing', title: 'Email Marketing', path: '/services/email-marketing',
+    desc: 'Lifecycle and campaign emails that nurture leads and turn subscribers into customers.',
+    icon: (
+      <svg viewBox="0 0 48 48" fill="none">
+        <rect x="7" y="12" width="34" height="24" rx="4" stroke="currentColor" strokeWidth="2.2"/>
+        <path d="M9 14 L24 27 L39 14" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    id: 8, tag: 'Marketing', title: 'Content Marketing', path: '/services/content-marketing',
+    desc: 'Blogs, guides and assets that build authority and feed your funnel long after they\'re published.',
+    icon: (
+      <svg viewBox="0 0 48 48" fill="none">
+        <rect x="10" y="7" width="22" height="34" rx="3" stroke="currentColor" strokeWidth="2.2"/>
+        <line x1="15" y1="16" x2="27" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.7"/>
+        <line x1="15" y1="22" x2="27" y2="22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+        <line x1="15" y1="28" x2="22" y2="28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+        <path d="M32 28 L38 22 L41 25 L35 31 L32 31.5 Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" fill="none" opacity="0.85"/>
       </svg>
     ),
   },
 ];
 
-// C-curve resting offsets per index: forms a right-opening C shape
+// Only this many cards are ever on screen at once — the rest scroll
+// through a sliding window so the layout always reads as "5 cards".
+const WINDOW_SIZE = 5;
+
+// C-curve resting offsets for the 5 visible slots (right-opening C shape)
 const C_CURVE_OFFSETS = [0, 38, 54, 38, 0];
 const ACTIVE_OFFSET   = 54;
-
-// Each card gets its own scroll segment:
-// segment 0 → card 0 active, segment 1 → card 1 active … up to card 4
-// Total scroll = SERVICES.length * 100vh so each card owns exactly 1vh-screen
-const SCROLL_SEGMENTS = SERVICES.length; // 5 segments → 5 × 100vh = 500vh extra
 
 function useCountUp(target, duration = 1800, started = false) {
   const [count, setCount] = useState(0);
@@ -257,6 +278,7 @@ const styles = `
     border-radius: 18px; padding: 14px 18px 14px 20px;
     display: flex; align-items: center; gap: 15px;
     position: relative; overflow: hidden;
+    text-decoration: none; cursor: pointer;
     transition:
       transform    0.55s cubic-bezier(0.4,0,0.2,1),
       border-color 0.35s ease,
@@ -294,6 +316,10 @@ const styles = `
   }
   .svc-card--active::before {
     background: linear-gradient(180deg,#00c45e,#00a34d,#007a39); width:4px;
+  }
+  .svc-card:hover {
+    border-color: rgba(0,163,77,.4);
+    box-shadow: 0 18px 42px rgba(0,163,77,.18), 0 4px 12px rgba(0,163,77,.12);
   }
 
   .svc-card-num {
@@ -418,6 +444,9 @@ const styles = `
 `;
 
 const ServicesSection = () => {
+  // activeIndex walks across ALL services (0..SERVICES.length-1) as the
+  // user scrolls — but only a 5-card "window" around it is ever rendered,
+  // so the visible layout always looks like the original 5-card design.
   const [activeIndex,  setActiveIndex]  = useState(0);
   const [statsStarted, setStatsStarted] = useState(false);
   const [isMobile,     setIsMobile]     = useState(false);
@@ -425,6 +454,8 @@ const ServicesSection = () => {
   const sectionRef = useRef(null);
   const statsRef   = useRef(null);
   const cardRefs   = useRef([]);
+
+  const total = SERVICES.length;
 
   const c200 = useCountUp(200, 1800, statsStarted);
   const c98  = useCountUp(98,  1600, statsStarted);
@@ -449,34 +480,29 @@ const ServicesSection = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Desktop: scroll-driven one-by-one card reveal
-  // The section height = (SERVICES.length + 1) * 100vh
-  // We divide the scrolled distance into equal segments, one per card.
-  // Each card becomes active exactly when its segment is reached.
+  // Desktop: scroll-driven one-by-one card reveal across ALL services.
+  // Section height = (total + 1) * 100vh, split into `total` equal segments.
   useEffect(() => {
     if (isMobile) return;
 
     const handleScroll = () => {
       if (!sectionRef.current) return;
       const rect       = sectionRef.current.getBoundingClientRect();
-      const scrolled   = -rect.top;           // px scrolled into section
+      const scrolled   = -rect.top;
       const vh         = window.innerHeight;
-      // Total scrollable distance (excluding the last "exit" vh)
-      const totalScroll = SERVICES.length * vh;
-      // How far through the section are we (0 → 1)
+      const totalScroll = total * vh;
       const progress   = Math.max(0, Math.min(1, scrolled / totalScroll));
-      // Map progress to card index 0 → SERVICES.length-1
-      const rawIndex   = progress * (SERVICES.length - 1);
+      const rawIndex   = progress * (total - 1);
       const index      = Math.round(rawIndex);
-      setActiveIndex(Math.min(index, SERVICES.length - 1));
+      setActiveIndex(Math.min(index, total - 1));
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile]);
+  }, [isMobile, total]);
 
-  // Mobile: IntersectionObserver per card
+  // Mobile: IntersectionObserver per card (mobile renders every card, no windowing)
   useEffect(() => {
     if (!isMobile) return;
     const observers = cardRefs.current.map((el, i) => {
@@ -491,29 +517,41 @@ const ServicesSection = () => {
     return () => observers.forEach(o => o && o.disconnect());
   }, [isMobile]);
 
-  // Section height: 1 extra vh per card + 1vh to stay visible before exit
+  // Section height: 1 extra vh per card (across ALL services) + 1vh buffer
   const sectionStyle = isMobile
     ? {}
-    : { height: `${(SERVICES.length + 1) * 100}vh` };
+    : { height: `${(total + 1) * 100}vh` };
 
   // Scroll to a specific card segment on dot click
   const scrollToCard = (i) => {
     if (!sectionRef.current) return;
     const sectionTop = sectionRef.current.getBoundingClientRect().top + window.scrollY;
     const vh         = window.innerHeight;
-    const target     = sectionTop + (i / (SERVICES.length - 1)) * (SERVICES.length * vh);
+    const target     = sectionTop + (i / (total - 1)) * (total * vh);
     window.scrollTo({ top: target, behavior: 'smooth' });
   };
 
-  const getCardClass = (i) => {
-    if (i === activeIndex)    return 'svc-card svc-card--active';
-    if (i > activeIndex)      return 'svc-card svc-card--upcoming';
+  // ── Sliding window: pick WINDOW_SIZE services centred on activeIndex ──
+  const windowStart = isMobile
+    ? 0
+    : Math.max(0, Math.min(activeIndex - Math.floor(WINDOW_SIZE / 2), total - WINDOW_SIZE));
+  const visibleServices = isMobile ? SERVICES : SERVICES.slice(windowStart, windowStart + WINDOW_SIZE);
+
+  const getCardClass = (globalIndex) => {
+    if (globalIndex === activeIndex) return 'svc-card svc-card--active';
+    if (globalIndex > activeIndex)   return 'svc-card svc-card--upcoming';
     return 'svc-card svc-card--passed';
   };
 
-  const getTranslateX = (i, isActive) => {
+  const getTranslateX = (slotIndex, isActive) => {
     if (isActive) return ACTIVE_OFFSET;
-    return C_CURVE_OFFSETS[i];
+    return C_CURVE_OFFSETS[slotIndex] ?? 0;
+  };
+
+  // Navigate to a service's page. Swap this for your router's navigate()
+  // (e.g. React Router's useNavigate, Next.js's useRouter) if you have one.
+  const goToService = (path) => {
+    window.location.href = path;
   };
 
   return (
@@ -554,7 +592,7 @@ const ServicesSection = () => {
               </h2>
 
               <p className="svc-body-text">
-                Our custom software design and development teams design, build, test,
+                Our web development and digital marketing teams design, build, test,
                 and deliver products that fit your vision and market demand.
               </p>
 
@@ -583,22 +621,24 @@ const ServicesSection = () => {
               </a>
             </div>
 
-            {/* ── RIGHT: C-curve cards ── */}
+            {/* ── RIGHT: C-curve cards (sliding 5-card window over all services) ── */}
             <div className="svc-cards-outer" role="region" aria-label="Services">
               <div className="svc-cards-track">
-                {SERVICES.map((s, i) => {
-                  const isActive   = i === activeIndex;
-                  const translateX = getTranslateX(i, isActive);
+                {visibleServices.map((s, slotIndex) => {
+                  const globalIndex = isMobile ? slotIndex : windowStart + slotIndex;
+                  const isActive    = globalIndex === activeIndex;
+                  const translateX  = getTranslateX(slotIndex, isActive);
 
                   return (
-                    <div
+                    <a
                       key={s.id}
-                      ref={el => (cardRefs.current[i] = el)}
-                      className={getCardClass(i)}
+                      href={s.path}
+                      ref={el => (cardRefs.current[globalIndex] = el)}
+                      className={getCardClass(globalIndex)}
                       aria-current={isActive ? 'true' : undefined}
                       style={{ transform: `translateX(${translateX}px)` }}
                     >
-                      <span className="svc-card-num">0{i + 1}</span>
+                      <span className="svc-card-num">0{globalIndex + 1}</span>
 
                       <div className="svc-card-icon">{s.icon}</div>
 
@@ -611,12 +651,13 @@ const ServicesSection = () => {
                       <button
                         className="svc-card-arrow"
                         aria-label={`Learn more about ${s.title}`}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); goToService(s.path); }}
                       >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M7 17L17 7M17 7H7M17 7v10"/>
                         </svg>
                       </button>
-                    </div>
+                    </a>
                   );
                 })}
               </div>
