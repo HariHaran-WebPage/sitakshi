@@ -174,200 +174,273 @@ function AnimatedBg() {
 }
 
 /* ══════════════════════════════════════════════
-   FLYING ENVELOPE ANIMATION
+   HERO RIGHT — Idea-to-Strategy Concept Web
+   (Central glowing bulb radiating into the
+   levers of an email marketing programme)
+
+   Scaling strategy: everything below is positioned
+   with PERCENTAGES (of the 700×600 design space) and
+   sized with container-query units (cqw), inside an
+   outer box locked to a 700:600 aspect-ratio. That
+   means the whole graphic resizes purely through CSS
+   layout — no transform math, no ResizeObserver, no
+   breakpoint-specific scale values to keep in sync.
+   It can't clip or overlap at any viewport width.
 ══════════════════════════════════════════════ */
-function FlyingEnvelope({ style, delay = '0s', size = 36 }) {
-  return (
-    <div style={{ width: size, height: size, animation: `floatEnv 4s ease-in-out infinite ${delay}`, ...style }}>
-      <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-        <rect x="2" y="7" width="32" height="22" rx="3" fill="rgba(255,255,255,0.9)" stroke="#00a34d" strokeWidth="1.5"/>
-        <path d="M2 10 L18 21 L34 10" stroke="#00a34d" strokeWidth="1.5" fill="none"/>
-        <path d="M2 29 L13 19" stroke="#00a34d" strokeWidth="1" opacity="0.5"/>
-        <path d="M34 29 L23 19" stroke="#00a34d" strokeWidth="1" opacity="0.5"/>
-      </svg>
-    </div>
-  );
-}
+const conceptItems = [
+  { icon: 'ti ti-clipboard-list', label: 'Strategy',        angle: -100, desc: 'Full-funnel planning that maps every email to a stage in your customer journey.' },
+  { icon: 'ti ti-gift',           label: 'Prizes',          angle: -55,  desc: 'Giveaways and incentives that turn casual subscribers into engaged, loyal fans.' },
+  { icon: 'ti ti-share-3',        label: 'Social Media',    angle: -18,  desc: 'Cross-channel campaigns that turn your social audience into email subscribers.' },
+  { icon: 'ti ti-users',          label: 'Subscriber List', angle: 18,   desc: 'Clean, segmented lists that keep every send relevant and your sender reputation strong.' },
+  { icon: 'ti ti-chart-histogram',label: 'Analysis',        angle: 60,   desc: 'Deep dives into opens, clicks and revenue that reveal exactly what is working.' },
+  { icon: 'ti ti-coin',           label: 'ROI',              angle: 105, desc: 'Every campaign tracked back to real revenue, so you know the return on each send.' },
+  { icon: 'ti ti-align-left',     label: 'Content',         angle: 148,  desc: 'Copy and design crafted to earn the open, the click, and the conversion.' },
+  { icon: 'ti ti-shield-check',   label: 'Reliability',     angle: -148, desc: 'Consistent, on-time sends with deliverability safeguards built into every flow.' },
+];
 
-/* ══════════════════════════════════════════════
-   HERO RIGHT — Fully responsive via CSS scale
-══════════════════════════════════════════════ */
-function HeroRight() {
-  const [openRate] = useState(42);
-  const [sends, setSends] = useState(18420);
-  const [activeEmail, setActiveEmail] = useState(0);
-  const miniBarHeights = [35, 52, 44, 68, 56, 90, 78];
+const labelCycle = ['Strategy', 'Prizes', 'Social Media', 'Subscriber List', 'Analysis', 'ROI', 'Content', 'Reliability'];
 
-  const emailPreviews = [
-    { from: 'Your Brand', subject: '🎉 Welcome! Your gift is inside', preview: "Hi {{first_name}}, we've been waiting for you...", tag: 'Welcome Flow', color: '#00a34d' },
-    { from: 'Your Brand', subject: 'You left something behind 👀', preview: 'The items in your cart are almost gone...', tag: 'Abandoned Cart', color: '#7c3aed' },
-    { from: 'Your Brand', subject: 'Made for you this week ✨', preview: 'Based on your last order, we picked these...', tag: 'Personalised', color: '#0891b2' },
-  ];
+// Design-space reference: 700 wide × 600 tall (trimmed from 640 and
+// re-centered so the ring sits with even breathing room top and bottom,
+// which is what pulls the whole graphic up visually).
+const SPACE_W = 700, SPACE_H = 600;
+const wp = v => `${(v / SPACE_W) * 100}%`;   // horizontal position / width
+const hp = v => `${(v / SPACE_H) * 100}%`;   // vertical position / height
+const cq = v => `${(v / SPACE_W) * 100}cqw`; // uniform size (font, radius, gap) via container-query units
 
+function ConceptWeb() {
+  const { ref, visible } = useReveal();
+  const cx = 350, cy = 300, R = 220, bulbR = 76;
+  const toXY = (angleDeg, radius) => {
+    const rad = (angleDeg - 90) * Math.PI / 180;
+    return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
+  };
+
+  const [activeLabel, setActiveLabel] = useState(0);
+  const cycleRef = useRef(null);
   useEffect(() => {
-    const id = setInterval(() => setSends(v => v + Math.floor(Math.random() * 12 + 2)), 1800);
-    return () => clearInterval(id);
-  }, []);
+    if (!visible) return;
+    const kick = setTimeout(() => {
+      cycleRef.current = setInterval(() => setActiveLabel(v => (v + 1) % labelCycle.length), 1500);
+    }, 1600);
+    return () => { clearTimeout(kick); if (cycleRef.current) clearInterval(cycleRef.current); };
+  }, [visible]);
 
-  useEffect(() => {
-    const id = setInterval(() => setActiveEmail(v => (v + 1) % emailPreviews.length), 3200);
-    return () => clearInterval(id);
-  }, []);
+  const activeItem = conceptItems.find(c => c.label === labelCycle[activeLabel]) || conceptItems[0];
+  const [popupItem, setPopupItem] = useState(null);
 
   return (
-    <div className="hero-right-outer">
-      <div className="hero-right-inner">
-        {/* Connection lines */}
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} viewBox="0 0 600 560">
-          <line x1="90" y1="130" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-          <line x1="90" y1="250" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-          <line x1="90" y1="370" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-          <line x1="510" y1="130" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-          <line x1="510" y1="250" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
-          <line x1="510" y1="370" x2="300" y2="250" stroke="rgba(0,163,77,0.1)" strokeWidth="1" strokeDasharray="5 7"/>
+    <div ref={ref} className="hero-right-outer">
+      <div className="hero-right-inner" style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.8s ease' }}>
+        {/* connecting spokes */}
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }} viewBox={`0 0 ${SPACE_W} ${SPACE_H}`} preserveAspectRatio="none">
+          <defs>
+            <marker id="cwArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill={T.primary} opacity="0.55" />
+            </marker>
+          </defs>
+          {conceptItems.map((item, i) => {
+            const from = toXY(item.angle, bulbR * 1.32 + 8);
+            const to = toXY(item.angle, R - 40);
+            return (
+              <line key={i} x1={from.x} y1={from.y} x2={to.x} y2={to.y}
+                stroke={T.primary} strokeWidth="1.5" strokeDasharray="1 6" strokeLinecap="round"
+                opacity={visible ? 0.5 : 0}
+                style={{ transition: `opacity 0.5s ease ${i * 90 + 650}ms` }}
+                markerEnd="url(#cwArrow)" />
+            );
+          })}
         </svg>
 
-        {/* ── ROW 1: Top stat cards ── */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', gap: 8, zIndex: 8, animation: 'slideInLeftEM 0.7s ease 0.2s both' }}>
-          {[
-            { label: 'Open Rate', value: `${openRate}%`, sub: '▲ industry avg 21%', bars: miniBarHeights },
-            { label: 'Click Rate', value: '8.3%', sub: '▲ 3× industry avg' },
-            { label: 'Revenue/Email', value: '$4.20', sub: '▲ per send' },
-            { label: 'List Growth', value: '+2.8K', sub: '▲ this month' },
-          ].map((s, i) => (
-            <div key={i} style={{ flex: 1, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(14px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 12, padding: '10px 12px', boxShadow: '0 4px 16px rgba(0,0,0,0.07)' }}>
-              <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{s.label}</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: T.primary, lineHeight: 1.1, marginTop: 2 }}>{s.value}</div>
-              <div style={{ fontSize: 9, color: T.primary, fontWeight: 600, marginTop: 2 }}>{s.sub}</div>
-              {s.bars && (
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 24, marginTop: 5 }}>
-                  {s.bars.map((h, j) => (
-                    <div key={j} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: j === s.bars.length - 1 ? 'linear-gradient(180deg,#33c972,#00a34d)' : 'rgba(0,163,77,0.18)' }}/>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        {/* faint orbit ring */}
+        <div style={{ position: 'absolute', left: wp(cx), top: hp(cy), width: wp((R - 10) * 2), height: hp((R - 10) * 2), transform: 'translate(-50%,-50%)', borderRadius: '50%', border: `1px dashed rgba(0,163,77,0.16)`, zIndex: 0 }} />
 
-        {/* ── Floating envelopes ── */}
-        <FlyingEnvelope style={{ position: 'absolute', top: 120, left: 20, zIndex: 5 }} delay="0s" size={40}/>
-        <FlyingEnvelope style={{ position: 'absolute', top: 220, left: 8, zIndex: 5 }} delay="0.8s" size={34}/>
-        <FlyingEnvelope style={{ position: 'absolute', top: 320, left: 18, zIndex: 5 }} delay="1.6s" size={38}/>
-        <FlyingEnvelope style={{ position: 'absolute', top: 120, right: 20, zIndex: 5 }} delay="0.4s" size={36}/>
-        <FlyingEnvelope style={{ position: 'absolute', top: 220, right: 8, zIndex: 5 }} delay="1.2s" size={42}/>
-        <FlyingEnvelope style={{ position: 'absolute', top: 320, right: 18, zIndex: 5 }} delay="2.0s" size={34}/>
-
-        {/* ── Outer glow ── */}
-        <div style={{ position: 'absolute', left: '50%', top: 265, transform: 'translate(-50%,-50%)', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(0,163,77,0.15) 0%, rgba(0,163,77,0.04) 55%, transparent 75%)', animation: 'glowPulseEM 2.8s ease-in-out infinite', zIndex: 1, pointerEvents: 'none' }}/>
-
-        {/* ── Orbital rings ── */}
-        <div style={{ position: 'absolute', left: '50%', top: 265, transform: 'translate(-50%,-50%)', width: 290, height: 290, zIndex: 2, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1.5px solid rgba(0,163,77,0.28)', transform: 'rotateX(70deg)', animation: 'spinRingEM 9s linear infinite', transformStyle: 'preserve-3d' }}/>
-          <div style={{ position: 'absolute', inset: '8px', borderRadius: '50%', border: '1.5px dashed rgba(0,163,77,0.2)', transform: 'rotateX(50deg) rotateY(20deg)', animation: 'spinRingEM2 13s linear infinite reverse', transformStyle: 'preserve-3d' }}/>
-          <div style={{ position: 'absolute', inset: '16px', borderRadius: '50%', border: '1px solid rgba(0,128,64,0.14)', transform: 'rotateX(82deg) rotateZ(45deg)', animation: 'spinRingEM 18s linear infinite reverse', transformStyle: 'preserve-3d' }}/>
-        </div>
-
-        {/* ── CENTER: Globe ── */}
-        <div style={{ position: 'absolute', left: '50%', top: 265, transform: 'translate(-50%,-50%)', width: 220, height: 220, zIndex: 3 }}>
-          <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'radial-gradient(ellipse at 34% 27%, #ffffff 0%, #e4f8ef 30%, #aadfc5 60%, #268c52 85%, #006b30 100%)', boxShadow: '10px 16px 48px rgba(0,100,40,0.32), inset -14px -10px 30px rgba(0,80,30,0.16), inset 10px 8px 24px rgba(255,255,255,0.55)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: '12%', left: '14%', width: '40%', height: '32%', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.15) 60%, transparent 100%)', pointerEvents: 'none' }}/>
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 2 }}>
-              <svg width="44" height="36" viewBox="0 0 44 36" fill="none" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,255,0.3))' }}>
-                <rect x="1" y="1" width="42" height="34" rx="4" fill="rgba(255,255,255,0.92)" stroke="#00a34d" strokeWidth="1.5"/>
-                <path d="M1 6 L22 21 L43 6" stroke="#00a34d" strokeWidth="1.8" fill="none"/>
-                <path d="M1 35 L16 22" stroke="#00a34d" strokeWidth="1" opacity="0.4"/>
-                <path d="M43 35 L28 22" stroke="#00a34d" strokeWidth="1" opacity="0.4"/>
-              </svg>
-              <span style={{ fontFamily: "'Arial Black', Arial, sans-serif", fontSize: 9, fontWeight: 900, letterSpacing: 2.5, color: '#008040', textShadow: '0 0 12px rgba(0,163,77,0.5)', marginTop: 4 }}>EMAIL</span>
-              <span style={{ fontFamily: "'Arial Black', Arial, sans-serif", fontSize: 7, fontWeight: 800, letterSpacing: 2, color: '#0055aa', textShadow: '0 0 8px rgba(0,163,77,0.3)' }}>MARKETING</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Animated email preview card (cycling) ── */}
-        <div style={{ position: 'absolute', top: 310, left: '50%', marginLeft: -195, zIndex: 7, width: 170 }}>
-          {emailPreviews.map((ep, i) => (
-            <div key={i} style={{
-              position: 'absolute', top: 0, left: 0, width: '100%',
-              background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)',
-              border: `1px solid ${ep.color}33`, borderRadius: 12, padding: '8px 11px',
-              boxShadow: '0 4px 18px rgba(0,0,0,0.10)',
-              opacity: activeEmail === i ? 1 : 0,
-              transform: activeEmail === i ? 'translateY(-2px)' : 'translateY(6px)',
-              transition: 'opacity 0.5s ease, transform 0.5s ease',
+        {/* concept nodes */}
+        {conceptItems.map((item, i) => {
+          const pos = toXY(item.angle, R);
+          const dx = cx - pos.x, dy = cy - pos.y;
+          const delay = i * 90 + 700;
+          return (
+            <div key={item.label} style={{
+              position: 'absolute', left: wp(pos.x), top: hp(pos.y),
+              zIndex: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: cq(7),
+              width: wp(118), textAlign: 'center',
+              opacity: visible ? 1 : 0,
+              transform: visible
+                ? 'translate(-50%,-50%) translate(0,0) scale(1)'
+                : `translate(-50%,-50%) translate(${wp(dx)},${hp(dy)}) scale(0.15)`,
+              transition: `opacity 0.45s ease ${delay}ms, transform 0.6s cubic-bezier(0.3,1.4,0.4,1) ${delay}ms`,
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <div style={{ width: 20, height: 20, borderRadius: '50%', background: ep.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><rect x="1" y="3" width="18" height="14" rx="2" fill="white" opacity="0.9"/><path d="M1 6L10 12L19 6" stroke={ep.color} strokeWidth="1.5"/></svg>
-                </div>
-                <div>
-                  <div style={{ fontSize: 8.5, fontWeight: 700, color: T.text }}>{ep.from}</div>
-                  <div style={{ fontSize: 7.5, color: T.textLighter }}>{ep.tag}</div>
-                </div>
+              <div
+                onClick={() => setPopupItem(item)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setPopupItem(item); }}
+                style={{
+                  width: cq(50), height: cq(50), borderRadius: cq(14),
+                  background: 'linear-gradient(160deg, #ffffff 0%, #eef6f1 100%)',
+                  border: `1px solid rgba(0,163,77,0.24)`,
+                  boxShadow: '0 8px 18px rgba(0,60,20,0.12), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -2px 4px rgba(0,60,20,0.06)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: T.primaryDark, fontSize: cq(22), flexShrink: 0,
+                  cursor: 'pointer', transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+              >
+                <i className={item.icon} aria-hidden="true" />
               </div>
-              <div style={{ fontSize: 9.5, fontWeight: 700, color: T.text, marginBottom: 2 }}>{ep.subject}</div>
-              <div style={{ fontSize: 8.5, color: T.textLighter, lineHeight: 1.4 }}>{ep.preview}</div>
+              <span style={{ fontSize: cq(12.5), fontWeight: 700, color: T.text, letterSpacing: '0.01em', lineHeight: 1.2 }}>{item.label}</span>
             </div>
-          ))}
+          );
+        })}
+
+        {/* outer glow behind envelope */}
+        <div style={{ position: 'absolute', left: wp(cx), top: hp(cy), width: wp(310), height: hp(280), transform: 'translate(-50%,-50%)', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(0,163,77,0.22) 0%, rgba(0,163,77,0.08) 55%, transparent 75%)', animation: 'glowPulseEM 2.8s ease-in-out infinite', zIndex: 1, pointerEvents: 'none' }} />
+
+        {/* orbit accent ring */}
+        <div style={{ position: 'absolute', left: wp(cx), top: hp(cy), width: wp((bulbR + 26) * 2), height: hp((bulbR + 26) * 2), transform: 'translate(-50%,-50%)', borderRadius: '50%', border: '1px dashed rgba(0,163,77,0.3)', animation: 'spinRingEM 16s linear infinite', zIndex: 2 }} />
+
+        {/* center: realistic 3D mail / envelope hub */}
+        <div style={{ position: 'absolute', left: wp(cx), top: hp(cy), width: wp(bulbR * 2.55), height: hp(bulbR * 2.1), transform: 'translate(-50%,-50%)', zIndex: 3, filter: 'drop-shadow(0 18px 30px rgba(0,60,20,0.28))' }}>
+          <svg width="100%" height="100%" viewBox="0 0 180 148" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="envBody" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#e7ede9" />
+              </linearGradient>
+              <linearGradient id="envFlapL" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#d7e3da" />
+              </linearGradient>
+              <linearGradient id="envFlapR" x1="1" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#c9dad0" />
+              </linearGradient>
+              <linearGradient id="envFlapTop" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#f4f8f5" />
+                <stop offset="100%" stopColor="#dbe7e0" />
+              </linearGradient>
+              <linearGradient id="stampGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#33c972" />
+                <stop offset="100%" stopColor="#008040" />
+              </linearGradient>
+            </defs>
+
+            {/* envelope back / body */}
+            <rect x="6" y="20" width="168" height="118" rx="12" fill="url(#envBody)" stroke="rgba(0,80,40,0.12)" strokeWidth="1.5" />
+
+            {/* inner side flaps (perspective) */}
+            <path d="M6 32 L90 78 L6 132 Z" fill="url(#envFlapL)" opacity="0.9" />
+            <path d="M174 32 L90 78 L174 132 Z" fill="url(#envFlapR)" opacity="0.9" />
+
+            {/* bottom pocket */}
+            <path d="M6 132 L90 82 L174 132 L174 138 A12 12 0 0 1 162 150 L18 150 A12 12 0 0 1 6 138 Z" fill="url(#envBody)" stroke="rgba(0,80,40,0.12)" strokeWidth="1.5" />
+
+            {/* top flap (unfolds open) */}
+            <g style={{
+              transformBox: 'fill-box', transformOrigin: '50% 0%',
+              transform: visible ? 'scaleY(1) rotate(0deg)' : 'scaleY(0.06) rotate(1deg)',
+              opacity: visible ? 1 : 0.85,
+              transition: 'transform 0.55s cubic-bezier(0.32,1.5,0.4,1) 0.05s, opacity 0.35s ease 0.05s',
+            }}>
+              <path d="M6 32 A12 12 0 0 1 18 20 L162 20 A12 12 0 0 1 174 32 L90 84 Z" fill="url(#envFlapTop)" stroke="rgba(0,80,40,0.14)" strokeWidth="1.5" />
+              <path d="M20 24 L90 76 L160 24" fill="none" stroke="rgba(0,120,60,0.18)" strokeWidth="1.4" />
+            </g>
+
+            {/* subtle sheen */}
+            <path d="M14 26 L90 80" stroke="rgba(255,255,255,0.9)" strokeWidth="4" strokeLinecap="round" opacity="0.5" />
+
+            {/* wax-style seal / stamp — pops in once the flap has opened */}
+            <g style={{
+              transformBox: 'fill-box', transformOrigin: '50% 50%',
+              transform: visible ? 'scale(1)' : 'scale(0)',
+              opacity: visible ? 1 : 0,
+              transition: 'transform 0.5s cubic-bezier(0.3,1.6,0.4,1) 0.5s, opacity 0.3s ease 0.5s',
+            }}>
+              <circle cx="90" cy="80" r="20" fill="url(#stampGrad)" stroke="#ffffff" strokeWidth="3" />
+              <path d="M81 80 l6 6 12-13" fill="none" stroke="#ffffff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+            </g>
+          </svg>
         </div>
 
-        {/* ── Sends counter ── */}
-        <div style={{ position: 'absolute', top: 310, left: '50%', marginLeft: 28, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 14, padding: '8px 12px', zIndex: 7, boxShadow: '0 4px 18px rgba(0,0,0,0.09)', animation: 'slideInRightEM 0.7s ease 1.1s both', minWidth: 150 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: T.primary }}>📬 Sends Today</div>
-          <div style={{ fontSize: 19, fontWeight: 800, color: T.text, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sends.toLocaleString()}</div>
-          <div style={{ fontSize: 9, color: T.textLighter, marginTop: 2 }}>avg. open rate <span style={{ color: T.primary, fontWeight: 700 }}>42%</span></div>
-        </div>
-
-        {/* ── ROW 3: Bottom metric cards ── */}
-        <div style={{ position: 'absolute', top: 390, left: 0, right: 0, display: 'flex', gap: 10, zIndex: 8 }}>
-          <div style={{ flex: 1, background: 'rgba(10,14,30,0.94)', backdropFilter: 'blur(14px)', border: '1px solid rgba(0,163,77,0.28)', borderRadius: 14, padding: '11px 13px', boxShadow: '0 8px 32px rgba(0,0,0,0.28)', animation: 'slideInLeftEM 0.7s ease 0.6s both' }}>
-            <div style={{ fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.8px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
-              <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#33c972', animation: 'pulseDotEM 1.8s ease-in-out infinite' }}/>
-              Deliverability
-            </div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: '#fff' }}>99.2%</div>
-            <div style={{ fontSize: 9, color: '#33c972', fontWeight: 700, marginTop: 1 }}>↑ inbox rate</div>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 28, marginTop: 7 }}>
-              {[72, 81, 88, 91, 95, 99].map((h, i) => (
-                <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: i === 5 ? 'linear-gradient(180deg,#33c972,#00a34d)' : 'rgba(0,163,77,0.22)' }}/>
-              ))}
-            </div>
-          </div>
-          <div style={{ flex: 1, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 14, padding: '11px 13px', boxShadow: '0 5px 20px rgba(0,0,0,0.08)', animation: 'slideInRightEM 0.7s ease 0.8s both' }}>
-            <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>Subscribers</div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: T.primary }}>+2.8K</div>
-            <div style={{ fontSize: 9, color: T.textLighter, marginTop: 1 }}>this month</div>
-            <div style={{ marginTop: 8, height: 5, background: T.border, borderRadius: 99, overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: '68%', background: 'linear-gradient(90deg,#00a34d,#33c972)', borderRadius: 99 }}/>
-            </div>
-            <div style={{ marginTop: 8, fontSize: 9, color: T.textLighter }}>Churn: <span style={{ color: T.primary, fontWeight: 700 }}>0.8%</span> · Growth: <span style={{ color: T.primary, fontWeight: 700 }}>↑12%</span></div>
-          </div>
-          <div style={{ flex: 1, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 14, padding: '11px 13px', boxShadow: '0 5px 20px rgba(0,0,0,0.08)', animation: 'slideInRightEM 0.7s ease 1.0s both' }}>
-            <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>Flow Revenue</div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: '#005c24' }}>$180K</div>
-            <div style={{ fontSize: 9, color: T.textLighter, marginTop: 1 }}>attributed this quarter</div>
-            <div style={{ display: 'flex', gap: 4, marginTop: 8, flexWrap: 'wrap' }}>
-              {['3.8× ROI', '100+ Flows'].map(b => (
-                <span key={b} style={{ fontSize: 8.5, background: T.primaryLight, color: T.primaryDark, borderRadius: 6, padding: '2px 7px', fontWeight: 600, border: '1px solid #b3f0cc' }}>{b}</span>
-              ))}
-            </div>
+        {/* spinning letter — pulls out of the envelope and flips through each concept */}
+        <div style={{
+          position: 'absolute', left: wp(cx), top: hp(cy - bulbR * 0.98), transform: 'translate(-50%,-50%)',
+          zIndex: 5, perspective: 900,
+          opacity: visible ? 1 : 0,
+          transition: 'opacity 0.5s ease 1.55s',
+        }}>
+          <div key={activeLabel} style={{
+            display: 'flex', alignItems: 'center', gap: cq(9),
+            background: '#ffffff', borderRadius: cq(12), padding: `${cq(9)} ${cq(16)} ${cq(9)} ${cq(12)}`,
+            border: `1px solid rgba(0,163,77,0.28)`, boxShadow: '0 10px 26px rgba(0,60,20,0.22)',
+            transformStyle: 'preserve-3d', whiteSpace: 'nowrap',
+            animation: 'letterSpinCard 0.65s cubic-bezier(0.32,1.4,0.4,1) both',
+          }}>
+            <span style={{
+              width: cq(26), height: cq(26), borderRadius: cq(8), background: T.primaryLight,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: T.primaryDark, fontSize: cq(14), flexShrink: 0,
+            }}>
+              <i className={activeItem.icon} aria-hidden="true" />
+            </span>
+            <span style={{ fontSize: cq(13), fontWeight: 700, color: T.text }}>{activeItem.label}</span>
           </div>
         </div>
 
-        {/* ── ROW 4: Badge strip ── */}
-        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8, zIndex: 8, animation: 'slideInLeftEM 0.7s ease 1s both', whiteSpace: 'nowrap' }}>
-          {[
-            { val: '42%', label: 'Avg. Open Rate' },
-            { val: '8.3%', label: 'Click-Through Rate' },
-            { val: '3.8×', label: 'Average ROI' },
-          ].map(b => (
-            <div key={b.label} style={{ background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 10, padding: '6px 12px', textAlign: 'center', boxShadow: '0 3px 12px rgba(0,0,0,0.07)' }}>
-              <div style={{ fontSize: 12, fontWeight: 800, color: T.primary }}>{b.val}</div>
-              <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600 }}>{b.label}</div>
-            </div>
-          ))}
+        {/* wordmark chip under bulb */}
+        <div style={{
+          position: 'absolute', left: wp(cx), top: hp(cy + bulbR * 1.05 + 20), transform: 'translate(-50%,0)', zIndex: 4,
+          background: T.text, color: '#fff', borderRadius: cq(30), padding: `${cq(7)} ${cq(18)}`,
+          fontFamily: 'Playfair Display,serif', fontSize: cq(13), fontWeight: 800, letterSpacing: '0.06em',
+          textTransform: 'uppercase', boxShadow: '0 8px 22px rgba(0,0,0,0.18)', whiteSpace: 'nowrap',
+          opacity: visible ? 1 : 0, transition: 'opacity 0.6s ease 1.5s',
+        }}>
+          Email Marketing
         </div>
+
+        {/* click pop-up: detail card for the tapped concept icon */}
+        {popupItem && (
+          <div
+            onClick={() => setPopupItem(null)}
+            style={{
+              position: 'absolute', inset: 0, zIndex: 10,
+              background: 'rgba(6,20,12,0.42)', backdropFilter: 'blur(2px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              animation: 'popBackdropIn 0.25s ease both', cursor: 'pointer',
+            }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                width: '82%', maxWidth: 280, background: '#ffffff', borderRadius: 20, padding: '26px 24px 22px',
+                boxShadow: '0 30px 70px rgba(0,20,10,0.35)', border: '1px solid rgba(0,163,77,0.2)',
+                position: 'relative', cursor: 'default',
+                animation: 'popCardIn 0.4s cubic-bezier(0.3,1.6,0.4,1) both',
+              }}
+            >
+              <button
+                onClick={() => setPopupItem(null)}
+                aria-label="Close"
+                style={{
+                  position: 'absolute', top: 12, right: 12, width: 26, height: 26, borderRadius: '50%',
+                  border: 'none', background: T.bgLight, color: T.textLight, fontSize: 14,
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >✕</button>
+              <div style={{
+                width: 54, height: 54, borderRadius: 16, background: T.primaryLight,
+                border: `1px solid #b3f0cc`, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: T.primaryDark, fontSize: 24, marginBottom: 16,
+              }}>
+                <i className={popupItem.icon} aria-hidden="true" />
+              </div>
+              <h4 style={{ fontFamily: 'Playfair Display,serif', fontSize: 19, fontWeight: 800, color: T.text, marginBottom: 8 }}>{popupItem.label}</h4>
+              <p style={{ fontSize: 13, color: T.textLight, lineHeight: 1.7 }}>{popupItem.desc}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -717,8 +790,8 @@ function Hero() {
         </div>
 
         {/* RIGHT */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <HeroRight />
+        <div className="em-hero-right-wrap">
+          <ConceptWeb />
         </div>
       </div>
     </div>
@@ -887,17 +960,31 @@ export default function EmailMarketingPage() {
         body{font-family:'Poppins',sans-serif;background:#f8f9fa;color:#2a2a2a;line-height:1.6;font-size:14px;overflow-x:hidden;}
         #services,#work,#process,#faq{scroll-margin-top:90px;}
 
-        /* ── HeroRight responsive wrapper ── */
+        /* ── HeroRight responsive wrapper ──
+           Pure CSS scaling: the outer box is locked to a 700:600
+           aspect-ratio and capped with max-width per breakpoint below.
+           Every element inside ConceptWeb is positioned/sized with
+           percentages and container-query (cqw) units relative to that
+           box, so the whole diagram resizes automatically with zero
+           JavaScript measurement — it cannot clip or overlap at any
+           screen width, and there's no scale value to keep in sync. */
+        .em-hero-right-wrap {
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+        }
         .hero-right-outer {
+          position: relative;
           width: 100%;
-          max-width: 600px;
+          max-width: 700px;
+          aspect-ratio: 700 / 600;
           overflow: hidden;
+          container-type: inline-size;
+          margin-top: -18px; /* nudges the graphic up so it sits level with the headline, compensating for the ring's built-in top padding */
         }
         .hero-right-inner {
-          position: relative;
-          width: 600px;
-          height: 560px;
-          transform-origin: top left;
+          position: absolute;
+          inset: 0;
         }
 
         /* ── Stat cell base ── */
@@ -911,8 +998,10 @@ export default function EmailMarketingPage() {
         .stat-cell:last-child { border-right: none; }
 
         @keyframes glowPulseEM{0%,100%{opacity:0.55}50%{opacity:0.88}}
-        @keyframes spinRingEM{from{transform:rotateX(70deg) rotateZ(0deg)}to{transform:rotateX(70deg) rotateZ(360deg)}}
-        @keyframes spinRingEM2{from{transform:rotateX(50deg) rotateY(20deg) rotateZ(0deg)}to{transform:rotateX(50deg) rotateY(20deg) rotateZ(-360deg)}}
+        @keyframes spinRingEM{from{transform:rotateZ(0deg)}to{transform:rotateZ(360deg)}}
+        @keyframes letterSpinCard{0%{transform:rotateY(-110deg) scale(0.7);opacity:0;}55%{transform:rotateY(18deg) scale(1.05);opacity:1;}100%{transform:rotateY(0deg) scale(1);opacity:1;}}
+        @keyframes popBackdropIn{from{opacity:0}to{opacity:1}}
+        @keyframes popCardIn{0%{transform:scale(0.4) translateY(18px);opacity:0;}60%{transform:scale(1.06) translateY(-4px);opacity:1;}100%{transform:scale(1) translateY(0);opacity:1;}}
         @keyframes floatEnv{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
         @keyframes slideInLeftEM{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:translateX(0)}}
         @keyframes slideInRightEM{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
@@ -937,29 +1026,28 @@ export default function EmailMarketingPage() {
         .enq-select-wrap:focus-within .enq-select-chevron{color:#00a34d;transform:rotate(180deg);}
         .enq-select option{background:#0a140e;color:#fff;}
 
-        /* ══ LARGE DESKTOP (1280px+) ══ */
-        @media(min-width:1281px){
-          .hero-right-inner{transform:scale(1);}
-        }
-
         /* ══ 1100–1280px ══ */
         @media(max-width:1280px){
-          .hero-right-outer{max-width:520px;}
-          .hero-right-inner{transform:scale(calc(520/600));height:calc(560px * 520/600);}
+          .hero-right-outer{max-width:600px;}
           .em-hero-grid{padding:64px 40px 56px !important;gap:32px !important;}
         }
 
         /* ══ 1025–1100px ══ */
         @media(max-width:1100px){
-          .hero-right-outer{max-width:460px;}
-          .hero-right-inner{transform:scale(calc(460/600));height:calc(560px * 460/600);}
+          .hero-right-outer{max-width:530px;}
+        }
+
+        /* ══ LAPTOP (1025–1440px): nudge hero content upward ══ */
+        @media(min-width:1025px) and (max-width:1440px){
+          .em-hero-grid{padding:32px 56px 40px !important;align-items:flex-start !important;}
+          .hero-right-outer{margin-top:-30px;}
         }
 
         /* ══ TABLET (769–1024px): switch hero to single column ══ */
         @media(max-width:1024px){
           .em-hero-grid{grid-template-columns:1fr !important;padding:56px 32px 48px !important;gap:40px !important;}
-          .hero-right-outer{max-width:560px;margin:0 auto;}
-          .hero-right-inner{transform:scale(calc(560/600));height:calc(560px * 560/600);}
+          .em-hero-right-wrap{justify-content:center;}
+          .hero-right-outer{max-width:640px;margin:12px auto 0;}
           .em-stats-grid{grid-template-columns:repeat(2,1fr) !important;}
           .stat-cell{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);padding:32px 28px;}
           .stat-cell:nth-child(odd){border-right:1px solid rgba(255,255,255,0.06) !important;}
@@ -973,8 +1061,7 @@ export default function EmailMarketingPage() {
         /* ══ MOBILE (481–768px) ══ */
         @media(max-width:768px){
           .em-hero-grid{padding:40px 20px 36px !important;gap:28px !important;}
-          .hero-right-outer{max-width:400px;}
-          .hero-right-inner{transform:scale(calc(400/600));height:calc(560px * 400/600);}
+          .hero-right-outer{max-width:460px;margin:8px auto 0;}
           .em-services-grid{grid-template-columns:1fr !important;}
           .em-cases-grid{grid-template-columns:1fr !important;}
           .em-cta-inner{flex-direction:column !important;align-items:flex-start !important;}
@@ -986,26 +1073,13 @@ export default function EmailMarketingPage() {
 
         /* ══ SMALL MOBILE (≤480px) ══ */
         @media(max-width:480px){
-          .hero-right-outer{max-width:calc(100vw - 40px);}
-          .hero-right-inner{
-            transform:scale(calc((100vw - 40px)/600));
-            height:calc(560px * (100vw - 40px)/600);
-          }
+          .hero-right-outer{max-width:100%;margin:4px auto 0;}
           .em-stats-grid{grid-template-columns:1fr 1fr !important;}
           .stat-cell{padding:24px 16px !important;}
           .stat-cell:nth-child(odd){border-right:1px solid rgba(255,255,255,0.06) !important;}
           .em-process-grid{grid-template-columns:1fr !important;gap:32px !important;}
           .em-contact-grid{grid-template-columns:1fr !important;}
           .em-hero-grid{padding:32px 16px 28px !important;}
-        }
-
-        /* ══ VERY SMALL (≤360px) ══ */
-        @media(max-width:360px){
-          .hero-right-outer{max-width:calc(100vw - 32px);}
-          .hero-right-inner{
-            transform:scale(calc((100vw - 32px)/600));
-            height:calc(560px * (100vw - 32px)/600);
-          }
         }
 
         @media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}

@@ -142,263 +142,143 @@ function AnimatedBg() {
 }
 
 /* ══════════════════════════════════════════════════
-   SPEEDOMETER — rebuilt as a realistic automotive-style
-   performance gauge: brushed-metal bezel, glass highlight,
-   printed tick marks with numerals, a weighted two-tone
-   needle with a metal hub, and a small digital readout
-   strip underneath the dial (the way a real dashboard
-   pairs an analog gauge with a digital trip computer).
-
-   NEEDLE FIX: the needle polygon is now drawn pointing
-   straight UP from the hub (130,130) toward (130,32) in
-   its own local coordinate space — i.e. before rotation.
-   Because the rotation convention used by toRad()/ptOn()
-   treats 0deg as "up" (12 o'clock) and increases clockwise,
-   a needle that points up locally will land exactly on the
-   tick matching needleDeg once rotated. The old polygon ran
-   sideways (along the X axis) instead of up, so the visible
-   needle was ~90° off from the score it was meant to show.
+   SEO MAGNIFIER SCENE — replaces the old speedometer /
+   device dashboard hero graphic. Recreates the classic
+   "magnifying glass surrounded by orbiting service icons"
+   composition (search, mail, cloud, settings, ideas,
+   people, media, docs, calls, discovery) but restyled to
+   match this page's dark glass + brand-green language:
+   a brushed metal ring, a frosted glass lens with "SEO"
+   inside, a two-tone handle, dashed connector lines with
+   travelling data-dots, and floating glassmorphic icon
+   nodes in the same red / amber / green accent family
+   already used elsewhere on the page (danger red for the
+   404 chip, amber for warnings, green as the core brand).
 ══════════════════════════════════════════════════ */
-function Speedometer() {
-  const [score, setScore] = useState(0);
-  const [needleDeg, setNeedleDeg] = useState(-120);
-  const [phase, setPhase] = useState('spin');
-  const [glowPulse, setGlowPulse] = useState(false);
-  const TARGET = 93;
-  const START_DEG = -120;
-  const END_DEG = 120;
-  const TARGET_DEG = START_DEG + (TARGET / 100) * (END_DEG - START_DEG);
+const magnifierNodes = [
+  { angle: -90, r: 232, icon: 'ti ti-device-laptop', color: '#4ade80', big: true, float: 'chipFloat1' },
+  { angle: -54, r: 230, icon: 'ti ti-mail', color: '#4ade80', float: 'chipFloat2' },
+  { angle: -18, r: 232, icon: 'ti ti-settings', color: '#cbd5c9', float: 'chipFloat3' },
+  { angle: 18, r: 232, icon: 'ti ti-bulb', color: '#f59e0b', float: 'chipFloat1' },
+  { angle: 54, r: 230, icon: 'ti ti-world', color: '#86efac', float: 'chipFloat2' },
+  { angle: 90, r: 232, icon: 'ti ti-message-circle', color: '#4ade80', float: 'chipFloat3' },
+  { angle: 126, r: 230, icon: 'ti ti-user', color: '#cbd5c9', float: 'chipFloat1' },
+  { angle: 162, r: 232, icon: 'ti ti-player-play', color: '#f87171', float: 'chipFloat2' },
+  { angle: 198, r: 232, icon: 'ti ti-file-text', color: '#f59e0b', float: 'chipFloat3' },
+  { angle: 234, r: 230, icon: 'ti ti-phone', color: '#f87171', float: 'chipFloat1' },
+];
 
-  useEffect(() => {
-    const SPIN_DURATION = 950, SPIN_END_DEG = START_DEG + 360 * 1.4;
-    const t0 = performance.now() + 200;
-    const easeIn = t => t * t * t;
-    let raf;
-    const spinStep = now => {
-      const p = Math.min(Math.max((now - t0) / SPIN_DURATION, 0), 1);
-      const deg = START_DEG + easeIn(p) * (SPIN_END_DEG - START_DEG);
-      setNeedleDeg(deg);
-      if (p < 1) { raf = requestAnimationFrame(spinStep); } else {
-        setPhase('settle');
-        const t1 = performance.now();
-        const easeOut = t => 1 - Math.pow(-2 * t + 2, 3) / 8;
-        const startDeg = deg;
-        const settleStep = now2 => {
-          const p2 = Math.min((now2 - t1) / 1700, 1);
-          const e = easeOut(p2);
-          setNeedleDeg(startDeg + (TARGET_DEG - startDeg) * e);
-          setScore(Math.round(e * TARGET));
-          if (p2 < 1) raf = requestAnimationFrame(settleStep);
-          else { setGlowPulse(true); setTimeout(() => setGlowPulse(false), 650); }
-        };
-        raf = requestAnimationFrame(settleStep);
-      }
-    };
-    raf = requestAnimationFrame(spinStep);
-    return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const cx = 130, cy = 130, R = 102;
-  const toRad = d => (d - 90) * Math.PI / 180; // 0deg = top
-  const ptOn = (r, deg) => [cx + r * Math.cos(toRad(deg)), cy + r * Math.sin(toRad(deg))];
-  const arcPath = (r, d1, d2) => {
-    const [x1, y1] = ptOn(r, d1), [x2, y2] = ptOn(r, d2);
-    const large = d2 - d1 > 180 ? 1 : 0;
-    return `M${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2}`;
-  };
-  // colour zones across the 240° sweep (-120..120)
-  const zones = [
-    { from: -120, to: -64, color: '#dc2626' },
-    { from: -64, to: -8, color: '#f59e0b' },
-    { from: -8, to: 48, color: '#eab308' },
-    { from: 48, to: 120, color: '#22c55e' },
-  ];
-  const ticks = Array.from({ length: 13 }, (_, i) => START_DEG + (i / 12) * (END_DEG - START_DEG));
-  const innerR = 78;
-  const grade = score >= 90 ? 'A+' : score >= 80 ? 'A' : score >= 60 ? 'B' : score >= 40 ? 'C' : 'D';
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 264, flexShrink: 0 }}>
-      {/* outer brushed bezel */}
-      <div style={{
-        position: 'relative', width: 252, height: 252, borderRadius: '50%',
-        background: 'conic-gradient(from 0deg,#3a4a3f,#0e1410,#3a4a3f,#1a221c,#3a4a3f,#0e1410,#3a4a3f)',
-        boxShadow: glowPulse
-          ? '0 0 0 1px rgba(74,222,128,0.5),0 0 36px rgba(34,197,94,0.55),0 18px 36px rgba(0,0,0,0.5),inset 0 2px 4px rgba(255,255,255,0.18)'
-          : '0 0 0 1px rgba(34,197,94,0.18),0 18px 36px rgba(0,0,0,0.45),inset 0 2px 4px rgba(255,255,255,0.14)',
-        padding: 10, transition: 'box-shadow 0.4s ease',
-      }}>
-        {/* inner dark face */}
-        <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '50%', background: 'radial-gradient(circle at 38% 32%,#15201a 0%,#0a0f0c 62%,#060907 100%)', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.7), inset 0 -1px 2px rgba(255,255,255,0.05)', overflow: 'hidden' }}>
-          <svg width="100%" height="100%" viewBox="0 0 260 260" style={{ position: 'absolute', inset: 0 }}>
-            <defs>
-              <filter id="needleShadow"><feDropShadow dx="0" dy="1.5" stdDeviation="1.4" floodColor="#000" floodOpacity="0.55" /></filter>
-              <radialGradient id="hubGrad" cx="38%" cy="32%" r="70%"><stop offset="0%" stopColor="#e8f5ea" /><stop offset="55%" stopColor="#8fae97" /><stop offset="100%" stopColor="#34433a" /></radialGradient>
-              <linearGradient id="needleMain" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#ff5c4d" /><stop offset="100%" stopColor="#e23b2e" /></linearGradient>
-              <linearGradient id="needleCounter" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#8a9690" /><stop offset="100%" stopColor="#cfd8d2" /></linearGradient>
-            </defs>
-            {/* zones, centered properly at 130,130 */}
-            {zones.map((z, i) => {
-              const a = (d, r) => { const rad = (d - 90) * Math.PI / 180; return [130 + r * Math.cos(rad), 130 + r * Math.sin(rad)]; };
-              const [x1, y1] = a(z.from, 102), [x2, y2] = a(z.to, 102);
-              const large = z.to - z.from > 180 ? 1 : 0;
-              return <path key={`z${i}`} d={`M${x1},${y1} A102,102 0 ${large} 1 ${x2},${y2}`} fill="none" stroke={z.color} strokeWidth="9" strokeLinecap="butt" opacity="0.95" />;
-            })}
-            {/* fine recessed groove just inside the band */}
-            <circle cx="130" cy="130" r="90" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-            {/* tick marks + numerals (0–100 scale, but printed as plain ticks) */}
-            {ticks.map((deg, i) => {
-              const rad = (deg - 90) * Math.PI / 180;
-              const major = i % 3 === 0;
-              const r1 = major ? 90 : 93;
-              const r2 = 98;
-              const x1 = 130 + r1 * Math.cos(rad), y1 = 130 + r1 * Math.sin(rad);
-              const x2 = 130 + r2 * Math.cos(rad), y2 = 130 + r2 * Math.sin(rad);
-              const lx = 130 + 76 * Math.cos(rad), ly = 130 + 76 * Math.sin(rad);
-              return (
-                <g key={i}>
-                  <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(255,255,255,0.75)" strokeWidth={major ? 1.6 : 1} strokeLinecap="round" />
-                  {major && <text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize="8.5" fontFamily="JetBrains Mono, monospace" fontWeight="700" fill="rgba(255,255,255,0.55)">{Math.round(i * (100 / 12))}</text>}
-                </g>
-              );
-            })}
-            {/* PERFORMANCE legend, printed dial style */}
-            <text x="130" y="64" textAnchor="middle" fontSize="7" fontFamily="Poppins, sans-serif" fontWeight="700" letterSpacing="2.5" fill="rgba(187,247,208,0.55)">PERFORMANCE</text>
-
-            {/* inner recessed disc behind needle */}
-            <circle cx="130" cy="130" r={innerR} fill="rgba(0,0,0,0.25)" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-
-            {/* digital score readout, embedded in dial */}
-            <text x="130" y="139" textAnchor="middle" dominantBaseline="middle" fontFamily="'Playfair Display', serif" fontWeight="900" fontSize="40" fill={phase === 'spin' ? 'rgba(187,247,208,0.5)' : '#eafff1'} style={{ transition: 'fill 0.3s' }}>
-              {phase === 'spin' ? '–' : score}
-            </text>
-            <text x="130" y="163" textAnchor="middle" fontFamily="Poppins, sans-serif" fontSize="8.5" fontWeight="700" letterSpacing="1.5" fill="#4ade80">
-              {phase === 'spin' ? 'SCANNING' : `GRADE ${grade}`}
-            </text>
-
-            {/* needle group — points straight UP locally; rotation places the tip on the correct tick */}
-            <g style={{ transformOrigin: '130px 130px', transform: `rotate(${needleDeg}deg)`, transition: phase === 'spin' ? 'none' : 'transform 0.02s linear' }} filter="url(#needleShadow)">
-              {/* counterweight tail (short, points down/opposite the tip) */}
-              <polygon points="130,130 125,130 124,152 130,158 136,152 135,130" fill="url(#needleCounter)" />
-              {/* main pointer (long, tapered, points up toward the tip) */}
-              <polygon points="130,130 127,128 124,42 130,32 136,42 133,128" fill="url(#needleMain)" />
-            </g>
-
-            {/* hub */}
-            <circle cx="130" cy="130" r="11" fill="url(#hubGrad)" stroke="rgba(0,0,0,0.4)" strokeWidth="0.6" />
-            <circle cx="130" cy="130" r="4.5" fill="#1c2620" stroke="rgba(255,255,255,0.15)" strokeWidth="0.6" />
-
-            {glowPulse && <circle cx="130" cy="130" r={innerR + 6} fill="none" stroke="rgba(34,197,94,0.55)" strokeWidth="3" style={{ animation: 'burstRing 0.65s ease-out forwards' }} />}
-          </svg>
-          {/* glass highlight overlay */}
-          <div style={{ position: 'absolute', top: '4%', left: '10%', width: '55%', height: '38%', borderRadius: '50%', background: 'linear-gradient(135deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.02) 60%,transparent 100%)', pointerEvents: 'none', transform: 'rotate(-18deg)' }} />
-        </div>
-      </div>
-
-      {/* digital readout strip below the dial, like a trip computer */}
-      <div style={{ marginTop: 14, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, background: 'rgba(8,20,12,0.85)', border: '1px solid rgba(34,197,94,0.22)', borderRadius: 10, padding: '8px 12px', backdropFilter: 'blur(10px)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: phase === 'spin' ? '#fbbf24' : '#4ade80', animation: 'pulse 1.6s ease-in-out infinite' }} />
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.04em' }}>{phase === 'spin' ? 'RUNNING LIGHTHOUSE…' : 'PAGESPEED INSIGHTS'}</span>
-        </div>
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9.5, fontWeight: 700, color: phase === 'spin' ? 'rgba(255,255,255,0.4)' : '#4ade80' }}>{phase === 'spin' ? '···' : '0.9s LCP'}</span>
-      </div>
-    </div>
-  );
+function nodePos(angle, r, cx = 280, cy = 280) {
+  const rad = (angle * Math.PI) / 180;
+  return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
 }
 
-function SeoChip({ icon, label, sub, style, animClass, danger }) {
-  const [hov, setHov] = useState(false);
+function MagnifierConnectors({ cx = 280, cy = 280 }) {
   return (
-    <div className={animClass} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ position: 'absolute', display: 'flex', alignItems: 'center', gap: 10, background: hov ? 'rgba(8,20,12,0.97)' : 'rgba(8,20,12,0.90)', border: `1.5px solid ${hov ? 'rgba(34,197,94,0.6)' : 'rgba(34,197,94,0.22)'}`, borderRadius: 50, padding: '10px 18px 10px 10px', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', boxShadow: hov ? '0 0 24px rgba(34,197,94,0.3),0 8px 28px rgba(0,0,0,0.6)' : '0 4px 20px rgba(0,0,0,0.5)', cursor: 'default', transition: 'all 0.3s ease', transform: hov ? 'scale(1.06) translateY(-2px)' : 'scale(1)', zIndex: 8, whiteSpace: 'nowrap', ...style }}>
-      <div style={{ width: 32, height: 32, borderRadius: '50%', background: danger ? 'rgba(220,38,38,0.25)' : 'rgba(34,197,94,0.15)', border: `1.5px solid ${danger ? 'rgba(220,38,38,0.5)' : 'rgba(34,197,94,0.4)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 15, color: danger ? '#f87171' : '#4ade80' }}>
-        <i className={icon} aria-hidden="true" />
-      </div>
-      <div>
-        <div style={{ fontFamily: 'Poppins,sans-serif', fontSize: 12.5, fontWeight: 700, color: '#ffffff', lineHeight: 1.2 }}>{label}</div>
-        {sub && <div style={{ fontFamily: 'Poppins,sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.5)', marginTop: 1 }}>{sub}</div>}
-      </div>
-    </div>
-  );
-}
-
-function TrafficPill() {
-  const [val, setVal] = useState(14896);
-  useEffect(() => {
-    const id = setInterval(() => setVal(v => v + Math.floor(Math.random() * 35) + 5), 1600);
-    return () => clearInterval(id);
-  }, []);
-  return (
-    <div style={{ position: 'absolute', top: 90, left: 20, zIndex: 9, background: 'rgba(8,20,12,0.92)', border: '1.5px solid rgba(34,197,94,0.25)', borderRadius: 16, padding: '14px 18px', backdropFilter: 'blur(16px)', boxShadow: '0 6px 28px rgba(0,0,0,0.55)', animation: 'chipFloat2 5s ease-in-out infinite', minWidth: 160 }}>
-      <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.09em', fontWeight: 700, marginBottom: 5 }}>Organic Traffic</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 }}>
-        <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 20, fontWeight: 800, color: '#ffffff' }}>{val.toLocaleString()}</span>
-        <span style={{ fontSize: 10, color: '#4ade80', fontWeight: 700 }}>↑312%</span>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 28 }}>
-        {[30, 44, 36, 58, 48, 70, 82, 95].map((h, i) => (
-          <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: i === 7 ? '#22c55e' : `rgba(74,222,128,${0.12 + i * 0.1})` }} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function RankBadge() {
-  const [rank, setRank] = useState(47);
-  const [flash, setFlash] = useState(false);
-  useEffect(() => {
-    if (rank <= 1) return;
-    const delay = rank > 20 ? 85 : rank > 5 ? 160 : 380;
-    const t = setTimeout(() => { setRank(r => r - 1); setFlash(true); setTimeout(() => setFlash(false), 120); }, delay);
-    return () => clearTimeout(t);
-  }, [rank]);
-  return (
-    <div style={{ position: 'absolute', bottom: 30, right: 68, zIndex: 10, width: 72, height: 72, borderRadius: '50%', background: rank === 1 ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'rgba(8,20,12,0.92)', border: `2.5px solid ${rank === 1 ? '#4ade80' : 'rgba(34,197,94,0.45)'}`, boxShadow: rank === 1 ? '0 0 28px rgba(34,197,94,0.7),0 0 8px rgba(34,197,94,0.4)' : '0 4px 20px rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, backdropFilter: 'blur(12px)', transition: 'all 0.5s ease', animation: 'chipFloat3 5.5s ease-in-out infinite' }}>
-      <div style={{ fontFamily: 'Poppins,sans-serif', fontSize: rank > 9 ? 16 : 20, fontWeight: 900, lineHeight: 1, color: rank === 1 ? '#fff' : (flash ? '#4ade80' : '#22c55e'), transition: 'color 0.1s' }}>#{rank}</div>
-      <div style={{ fontSize: 7, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: rank === 1 ? 'rgba(255,255,255,0.9)' : 'rgba(74,222,128,0.85)' }}>{rank === 1 ? 'TOP!' : 'Rank'}</div>
-    </div>
-  );
-}
-
-function WebLines() {
-  const cx = 450, cy = 385;
-  const pts = [[200, 72], [400, 52], [100, 200], [115, 295], [100, 415], [390, 490]];
-  return (
-    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }} viewBox="0 0 560 540" preserveAspectRatio="none">
-      {pts.map(([x, y], i) => (<line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(34,197,94,0.18)" strokeWidth="1" strokeDasharray="5 4" style={{ animation: `dashFlow 2s linear infinite`, animationDelay: `${i * 0.3}s` }} />))}
-      {[[0, 1], [1, 5], [5, 4], [4, 2], [2, 3], [3, 0], [0, 5], [1, 4]].map(([a, b], i) => (<line key={`x${i}`} x1={pts[a][0]} y1={pts[a][1]} x2={pts[b][0]} y2={pts[b][1]} stroke="rgba(34,197,94,0.07)" strokeWidth="0.8" strokeDasharray="4 5" />))}
-      {pts.map(([x, y], i) => (<circle key={`d${i}`} r="2.5" fill="#22c55e" opacity="0.55"><animateMotion dur={`${2.2 + i * 0.25}s`} repeatCount="indefinite" path={`M${cx},${cy} L${x},${y}`} /></circle>))}
-      {pts.map(([x, y], i) => (<circle key={`id${i}`} cx={x} cy={y} r="3.5" fill="rgba(34,197,94,0.25)" stroke="rgba(34,197,94,0.5)" strokeWidth="1" />))}
-      <circle cx={cx} cy={cy} r="5" fill="rgba(34,197,94,0.3)" stroke="rgba(34,197,94,0.6)" strokeWidth="1.5" />
+    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }} viewBox="0 0 560 560" preserveAspectRatio="none">
+      {magnifierNodes.map((n, i) => {
+        const [x, y] = nodePos(n.angle, n.r, cx, cy);
+        return <line key={`l${i}`} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(34,197,94,0.18)" strokeWidth="1" strokeDasharray="5 4" style={{ animation: 'dashFlow 2s linear infinite', animationDelay: `${i * 0.25}s` }} />;
+      })}
+      {magnifierNodes.map((n, i) => {
+        const [x, y] = nodePos(n.angle, n.r, cx, cy);
+        return (
+          <circle key={`d${i}`} r="2.5" fill="#22c55e" opacity="0.6">
+            <animateMotion dur={`${2.4 + i * 0.22}s`} repeatCount="indefinite" path={`M${cx},${cy} L${x},${y}`} />
+          </circle>
+        );
+      })}
+      <circle cx={cx} cy={cy} r="118" fill="none" stroke="rgba(34,197,94,0.12)" strokeWidth="1" strokeDasharray="2 6" />
     </svg>
   );
 }
 
-// KEY FIX: useSceneScale with baseWidth=560 means the scene scales
-// proportionally on any container width — laptop gets 1:1, mobile gets ~0.6x etc.
-function SeoDeviceScene() {
+function MagnifierGlass({ cx = 280, cy = 280 }) {
+  const lensR = 100;
+  const ringW = 15;
+  const handleAngle = 45;
+  const [hx1, hy1] = nodePos(handleAngle, lensR + ringW / 2, cx, cy);
+  const [hx2, hy2] = nodePos(handleAngle, lensR + 96, cx, cy);
+  return (
+    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 5 }} viewBox="0 0 560 560">
+      <defs>
+        <radialGradient id="lensGrad" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stopColor="#16261c" />
+          <stop offset="55%" stopColor="#0b1510" />
+          <stop offset="100%" stopColor="#060b08" />
+        </radialGradient>
+        <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#4ade80" />
+          <stop offset="45%" stopColor="#166534" />
+          <stop offset="100%" stopColor="#0a1a10" />
+        </linearGradient>
+        <linearGradient id="handleGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#22c55e" />
+          <stop offset="100%" stopColor="#0a1a10" />
+        </linearGradient>
+        <filter id="lensShadow"><feDropShadow dx="0" dy="10" stdDeviation="18" floodColor="#000" floodOpacity="0.5" /></filter>
+      </defs>
+
+      {/* handle */}
+      <line x1={hx1} y1={hy1} x2={hx2} y2={hy2} stroke="url(#handleGrad)" strokeWidth="30" strokeLinecap="round" filter="url(#lensShadow)" />
+      <circle cx={hx2} cy={hy2} r="15" fill="#4ade80" opacity="0.9" />
+
+      {/* lens */}
+      <g filter="url(#lensShadow)">
+        <circle cx={cx} cy={cy} r={lensR + ringW} fill="url(#ringGrad)" />
+        <circle cx={cx} cy={cy} r={lensR} fill="url(#lensGrad)" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+      </g>
+
+      {/* glass highlight */}
+      <ellipse cx={cx - 34} cy={cy - 40} rx="46" ry="26" fill="rgba(255,255,255,0.07)" transform={`rotate(-25 ${cx - 34} ${cy - 40})`} />
+
+      {/* SEO wordmark */}
+      <text x={cx} y={cy + 3} textAnchor="middle" dominantBaseline="middle" fontFamily="'Playfair Display', serif" fontWeight="900" fontSize="34" letterSpacing="2" fill="#eafff1">SEO</text>
+      <text x={cx} y={cy + 28} textAnchor="middle" fontFamily="Poppins, sans-serif" fontWeight="700" fontSize="8" letterSpacing="3" fill="#4ade80">RANK ENGINE</text>
+    </svg>
+  );
+}
+
+function MagnifierIconNode({ node }) {
+  const [x, y] = nodePos(node.angle, node.r);
+  const [hov, setHov] = useState(false);
+  const size = node.big ? 62 : 50;
+  return (
+    <div
+      className={node.float}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        position: 'absolute',
+        left: x, top: y,
+        transform: `translate(-50%,-50%) scale(${hov ? 1.1 : 1})`,
+        width: size, height: size, borderRadius: '50%',
+        background: hov ? 'rgba(8,20,12,0.97)' : 'rgba(8,20,12,0.9)',
+        border: `1.5px solid ${hov ? node.color : 'rgba(34,197,94,0.22)'}`,
+        boxShadow: hov ? `0 0 22px ${node.color}55, 0 10px 26px rgba(0,0,0,0.55)` : '0 6px 20px rgba(0,0,0,0.5)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
+        zIndex: 6, cursor: 'default',
+      }}
+    >
+      <i className={node.icon} aria-hidden="true" style={{ fontSize: node.big ? 24 : 19, color: node.color }} />
+    </div>
+  );
+}
+
+function SeoMagnifierScene() {
   const { ref: wrapRef, scale } = useSceneScale(560);
   const { ref: tiltRef, tilt } = useParallax(3);
   return (
     <div ref={wrapRef} style={{ width: '100%', maxWidth: 560 }}>
       <div style={{ width: '100%', height: 540 * scale, overflow: 'hidden', position: 'relative' }}>
         <div ref={tiltRef} style={{ width: 560, height: 540, transformOrigin: 'top left', transform: `scale(${scale}) perspective(1400px) rotateX(${-tilt.y * 0.12}deg) rotateY(${tilt.x * 0.12}deg)`, transition: 'transform 0.25s ease-out', position: 'relative' }}>
-          <div style={{ position: 'absolute', top: '20%', left: '30%', width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle,rgba(34,197,94,0.13) 0%,rgba(34,197,94,0.05) 50%,transparent 75%)', filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0, animation: 'sceneGlow 4s ease-in-out infinite' }} />
-          <div style={{ position: 'absolute', top: '50%', right: '10%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(74,222,128,0.1) 0%,transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none', zIndex: 0, animation: 'sceneGlow2 5.5s ease-in-out infinite 1.5s' }} />
-          <WebLines />
-          <SeoChip icon="ti ti-devices" label="SEO Scanner" sub="Automated scans" animClass="chipFloat1" style={{ top: 48, left: 140 }} />
-          <SeoChip icon="ti ti-sitemap" label="HTML Site Map" sub="Auto-generated" animClass="chipFloat2" style={{ top: 28, right: 60 }} />
-          <TrafficPill />
-          <SeoChip icon="ti ti-alert-square" label="404 Error" sub="Detection & fix" animClass="chipFloat3" danger style={{ top: 272, left: 22 }} />
-          <SeoChip icon="ti ti-shield-check" label="Site Verification" sub="Google & Bing" animClass="chipFloat1" style={{ top: 400, left: 18 }} />
-          <SeoChip icon="ti ti-search" label="Search Appearance" sub="SERP preview" animClass="chipFloat2" style={{ bottom: 20, left: '38%' }} />
-          <div style={{ position: 'absolute', bottom: 170, right: 50, zIndex: 6, animation: 'chipFloat3 6s ease-in-out infinite' }}>
-            <Speedometer />
-          </div>
-          <RankBadge />
+          <div style={{ position: 'absolute', top: '14%', left: '26%', width: 380, height: 380, borderRadius: '50%', background: 'radial-gradient(circle,rgba(34,197,94,0.14) 0%,rgba(34,197,94,0.05) 50%,transparent 75%)', filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0, animation: 'sceneGlow 4s ease-in-out infinite' }} />
+          <div style={{ position: 'absolute', top: '48%', right: '6%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(74,222,128,0.1) 0%,transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none', zIndex: 0, animation: 'sceneGlow2 5.5s ease-in-out infinite 1.5s' }} />
+          <MagnifierConnectors />
+          {magnifierNodes.map((n, i) => <MagnifierIconNode key={i} node={n} />)}
+          <MagnifierGlass />
         </div>
       </div>
     </div>
@@ -658,15 +538,14 @@ export default function SeoPage() {
         @keyframes floatIcon{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
         @keyframes dashFlow{to{stroke-dashoffset:-18}}
-        @keyframes chipFloat1{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-        @keyframes chipFloat2{0%,100%{transform:translateY(0) rotate(-0.4deg)}50%{transform:translateY(-9px) rotate(0.4deg)}}
-        @keyframes chipFloat3{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+        @keyframes chipFloat1{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-7px)}}
+        @keyframes chipFloat2{0%,100%{transform:translate(-50%,-50%) translateY(0) rotate(-0.4deg)}50%{transform:translate(-50%,-50%) translateY(-9px) rotate(0.4deg)}}
+        @keyframes chipFloat3{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-5px)}}
         .chipFloat1{animation:chipFloat1 4.4s ease-in-out infinite;}
         .chipFloat2{animation:chipFloat2 5.2s ease-in-out infinite 0.6s;}
         .chipFloat3{animation:chipFloat3 4.8s ease-in-out infinite 1.1s;}
         @keyframes sceneGlow{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
         @keyframes sceneGlow2{0%,100%{opacity:0.4;transform:scale(1) translateY(0)}50%{opacity:0.9;transform:scale(1.12) translateY(-10px)}}
-        @keyframes burstRing{0%{r:78;opacity:0.8;stroke-width:4}100%{r:118;opacity:0;stroke-width:1}}
         .seo-reveal{animation:fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both;}
         .section-pad{padding:88px 64px;}
         .eyebrow{display:inline-block;background:#f0fdf4;color:#15803d;font-size:11px;font-weight:600;padding:5px 16px;border-radius:30px;margin-bottom:12px;letter-spacing:0.07em;text-transform:uppercase;border:1px solid #bbf7d0;}
@@ -830,9 +709,9 @@ export default function SeoPage() {
               </div>
             </div>
 
-            {/* ✅ Scene always shown — auto-scales via useSceneScale hook */}
+            {/* ✅ Scene always shown — new magnifying-glass composition, auto-scales via useSceneScale hook */}
             <div className="hero-right">
-              <SeoDeviceScene />
+              <SeoMagnifierScene />
             </div>
           </div>
         </div>

@@ -1,10 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  Users, Newspaper, Mic, Video, Camera, PenLine, Mail, Lightbulb,
+  Sparkles, Share2, Play, Pause,
+} from 'lucide-react';
 
 const T = {
   primary:      '#00a34d',
   primaryDark:  '#008040',
   primaryLight: '#e6f7ee',
   secondary:    '#ffffff',
+  ink:          '#1f2a22',
+  paper:        '#fdfdfb',
+  paperLine:    'rgba(0,0,0,0.05)',
   text:         '#2a2a2a',
   textLight:    '#6c757d',
   textLighter:  '#a0a8b0',
@@ -12,6 +19,332 @@ const T = {
   bgLight:      '#f8f9fa',
 };
 
+/* ════════════════════════════════════════════════════════════
+   FLIPBOOK — hero-right visual. Every page carries a real photo
+   background (Unsplash), including the closing "merge" page.
+════════════════════════════════════════════════════════════ */
+const PAGES = [
+    {
+    key: 'merge',
+    kind: 'merge',
+    icon: Share2,
+    label: 'It All Connects',
+    tag: 'The System',
+    desc: 'Eight formats. One system. Each piece feeds the next, compounding into an audience that grows a little more with every single publish.',
+    color: '#008040',
+    anim: 'anim-pulse',
+    img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=80&auto=format',
+  },
+  {
+    key: 'cover',
+    kind: 'cover',
+    icon: Sparkles,
+    eyebrow: 'A NOTEBOOK GUIDE',
+    title: 'Content\nMarketing',
+    desc: 'One strategy, eight formats. Every piece of content is built to earn attention, build trust, and drive a real business outcome — turn the page to see how each one works.',
+    color: '#008040',
+    anim: 'anim-pulse',
+    img: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=900&q=80&auto=format',
+  },
+  {
+    key: 'audience',
+    kind: 'node',
+    icon: Users,
+    label: 'Audience',
+    tag: '01 · Foundation',
+    desc: 'Before a single word is written, we map exactly who you\u2019re talking to — their questions, objections, and buying triggers. Every format below starts from this map, not a guess.',
+    color: '#0f5132',
+    anim: 'anim-bob',
+    img: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80&auto=format',
+  },
+  {
+    key: 'news',
+    kind: 'node',
+    icon: Newspaper,
+    label: 'News',
+    tag: '02 · Timeliness',
+    desc: 'Newsjacking and real-time commentary place your brand inside conversations that are already happening, riding the search and social spikes right as they peak.',
+    color: T.primary,
+    anim: 'anim-tilt',
+    img: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=900&q=80&auto=format',
+  },
+  {
+    key: 'podcasts',
+    kind: 'node',
+    icon: Mic,
+    label: 'Podcasts',
+    tag: '03 · Authority',
+    desc: 'Long-form audio builds trust in a way text never can. Interviews and narrative episodes turn casual listeners into a loyal, returning audience.',
+    color: '#33c972',
+    anim: 'anim-wiggle',
+    img: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=900&q=80&auto=format',
+  },
+  {
+    key: 'video',
+    kind: 'node',
+    icon: Video,
+    label: 'Video',
+    tag: '04 · Attention',
+    desc: 'Explainers, demos, and brand stories stop the scroll and hold attention longer than any other format — turning curiosity into conversion.',
+    color: '#0f5132',
+    anim: 'anim-pop',
+    img: 'https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=900&q=80&auto=format',
+  },
+  {
+    key: 'photos',
+    kind: 'node',
+    icon: Camera,
+    label: 'Photos',
+    tag: '05 · Clarity',
+    desc: 'Infographics and branded visuals turn complex data into a story that\u2019s easy to share — the kind that earns backlinks instead of a scroll-past.',
+    color: T.primary,
+    anim: 'anim-float',
+    img: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=900&q=80&auto=format',
+  },
+  {
+    key: 'blogs',
+    kind: 'node',
+    icon: PenLine,
+    label: 'Blogs',
+    tag: '06 · Compounding',
+    desc: 'SEO-driven articles keep working long after they\u2019re published, capturing search intent and turning organic traffic into a channel that pays you back monthly.',
+    color: '#0f5132',
+    anim: 'anim-write',
+    img: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=900&q=80&auto=format',
+  },
+  {
+    key: 'newsletters',
+    kind: 'node',
+    icon: Mail,
+    label: 'Newsletters',
+    tag: '07 · Relationship',
+    desc: 'A direct line into the inbox, no algorithm in between. Newsletters turn one-time readers into a recurring, first-party relationship.',
+    color: '#33c972',
+    anim: 'anim-swing',
+    img: 'https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=900&q=80&auto=format',
+  },
+  {
+    key: 'strategy',
+    kind: 'node',
+    icon: Lightbulb,
+    label: 'Strategy',
+    tag: '08 · The Plan',
+    desc: 'The plan that ties every format to a buyer stage, a keyword, and a goal. Nothing gets published without a specific job to do.',
+    color: '#008040',
+    anim: 'anim-glow',
+    img: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80&auto=format',
+  },
+
+];
+
+const MERGE_NODES = [
+  { key: 'audience', icon: Users, label: 'Audience', x: 26, y: 22, color: '#0f5132' },
+  { key: 'news', icon: Newspaper, label: 'News', x: 55, y: 15, color: T.primary },
+  { key: 'podcasts', icon: Mic, label: 'Podcasts', x: 82, y: 25, color: '#33c972' },
+  { key: 'video', icon: Video, label: 'Video', x: 87, y: 55, color: '#0f5132' },
+  { key: 'photos', icon: Camera, label: 'Photos', x: 78, y: 82, color: T.primary },
+  { key: 'blogs', icon: PenLine, label: 'Blogs', x: 50, y: 90, color: '#0f5132' },
+  { key: 'newsletters', icon: Mail, label: 'Newsletters', x: 20, y: 78, color: '#33c972' },
+  { key: 'strategy', icon: Lightbulb, label: 'Strategy', x: 13, y: 48, color: '#008040' },
+];
+
+function IconMedallion({ Icon, color, anim, size = 88 }) {
+  return (
+    <div
+      className={`cf-medallion ${anim}`}
+      style={{ width: size, height: size, background: `linear-gradient(150deg, ${color}, ${color}dd)` }}
+    >
+      <Icon size={size * 0.42} strokeWidth={1.8} color="#fff" />
+    </div>
+  );
+}
+
+function MergePage({ active }) {
+  const center = { x: 50, y: 50 };
+  return (
+    <div className="cf-merge-wrap">
+      <svg className="cf-merge-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <marker id="cfArrow" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#7CFCB0" />
+          </marker>
+        </defs>
+        {MERGE_NODES.map((n, i) => {
+          const dx = center.x - n.x, dy = center.y - n.y;
+          const len = Math.sqrt(dx * dx + dy * dy);
+          const ux = dx / len, uy = dy / len;
+          const sx = n.x + ux * 8, sy = n.y + uy * 8;
+          const ex = center.x - ux * 14, ey = center.y - uy * 14;
+          return (
+            <path
+              key={n.key}
+              d={`M${sx},${sy} L${ex},${ey}`}
+              className={active ? 'cf-merge-line cf-merge-line-active' : 'cf-merge-line'}
+              style={{ animationDelay: `${i * 90 + 200}ms` }}
+              stroke="#7CFCB0" strokeWidth="0.5" strokeDasharray="2 2" fill="none"
+              markerEnd="url(#cfArrow)"
+            />
+          );
+        })}
+      </svg>
+
+      <div className="cf-merge-center" style={{ left: `${center.x}%`, top: `${center.y}%` }}>
+        <Share2 size={20} color="#fff" />
+      </div>
+
+      {MERGE_NODES.map((n, i) => (
+        <div
+          key={n.key}
+          className={active ? 'cf-merge-node cf-merge-node-active' : 'cf-merge-node'}
+          style={{ left: `${n.x}%`, top: `${n.y}%`, animationDelay: `${i * 90}ms` }}
+        >
+          <div className="cf-merge-node-icon" style={{ background: n.color }}>
+            <n.icon size={15} color="#fff" />
+          </div>
+          <span className="cf-merge-node-label">{n.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* every page (cover / node / merge) now sits on top of a real photo */
+function PageContent({ page, index, total, active }) {
+  const Icon = page.icon;
+
+  if (page.kind === 'merge') {
+    return (
+      <div className="cf-page-inner cf-page-merge">
+        <img className="cf-page-photo" src={page.img} alt="" aria-hidden="true" />
+        <div className="cf-page-overlay cf-page-overlay-strong" />
+        <div className="cf-page-content">
+          <div className="cf-page-tag cf-page-tag-photo">{page.tag}</div>
+          <MergePage active={active} />
+          <h3 className="cf-page-title cf-page-title-photo">{page.label}</h3>
+          <p className="cf-page-desc cf-page-desc-photo">{page.desc}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (page.kind === 'cover') {
+    return (
+      <div className="cf-page-inner cf-page-cover">
+        <img className="cf-page-photo" src={page.img} alt="" aria-hidden="true" />
+        <div className="cf-page-overlay cf-page-overlay-strong" />
+        <div className="cf-page-content">
+          <div className="cf-page-eyebrow cf-page-eyebrow-photo">{page.eyebrow}</div>
+          <IconMedallion Icon={Icon} color={page.color} anim={active ? page.anim : ''} size={92} />
+          <h1 className="cf-cover-title cf-page-title-photo">
+            {page.title.split('\n').map((l, i) => <span key={i}>{l}<br /></span>)}
+          </h1>
+          <p className="cf-page-desc cf-page-desc-photo" style={{ maxWidth: 340 }}>{page.desc}</p>
+          <div className="cf-page-hint">Tap the arrows or dots to turn the page →</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cf-page-inner cf-page-node">
+      <img className="cf-page-photo" src={page.img} alt="" aria-hidden="true" />
+      <div className="cf-page-overlay" />
+      <div className="cf-page-content">
+        <div className="cf-page-tag cf-page-tag-photo">{page.tag}</div>
+        <IconMedallion Icon={Icon} color={page.color} anim={active ? page.anim : ''} />
+        <h3 className="cf-page-title cf-page-title-photo">{page.label}</h3>
+        <p className="cf-page-desc cf-page-desc-photo">{page.desc}</p>
+        <div className="cf-page-count">{String(index).padStart(2, '0')} / {String(total - 1).padStart(2, '0')}</div>
+      </div>
+    </div>
+  );
+}
+
+function HeroFlipbook() {
+  const [index, setIndex] = useState(0);
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const [phase, setPhase] = useState('idle');
+  const [dir, setDir] = useState('next');
+  const [isPlaying, setIsPlaying] = useState(true);
+  const timeoutsRef = useRef([]);
+  const intervalRef = useRef(null);
+  const total = PAGES.length;
+
+  const clearTimers = () => { 
+    timeoutsRef.current.forEach(clearTimeout); 
+    timeoutsRef.current = []; 
+  };
+
+  const goTo = useCallback((newIndex, direction) => {
+    if (phase !== 'idle') return;
+    clearTimers();
+    setDir(direction);
+    setPhase('out');
+    const t1 = setTimeout(() => {
+      setDisplayIndex(newIndex);
+      setIndex(newIndex);
+      setPhase('in');
+      const t2 = setTimeout(() => setPhase('idle'), 340);
+      timeoutsRef.current.push(t2);
+    }, 300);
+    timeoutsRef.current.push(t1);
+  }, [phase]);
+
+  const next = useCallback(() => goTo((index + 1) % total, 'next'), [index, goTo, total]);
+
+  // Auto-flip functionality
+  useEffect(() => {
+    if (isPlaying) {
+      intervalRef.current = setInterval(() => {
+        next();
+      }, 4000); // Flip every 4 seconds
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isPlaying, next]);
+
+  useEffect(() => () => clearTimers(), []);
+
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const page = PAGES[displayIndex];
+  const animClass = phase === 'out'
+    ? (dir === 'next' ? 'cf-flip-out-next' : 'cf-flip-out-prev')
+    : phase === 'in'
+      ? (dir === 'next' ? 'cf-flip-in-next' : 'cf-flip-in-prev')
+      : '';
+
+  return (
+    <div className="cf-root">
+      <div className="cf-book-wrap">
+        <div className="cf-book">
+          <div className="cf-spiral" aria-hidden="true">
+            {Array.from({ length: 12 }).map((_, i) => <span key={i} />)}
+          </div>
+          <div key={displayIndex + phase} className={`cf-page-shell ${animClass}`}>
+            <PageContent page={page} index={displayIndex} total={total} active={phase !== 'out'} />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════
+   PAGE DATA — services / process / faq / case studies
+════════════════════════════════════════════════════════════ */
 const cmServices = [
   { icon: 'ti ti-pencil', accent: 'dark', tag: '01', title: 'Blog Writing & SEO Content', subtitle: 'Rank. Be Read. Convert.', desc: 'Long-form articles, pillar pages, and cluster content engineered for search intent — written by humans who understand your industry, not just your keywords.', features: ['Keyword research', 'Pillar & cluster content', 'On-page SEO', 'Internal linking strategy'], cta: 'Start Ranking' },
   { icon: 'ti ti-video', accent: 'mid', tag: '02', title: 'Video Content Production', subtitle: 'Stories That Stop Thumbs', desc: 'Explainer videos, brand documentaries, testimonials, and product demos — scripted, shot, and edited to move people from curious to convinced.', features: ['Script & storyboard', 'Full production', 'Motion graphics', 'YouTube optimisation'], cta: 'Start Filming' },
@@ -110,17 +443,6 @@ function useParallax(strength = 14) {
   return { ref, tilt };
 }
 
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-  return isMobile;
-}
-
 /* ── ANIMATED BG ── */
 function AnimatedBg() {
   const canvasRef = useRef(null);
@@ -170,294 +492,6 @@ function AnimatedBg() {
     return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', onResize); };
   }, []);
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} />;
-}
-
-/* ── MOBILE HERO VISUAL — replaces the 600px fixed canvas on mobile ── */
-function MobileHeroVisual() {
-  const [visitors, setVisitors] = useState(31240);
-  const [activeCard, setActiveCard] = useState(0);
-  const contentCards = [
-    { label: 'Blog Post Published', sub: '12K reads in 24h', icon: 'ti ti-pencil', color: '#00a34d' },
-    { label: 'Podcast Episode Live', sub: '4.8K listens in 24h', icon: 'ti ti-microphone', color: '#7c3aed' },
-    { label: 'Infographic Shared', sub: '180 backlinks this week', icon: 'ti ti-chart-pie', color: '#0891b2' },
-    { label: 'Video Published', sub: '92K views — #1 Search', icon: 'ti ti-video', color: '#dc2626' },
-  ];
-  useEffect(() => {
-    const id = setInterval(() => setVisitors(v => v + Math.floor(Math.random() * 16 + 3)), 1800);
-    return () => clearInterval(id);
-  }, []);
-  useEffect(() => {
-    const id = setInterval(() => setActiveCard(v => (v + 1) % contentCards.length), 3000);
-    return () => clearInterval(id);
-  }, []);
-
-  return (
-    <div style={{ width: '100%', padding: '0 4px' }}>
-      {/* Top stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-        {[
-          { label: 'Organic Traffic', value: '+310%', sub: '▲ 6 months' },
-          { label: 'Content Pieces', value: '1,200+', sub: '▲ published' },
-          { label: 'Avg. Read Time', value: '4.8m', sub: '▲ engagement' },
-          { label: 'Backlinks', value: '+180', sub: '▲ this month' },
-        ].map((s, i) => (
-          <div key={i} style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 12, padding: '12px 14px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }}>
-            <div style={{ fontSize: 9, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 2 }}>{s.label}</div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: T.primary, lineHeight: 1.1 }}>{s.value}</div>
-            <div style={{ fontSize: 9, color: T.primary, fontWeight: 700, marginTop: 1 }}>{s.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Cycling notification + Live counter row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-        {/* Notification card */}
-        <div style={{ position: 'relative', height: 76 }}>
-          {contentCards.map((c, i) => (
-            <div key={i} style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.97)', border: `1px solid ${c.color}33`, borderRadius: 12, padding: '10px 12px', boxShadow: '0 2px 10px rgba(0,0,0,0.08)', opacity: activeCard === i ? 1 : 0, transform: activeCard === i ? 'translateY(-2px)' : 'translateY(6px)', transition: 'opacity 0.5s ease, transform 0.5s ease' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <div style={{ width: 20, height: 20, borderRadius: 5, background: c.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <i className={c.icon} style={{ fontSize: 10, color: '#fff' }} />
-                </div>
-                <div style={{ fontSize: 9.5, fontWeight: 700, color: T.text, lineHeight: 1.2 }}>{c.label}</div>
-              </div>
-              <div style={{ fontSize: 9, color: T.textLight, lineHeight: 1.4 }}>{c.sub}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Live counter */}
-        <div style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(0,163,77,0.2)', borderRadius: 12, padding: '10px 12px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2 }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#33c972', animation: 'pulseDotCM 1.8s ease-in-out infinite', display: 'inline-block' }} />
-            <span style={{ fontSize: 9, fontWeight: 700, color: T.primary }}>Live Readers</span>
-          </div>
-          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 20, fontWeight: 700, color: T.text }}>{visitors.toLocaleString()}</div>
-          <div style={{ fontSize: 9, color: T.textLighter, marginTop: 2 }}>avg. time <span style={{ color: T.primary, fontWeight: 700 }}>4.8m</span></div>
-        </div>
-      </div>
-
-      {/* Bottom metric cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-        <div style={{ background: 'rgba(8,18,11,0.95)', border: '1px solid rgba(0,163,77,0.26)', borderRadius: 12, padding: '12px 10px', boxShadow: '0 4px 16px rgba(0,0,0,0.24)' }}>
-          <div style={{ fontSize: 8, fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#33c972', display: 'inline-block' }} /> SEO
-          </div>
-          <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', lineHeight: 1 }}>Page #1</div>
-          <div style={{ fontSize: 8, color: '#33c972', fontWeight: 700, marginTop: 2 }}>↑ 14 keywords</div>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 18, marginTop: 6 }}>
-            {[30,42,38,55,48,100].map((h,i) => (
-              <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: i===5 ? 'linear-gradient(180deg,#33c972,#00a34d)' : 'rgba(0,163,77,0.25)' }} />
-            ))}
-          </div>
-        </div>
-        <div style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(0,163,77,0.2)', borderRadius: 12, padding: '12px 10px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }}>
-          <div style={{ fontSize: 8, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 4 }}>Audience</div>
-          <div style={{ fontSize: 16, fontWeight: 800, color: T.primary, lineHeight: 1 }}>+48K</div>
-          <div style={{ fontSize: 8, color: T.textLighter, marginTop: 1 }}>podcast listeners</div>
-          <div style={{ margin: '6px 0', height: 3, background: T.border, borderRadius: 99, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: '78%', background: 'linear-gradient(90deg,#00a34d,#33c972)', borderRadius: 99 }} />
-          </div>
-          <div style={{ fontSize: 8, color: T.textLighter }}>DR: <span style={{ color: T.primary, fontWeight: 700 }}>↑22pts</span></div>
-        </div>
-        <div style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(0,163,77,0.2)', borderRadius: 12, padding: '12px 10px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }}>
-          <div style={{ fontSize: 8, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 4 }}>Output</div>
-          <div style={{ fontSize: 16, fontWeight: 800, color: '#005c24', lineHeight: 1 }}>1,200+</div>
-          <div style={{ fontSize: 8, color: T.textLighter, marginTop: 1 }}>pieces live</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginTop: 6 }}>
-            {['300+ Clients','48h Delivery'].map(b => (
-              <span key={b} style={{ fontSize: 8, background: T.primaryLight, color: T.primaryDark, borderRadius: 5, padding: '2px 6px', fontWeight: 700, border: '1px solid #b3f0cc', textAlign: 'center' }}>{b}</span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ── FLOATING ICON ── */
-function FloatingIcon({ icon, bg, size = 44, style, delay = '0s', dir = 1 }) {
-  return (
-    <div style={{ width: size, height: size, borderRadius: '50%', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.18)', zIndex: 5, animation: `${dir > 0 ? 'floatUpCM' : 'floatDnCM'} 3.8s ease-in-out infinite ${delay}`, ...style }}>
-      <i className={icon} style={{ fontSize: size * 0.46, color: '#fff' }} aria-hidden="true" />
-    </div>
-  );
-}
-
-/* ── HERO RIGHT (desktop) ── */
-function HeroRight() {
-  const globeRef = useRef(null);
-  const frameRef = useRef(null);
-  const angleRef = useRef(0);
-  const [visitors, setVisitors] = useState(31240);
-  const [activeCard, setActiveCard] = useState(0);
-
-  const contentCards = [
-    { label: 'Blog Post Published', sub: 'Top 10 SEO Tips — 12K reads in 24h', icon: 'ti ti-pencil', color: '#00a34d' },
-    { label: 'Podcast Episode Live', sub: 'Ep. 42 — 4.8K listens in 24h', icon: 'ti ti-microphone', color: '#7c3aed' },
-    { label: 'Infographic Shared', sub: '180 backlinks earned this week', icon: 'ti ti-chart-pie', color: '#0891b2' },
-    { label: 'Video Published', sub: '92K views — #1 on YouTube Search', icon: 'ti ti-video', color: '#dc2626' },
-  ];
-  const miniBarHeights = [30, 48, 38, 62, 55, 85, 100];
-
-  useEffect(() => {
-    let last = null;
-    const animate = ts => {
-      if (last !== null) {
-        angleRef.current = (angleRef.current + (ts - last) * 0.016) % 360;
-        if (globeRef.current) {
-          globeRef.current.style.transform = `rotate(${angleRef.current}deg)`;
-          globeRef.current.style.transformOrigin = '110px 110px';
-        }
-      }
-      last = ts;
-      frameRef.current = requestAnimationFrame(animate);
-    };
-    frameRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frameRef.current);
-  }, []);
-
-  useEffect(() => {
-    const id = setInterval(() => setVisitors(v => v + Math.floor(Math.random() * 16 + 3)), 1800);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    const id = setInterval(() => setActiveCard(v => (v + 1) % contentCards.length), 3000);
-    return () => clearInterval(id);
-  }, []);
-
-  const leftIcons = [
-    { icon: 'ti ti-pencil',     bg: T.primary,     size: 46, delay: '0s',   dir: 1 },
-    { icon: 'ti ti-microphone', bg: '#7c3aed',     size: 42, delay: '0.5s', dir: -1 },
-    { icon: 'ti ti-chart-pie',  bg: '#0891b2',     size: 40, delay: '1s',   dir: 1 },
-  ];
-  const rightIcons = [
-    { icon: 'ti ti-video',      bg: '#dc2626',     size: 48, delay: '0.3s', dir: -1 },
-    { icon: 'ti ti-broadcast',  bg: T.primaryDark, size: 42, delay: '0.9s', dir: 1 },
-    { icon: 'ti ti-mail',       bg: '#b45309',     size: 40, delay: '1.4s', dir: -1 },
-  ];
-
-  return (
-    <div className="cm-hero-right-outer">
-      <div className="cm-hero-right-inner">
-        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }} viewBox="0 0 600 560">
-          {[[72,148],[72,238],[72,328],[528,148],[528,238],[528,328]].map(([x,y],i) => (
-            <line key={i} x1={x} y1={y} x2={300} y2={270} stroke="rgba(0,163,77,0.14)" strokeWidth="1.2" strokeDasharray="5 8" style={{ animation: `dashFlowCM ${2+i*0.4}s linear infinite` }} />
-          ))}
-        </svg>
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', gap: 8, zIndex: 8, animation: 'slideInLeftCM 0.7s ease 0.1s both' }}>
-          {[
-            { label: 'Organic Traffic', value: '+310%', sub: '▲ 6 months', bars: miniBarHeights },
-            { label: 'Content Pieces', value: '1,200+', sub: '▲ published' },
-            { label: 'Avg. Read Time', value: '4.8m', sub: '▲ engagement' },
-            { label: 'Backlinks', value: '+180', sub: '▲ this month' },
-          ].map((s, i) => (
-            <div key={i} style={{ flex: 1, background: 'rgba(255,255,255,0.91)', backdropFilter: 'blur(14px)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 13, padding: '10px 13px', boxShadow: '0 4px 18px rgba(0,0,0,0.07)' }}>
-              <div style={{ fontSize: 8.5, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: T.primary, lineHeight: 1.1, marginTop: 2 }}>{s.value}</div>
-              <div style={{ fontSize: 8, color: T.primary, fontWeight: 700, marginTop: 1 }}>{s.sub}</div>
-              {s.bars && (
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 22, marginTop: 6 }}>
-                  {s.bars.map((h, j) => (
-                    <div key={j} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: j === s.bars.length-1 ? 'linear-gradient(180deg,#33c972,#00a34d)' : 'rgba(0,163,77,0.2)' }} />
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        {leftIcons.map((ic, i) => (<FloatingIcon key={i} {...ic} style={{ position: 'absolute', top: 130 + i * 90, left: 10 }} />))}
-        {rightIcons.map((ic, i) => (<FloatingIcon key={i} {...ic} style={{ position: 'absolute', top: 130 + i * 90, right: 10 }} />))}
-        <div style={{ position: 'absolute', left: '50%', top: 270, transform: 'translate(-50%,-50%)', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse,rgba(0,163,77,0.17) 0%,rgba(0,163,77,0.05) 55%,transparent 75%)', animation: 'glowPulseCM 3s ease-in-out infinite', zIndex: 2, pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', left: '50%', top: 270, transform: 'translate(-50%,-50%)', width: 290, height: 290, zIndex: 3, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1.5px solid rgba(0,163,77,0.38)', animation: 'spinRingCM 9s linear infinite', transformStyle: 'preserve-3d', transform: 'rotateX(68deg)' }} />
-          <div style={{ position: 'absolute', inset: '10px', borderRadius: '50%', border: '1.5px dashed rgba(0,190,90,0.22)', animation: 'spinRingCM2 13s linear infinite', transformStyle: 'preserve-3d', transform: 'rotateX(50deg) rotateY(22deg)' }} />
-          <div style={{ position: 'absolute', inset: '20px', borderRadius: '50%', border: '1px solid rgba(0,210,100,0.15)', animation: 'spinRingCM 18s linear infinite reverse', transformStyle: 'preserve-3d', transform: 'rotateX(82deg) rotateZ(45deg)' }} />
-        </div>
-        <div style={{ position: 'absolute', left: '50%', top: 270, transform: 'translate(-50%,-50%)', width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(ellipse at 34% 27%,#ffffff 0%,#e0f7eb 24%,#a8ddc0 54%,#57b080 76%,#237a4a 100%)', boxShadow: '10px 16px 48px rgba(0,100,40,0.36),inset -14px -10px 30px rgba(0,80,30,0.18),inset 10px 8px 24px rgba(255,255,255,0.55)', zIndex: 4 }}>
-          <svg width="100%" height="100%" viewBox="0 0 220 220" style={{ position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', opacity: 0.18, pointerEvents: 'none' }}>
-            <ellipse cx="110" cy="65" rx="94" ry="15" fill="none" stroke="#003d1a" strokeWidth="1" />
-            <ellipse cx="110" cy="95" rx="108" ry="9" fill="none" stroke="#003d1a" strokeWidth="1" />
-            <ellipse cx="110" cy="124" rx="110" ry="6" fill="none" stroke="#003d1a" strokeWidth="1" />
-            <ellipse cx="110" cy="152" rx="106" ry="10" fill="none" stroke="#003d1a" strokeWidth="1" />
-            <ellipse cx="110" cy="178" rx="94" ry="15" fill="none" stroke="#003d1a" strokeWidth="1" />
-            <g ref={globeRef} fill="none" stroke="#003d1a" strokeWidth="1">
-              <ellipse cx="110" cy="110" rx="16" ry="110" />
-              <ellipse cx="110" cy="110" rx="52" ry="110" />
-              <ellipse cx="110" cy="110" rx="88" ry="110" />
-              <ellipse cx="110" cy="110" rx="108" ry="110" />
-            </g>
-          </svg>
-          <div style={{ position: 'absolute', top: '12%', left: '14%', width: '40%', height: '32%', borderRadius: '50%', background: 'radial-gradient(ellipse at 40% 40%,rgba(255,255,255,0.9) 0%,rgba(255,255,255,0.15) 60%,transparent 100%)', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 3 }}>
-            <i className="ti ti-pencil" style={{ fontSize: 22, color: '#00a34d', filter: 'drop-shadow(0 0 6px rgba(0,163,77,0.55))' }} />
-            <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: '1.8px', color: '#00a34d', textShadow: '0 0 12px rgba(0,163,77,0.5)', lineHeight: 1.3, marginTop: 3 }}>CONTENT<br/>MARKETING</span>
-          </div>
-        </div>
-        <div style={{ position: 'absolute', top: 322, left: '50%', marginLeft: -202, zIndex: 7, width: 178 }}>
-          {contentCards.map((c, i) => (
-            <div key={i} style={{ position: 'absolute', top: 0, left: 0, width: '100%', background: 'rgba(255,255,255,0.96)', border: `1px solid ${c.color}33`, borderRadius: 13, padding: '9px 12px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', opacity: activeCard === i ? 1 : 0, transform: activeCard === i ? 'translateY(-2px)' : 'translateY(8px)', transition: 'opacity 0.5s ease, transform 0.5s ease' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 3 }}>
-                <div style={{ width: 22, height: 22, borderRadius: 6, background: c.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <i className={c.icon} style={{ fontSize: 11, color: '#fff' }} />
-                </div>
-                <div style={{ fontSize: 9.5, fontWeight: 700, color: T.text }}>{c.label}</div>
-              </div>
-              <div style={{ fontSize: 8.5, color: T.textLight, lineHeight: 1.45 }}>{c.sub}</div>
-            </div>
-          ))}
-        </div>
-        <div style={{ position: 'absolute', top: 322, left: '50%', marginLeft: 26, zIndex: 7, minWidth: 150, animation: 'slideInRightCM 0.7s ease 1s both' }}>
-          <div style={{ background: 'rgba(255,255,255,0.93)', border: '1px solid rgba(0,163,77,0.2)', borderRadius: 14, padding: '9px 14px', boxShadow: '0 6px 22px rgba(0,0,0,0.08)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#33c972', animation: 'pulseDotCM 1.8s ease-in-out infinite', display: 'inline-block' }} />
-              <span style={{ fontSize: 10, fontWeight: 700, color: T.primary }}>Live Readers</span>
-            </div>
-            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 20, fontWeight: 700, color: T.text, letterSpacing: '-0.5px' }}>{visitors.toLocaleString()}</div>
-            <div style={{ fontSize: 8.5, color: T.textLighter, marginTop: 2 }}>avg. time on page <span style={{ color: T.primary, fontWeight: 700 }}>4.8m</span></div>
-          </div>
-        </div>
-        <div style={{ position: 'absolute', top: 400, left: 0, right: 0, display: 'flex', gap: 10, zIndex: 8, animation: 'slideInLeftCM 0.7s ease 0.6s both' }}>
-          <div style={{ flex: 1, background: 'rgba(8,18,11,0.95)', border: '1px solid rgba(0,163,77,0.26)', borderRadius: 14, padding: '12px 14px', boxShadow: '0 10px 36px rgba(0,0,0,0.32)' }}>
-            <div style={{ fontSize: 8.5, fontWeight: 600, color: 'rgba(255,255,255,0.38)', letterSpacing: '0.8px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#33c972', animation: 'pulseDotCM 1.8s ease-in-out infinite', display: 'inline-block' }} /> SEO Rankings
-            </div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: '#fff', lineHeight: 1 }}>Page #1</div>
-            <div style={{ fontSize: 8.5, color: '#33c972', fontWeight: 700, marginTop: 2 }}>↑ 14 core keywords</div>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 26, marginTop: 8 }}>
-              {[30,42,38,55,48,100].map((h,i) => (<div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: '2px 2px 0 0', background: i===5 ? 'linear-gradient(180deg,#33c972,#00a34d)' : 'rgba(0,163,77,0.25)' }} />))}
-            </div>
-          </div>
-          <div style={{ flex: 1, background: 'rgba(255,255,255,0.93)', border: '1px solid rgba(0,163,77,0.2)', borderRadius: 14, padding: '12px 14px', boxShadow: '0 6px 22px rgba(0,0,0,0.08)' }}>
-            <div style={{ fontSize: 8.5, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 5 }}>Audience Growth</div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: T.primary, lineHeight: 1 }}>+48K</div>
-            <div style={{ fontSize: 8.5, color: T.textLighter, marginTop: 1 }}>podcast listeners</div>
-            <div style={{ margin: '8px 0', height: 4, background: T.border, borderRadius: 99, overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: '78%', background: 'linear-gradient(90deg,#00a34d,#33c972)', borderRadius: 99 }} />
-            </div>
-            <div style={{ fontSize: 8.5, color: T.textLighter }}>Backlinks: <span style={{ color: T.primary, fontWeight: 700 }}>180+</span> · DR: <span style={{ color: T.primary, fontWeight: 700 }}>↑22pts</span></div>
-          </div>
-          <div style={{ flex: 1, background: 'rgba(255,255,255,0.93)', border: '1px solid rgba(0,163,77,0.2)', borderRadius: 14, padding: '12px 14px', boxShadow: '0 6px 22px rgba(0,0,0,0.08)' }}>
-            <div style={{ fontSize: 8.5, color: T.textLighter, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 5 }}>Content Output</div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: '#005c24', lineHeight: 1 }}>1,200+</div>
-            <div style={{ fontSize: 8.5, color: T.textLighter, marginTop: 1 }}>pieces published</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 9 }}>
-              {['300+ Clients','6 Formats','48h Delivery'].map(b => (<span key={b} style={{ fontSize: 8.5, background: T.primaryLight, color: T.primaryDark, borderRadius: 6, padding: '2px 8px', fontWeight: 700, border: '1px solid #b3f0cc' }}>{b}</span>))}
-            </div>
-          </div>
-        </div>
-        <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8, zIndex: 8, whiteSpace: 'nowrap', animation: 'slideInLeftCM 0.7s ease 1s both' }}>
-          {[{val:'310%',label:'Avg. Traffic Growth'},{val:'4.8m',label:'Avg. Read Time'},{val:'180+',label:'Backlinks/Month'}].map(b => (
-            <div key={b.label} style={{ background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,163,77,0.18)', borderRadius: 10, padding: '6px 13px', textAlign: 'center', boxShadow: '0 3px 12px rgba(0,0,0,0.07)' }}>
-              <div style={{ fontSize: 12, fontWeight: 800, color: T.primary }}>{b.val}</div>
-              <div style={{ fontSize: 8.5, color: T.textLighter, fontWeight: 600 }}>{b.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
 }
 
 /* ── SERVICE CARD ── */
@@ -580,6 +614,17 @@ function FaqItem({ item }) {
   );
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  return isMobile;
+}
+
 function LiveDashboard() {
   const { ref, tilt } = useParallax(6);
   const isMobile = useIsMobile();
@@ -676,7 +721,6 @@ function EnquiryForm() {
 
 /* ── HERO ── */
 function Hero() {
-  const isMobile = useIsMobile();
   return (
     <div style={{ position: 'relative', overflow: 'hidden', background: T.bgLight }}>
       <AnimatedBg />
@@ -723,9 +767,9 @@ function Hero() {
             <span style={{ fontSize: 12, color: T.textLight }}>Trusted by <strong style={{ color: T.text }}>300+ brands</strong> to build content that compounds</span>
           </div>
         </div>
-        {/* Right side: desktop = HeroRight, mobile = MobileHeroVisual */}
+        {/* Right side: the flipbook — merged in from the notebook-flip component */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          {isMobile ? <MobileHeroVisual /> : <HeroRight />}
+          <HeroFlipbook />
         </div>
       </div>
     </div>
@@ -885,30 +929,97 @@ export default function ContentMarketingPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=JetBrains+Mono:wght@500;600;700&family=Kalam:wght@400;700&display=swap');
         @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
         body{font-family:'Poppins',sans-serif;background:#f8f9fa;color:#2a2a2a;line-height:1.6;font-size:14px;overflow-x:hidden;}
         #services,#work,#process,#faq{scroll-margin-top:80px;}
 
-        /* Desktop hero right canvas */
-        .cm-hero-right-outer{width:100%;max-width:600px;overflow:hidden;}
-        .cm-hero-right-inner{position:relative;width:600px;height:560px;transform-origin:top left;}
-
         /* Stat band */
         .cm-stat-cell{padding:44px 36px;border-right:1px solid rgba(255,255,255,0.06);display:flex;gap:18px;align-items:center;}
         .cm-stat-cell:last-child{border-right:none;}
 
-        /* Animations */
-        @keyframes glowPulseCM{0%,100%{opacity:0.55}50%{opacity:0.88}}
-        @keyframes spinRingCM{from{transform:rotateX(70deg) rotateZ(0deg)}to{transform:rotateX(70deg) rotateZ(360deg)}}
-        @keyframes spinRingCM2{from{transform:rotateX(50deg) rotateY(20deg) rotateZ(0deg)}to{transform:rotateX(50deg) rotateY(20deg) rotateZ(-360deg)}}
+        /* ══ FLIPBOOK ══ */
+        .cf-root{ font-family:'Poppins',sans-serif; display:flex; flex-direction:column; align-items:center; gap:18px; width:100%; }
+        .cf-book-wrap{ position:relative; width:100%; max-width:420px; perspective:1600px; }
+        .cf-book{
+          position:relative; width:100%; aspect-ratio:4/5; border-radius:16px; overflow:hidden;
+          background-color:${T.paper};
+          border:1px solid rgba(0,0,0,0.08);
+          box-shadow:0 30px 70px -20px rgba(0,64,26,0.32), 0 4px 14px rgba(0,0,0,0.08);
+          padding-left:26px;
+          transform:rotate(-0.8deg);
+        }
+        .cf-spiral{ position:absolute; top:4%; bottom:4%; left:5px; width:14px; display:flex; flex-direction:column; justify-content:space-between; z-index:6; }
+        .cf-spiral span{ display:block; width:12px; height:12px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#5a5a5a,#1c1c1c); box-shadow:0 1px 2px rgba(0,0,0,0.4); }
+        .cf-page-shell{
+          position:absolute; inset:0; left:26px; transform-style:preserve-3d; transform-origin:left center;
+          backface-visibility:hidden; will-change:transform,opacity;
+        }
+        .cf-page-inner{ position:relative; height:100%; width:100%; overflow:hidden; }
+        .cf-page-photo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+        .cf-page-overlay{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(6,20,12,0.42) 0%, rgba(6,20,12,0.62) 55%, rgba(4,14,8,0.82) 100%); }
+        .cf-page-overlay-strong{ background:linear-gradient(180deg, rgba(6,20,12,0.58) 0%, rgba(6,20,12,0.74) 55%, rgba(4,14,8,0.9) 100%); }
+        .cf-page-content{ position:relative; z-index:2; height:100%; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:32px 24px; gap:12px; }
+
+        .cf-page-eyebrow-photo{ font-size:10.5px; font-weight:700; letter-spacing:0.16em; color:#b3f0cc; text-transform:uppercase; }
+        .cf-page-tag-photo{ font-family:'Kalam',cursive; font-weight:700; font-size:12.5px; color:#0a2c17; background:rgba(255,255,255,0.88); border:1px solid rgba(0,163,77,0.4); padding:4px 12px; border-radius:20px; margin-bottom:2px; }
+        .cf-cover-title{ font-family:'Playfair Display',serif; font-weight:900; font-size:clamp(28px,7vw,38px); line-height:1.08; letter-spacing:-1px; margin:4px 0 2px; }
+        .cf-page-title-photo{ font-family:'Playfair Display',serif; font-weight:800; font-size:clamp(22px,5.5vw,28px); color:#fff; letter-spacing:-0.5px; margin:2px 0 0; text-shadow:0 4px 18px rgba(0,0,0,0.4); }
+        .cf-page-desc-photo{ font-size:13px; line-height:1.7; color:rgba(255,255,255,0.86); max-width:300px; }
+        .cf-page-count{ font-family:'Kalam',cursive; font-size:11.5px; color:rgba(255,255,255,0.65); margin-top:4px; }
+        .cf-page-hint{ font-family:'Kalam',cursive; font-size:12px; color:#7CFCB0; margin-top:6px; }
+
+        .cf-medallion{ border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px -8px rgba(0,0,0,0.4), 0 0 0 5px rgba(255,255,255,0.9), 0 0 0 6px rgba(0,163,77,0.25); }
+        .anim-pulse{ animation:cfPulse 2.2s ease-in-out infinite; }
+        .anim-bob{ animation:cfBob 2.4s ease-in-out infinite; }
+        .anim-tilt{ animation:cfTilt 2.6s ease-in-out infinite; }
+        .anim-wiggle{ animation:cfWiggle 1.8s ease-in-out infinite; }
+        .anim-pop{ animation:cfPop 2s cubic-bezier(.34,1.56,.64,1) infinite; }
+        .anim-float{ animation:cfFloat 3s ease-in-out infinite; }
+        .anim-write{ animation:cfWrite 2.4s ease-in-out infinite; }
+        .anim-swing{ animation:cfSwing 2.4s ease-in-out infinite; transform-origin:top center; }
+        .anim-glow{ animation:cfGlow 2s ease-in-out infinite; }
+        @keyframes cfPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+        @keyframes cfBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+        @keyframes cfTilt{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(6deg);}}
+        @keyframes cfWiggle{0%,100%{transform:rotate(0deg) scale(1);}25%{transform:rotate(-8deg) scale(1.03);}75%{transform:rotate(8deg) scale(1.03);}}
+        @keyframes cfPop{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+        @keyframes cfFloat{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-7px) rotate(-3deg);}}
+        @keyframes cfWrite{0%,100%{transform:rotate(0deg) translateX(0);}50%{transform:rotate(-10deg) translateX(-3px);}}
+        @keyframes cfSwing{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+        @keyframes cfGlow{0%,100%{box-shadow:0 10px 26px -8px rgba(0,0,0,0.4),0 0 0 5px rgba(255,255,255,0.9),0 0 0 6px rgba(0,163,77,0.25);}50%{box-shadow:0 10px 34px -6px rgba(0,163,77,0.6),0 0 0 5px rgba(255,255,255,0.9),0 0 0 10px rgba(0,163,77,0.35);}}
+
+        @keyframes cfFlipOutNext{ from{transform:rotateY(0deg);opacity:1;} to{transform:rotateY(-95deg);opacity:0;} }
+        @keyframes cfFlipInNext{ from{transform:rotateY(95deg);opacity:0;} to{transform:rotateY(0deg);opacity:1;} }
+        @keyframes cfFlipOutPrev{ from{transform:rotateY(0deg);opacity:1;} to{transform:rotateY(95deg);opacity:0;} }
+        @keyframes cfFlipInPrev{ from{transform:rotateY(-95deg);opacity:0;} to{transform:rotateY(0deg);opacity:1;} }
+        .cf-flip-out-next{ animation:cfFlipOutNext 0.3s ease-in forwards; }
+        .cf-flip-in-next{ animation:cfFlipInNext 0.34s ease-out forwards; }
+        .cf-flip-out-prev{ animation:cfFlipOutPrev 0.3s ease-in forwards; }
+        .cf-flip-in-prev{ animation:cfFlipInPrev 0.34s ease-out forwards; }
+
+        .cf-page-merge{ }
+        .cf-merge-wrap{ position:relative; width:100%; max-width:230px; aspect-ratio:1/1; margin:2px 0; }
+        .cf-merge-svg{ position:absolute; inset:0; width:100%; height:100%; }
+        .cf-merge-line{ stroke-dasharray:2 2; opacity:0; }
+        .cf-merge-line-active{ animation:cfLineIn 0.4s ease forwards; }
+        @keyframes cfLineIn{ from{opacity:0;} to{opacity:1;} }
+        .cf-merge-center{ position:absolute; width:32px; height:32px; margin:-16px; border-radius:50%; background:linear-gradient(150deg,#008040,#00a34d); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px -4px rgba(0,64,26,0.5), 0 0 0 4px rgba(255,255,255,0.9); z-index:3; }
+        .cf-merge-node{ position:absolute; transform:translate(-50%,-50%) scale(0.5); opacity:0; display:flex; flex-direction:column; align-items:center; gap:3px; width:56px; z-index:2; }
+        .cf-merge-node-active{ animation:cfNodeIn 0.45s cubic-bezier(.34,1.56,.64,1) forwards; }
+        @keyframes cfNodeIn{ from{transform:translate(-50%,-50%) scale(0.4); opacity:0;} to{transform:translate(-50%,-50%) scale(1); opacity:1;} }
+        .cf-merge-node-icon{ width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px -2px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.9); }
+        .cf-merge-node-label{ font-family:'Kalam',cursive; font-weight:700; font-size:9px; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.6); white-space:nowrap; }
+
+        .cf-controls{ display:flex; align-items:center; gap:14px; }
+        .cf-play-btn{ width:36px; height:36px; border-radius:50%; border:1.5px solid ${T.primary}; background:#fff; color:${T.primaryDark}; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease; }
+        .cf-play-btn:hover{ background:${T.primary}; color:#fff; transform:translateY(-2px); }
+
+        /* Animations (page-level) */
         @keyframes floatUpCM{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
         @keyframes floatDnCM{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
-        @keyframes dashFlowCM{from{stroke-dashoffset:0}to{stroke-dashoffset:-26}}
-        @keyframes slideInLeftCM{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:translateX(0)}}
-        @keyframes slideInRightCM{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
         @keyframes pulseDotCM{0%,100%{box-shadow:0 0 0 3px rgba(0,163,77,0.25)}50%{box-shadow:0 0 0 6px rgba(0,163,77,0.1)}}
         @keyframes gradientMoveCM{0%{background-position:0%}100%{background-position:200%}}
         @keyframes fadeUpCM{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -933,20 +1044,13 @@ export default function ContentMarketingPage() {
 
         /* ── TABLET 1025–1280 ── */
         @media(max-width:1280px){
-          .cm-hero-right-outer{max-width:520px;}
-          .cm-hero-right-inner{transform:scale(calc(520/600));height:calc(560px * 520/600);}
           .cm-hero-grid{padding:64px 40px 56px !important;gap:32px !important;}
-        }
-        @media(max-width:1100px){
-          .cm-hero-right-outer{max-width:460px;}
-          .cm-hero-right-inner{transform:scale(calc(460/600));height:calc(560px * 460/600);}
         }
 
         /* ── TABLET 769–1024 ── */
         @media(max-width:1024px){
           .cm-hero-grid{grid-template-columns:1fr !important;padding:56px 32px 48px !important;gap:40px !important;}
-          .cm-hero-right-outer{max-width:560px;margin:0 auto;}
-          .cm-hero-right-inner{transform:scale(calc(560/600));height:calc(560px * 560/600);}
+          .cf-book-wrap{max-width:380px;margin:0 auto;}
           .cm-stats-grid{grid-template-columns:repeat(2,1fr) !important;}
           .cm-stat-cell{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);padding:32px 28px;}
           .cm-stat-cell:nth-child(odd){border-right:1px solid rgba(255,255,255,0.06) !important;}
@@ -963,8 +1067,7 @@ export default function ContentMarketingPage() {
         /* ── MOBILE 481–768 ── */
         @media(max-width:768px){
           .cm-hero-grid{grid-template-columns:1fr !important;padding:36px 16px 32px !important;gap:32px !important;}
-          /* Hide the desktop HeroRight on mobile — MobileHeroVisual renders instead via JS */
-          .cm-hero-right-outer{display:none !important;}
+          .cf-book-wrap{max-width:340px;}
           .cm-services-grid{grid-template-columns:1fr !important;}
           .cm-cases-grid{grid-template-columns:1fr !important;}
           .cm-cta-inner{flex-direction:column !important;align-items:flex-start !important;}
@@ -988,6 +1091,7 @@ export default function ContentMarketingPage() {
         /* ── SMALL MOBILE ≤480 ── */
         @media(max-width:480px){
           .cm-hero-grid{padding:28px 14px 24px !important;}
+          .cf-book-wrap{max-width:300px;}
           .cm-stats-grid{grid-template-columns:1fr 1fr !important;}
           .cm-stat-cell{padding:20px 14px !important;}
           .cm-stat-cell > div:first-child{width:44px !important;height:44px !important;font-size:20px !important;border-radius:12px !important;}
@@ -1002,6 +1106,7 @@ export default function ContentMarketingPage() {
         @media(max-width:360px){
           .cm-hero-grid{padding:24px 12px !important;}
           .cm-stat-cell{padding:16px 10px !important;}
+          .cf-book-wrap{max-width:260px;}
         }
 
         @media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}
