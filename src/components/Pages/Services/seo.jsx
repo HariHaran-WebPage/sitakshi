@@ -103,6 +103,17 @@ function useSceneScale(baseWidth = 560) {
   return { ref, scale };
 }
 
+// Cycles through an index 0..count-1 on a timer — drives the lens showcase
+function useCycle(count, interval = 2600) {
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    if (!count) return;
+    const id = setInterval(() => setActive(a => (a + 1) % count), interval);
+    return () => clearInterval(id);
+  }, [count, interval]);
+  return active;
+}
+
 function AnimatedBg() {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -142,48 +153,55 @@ function AnimatedBg() {
 }
 
 /* ══════════════════════════════════════════════════
-   SEO MAGNIFIER SCENE — replaces the old speedometer /
-   device dashboard hero graphic. Recreates the classic
-   "magnifying glass surrounded by orbiting service icons"
-   composition (search, mail, cloud, settings, ideas,
-   people, media, docs, calls, discovery) but restyled to
-   match this page's dark glass + brand-green language:
-   a brushed metal ring, a frosted glass lens with "SEO"
-   inside, a two-tone handle, dashed connector lines with
-   travelling data-dots, and floating glassmorphic icon
-   nodes in the same red / amber / green accent family
-   already used elsewhere on the page (danger red for the
-   404 chip, amber for warnings, green as the core brand).
+   SEO MAGNIFIER SCENE
+   Six orbiting nodes now map 1:1 to the six SEO
+   services. Every ~2.6s the active service advances:
+   - the matching orbiting node lights up (glow + label)
+   - its connector line/dot brighten
+   - the lens itself cross-fades to show that service's
+     icon, name ("type"), and one-line description
 ══════════════════════════════════════════════════ */
-const magnifierNodes = [
-  { angle: -90, r: 232, icon: 'ti ti-device-laptop', color: '#4ade80', big: true, float: 'chipFloat1' },
-  { angle: -54, r: 230, icon: 'ti ti-mail', color: '#4ade80', float: 'chipFloat2' },
-  { angle: -18, r: 232, icon: 'ti ti-settings', color: '#cbd5c9', float: 'chipFloat3' },
-  { angle: 18, r: 232, icon: 'ti ti-bulb', color: '#f59e0b', float: 'chipFloat1' },
-  { angle: 54, r: 230, icon: 'ti ti-world', color: '#86efac', float: 'chipFloat2' },
-  { angle: 90, r: 232, icon: 'ti ti-message-circle', color: '#4ade80', float: 'chipFloat3' },
-  { angle: 126, r: 230, icon: 'ti ti-user', color: '#cbd5c9', float: 'chipFloat1' },
-  { angle: 162, r: 232, icon: 'ti ti-player-play', color: '#f87171', float: 'chipFloat2' },
-  { angle: 198, r: 232, icon: 'ti ti-file-text', color: '#f59e0b', float: 'chipFloat3' },
-  { angle: 234, r: 230, icon: 'ti ti-phone', color: '#f87171', float: 'chipFloat1' },
-];
+const lensPalette = ['#4ade80', '#86efac', '#f59e0b', '#cbd5c9', '#22c55e', '#f87171'];
+
+const magnifierNodes = seoServices.map((svc, i) => ({
+  angle: -90 + i * 60,
+  r: 230,
+  icon: svc.icon,
+  title: svc.title,
+  subtitle: svc.subtitle,
+  desc: svc.desc,
+  color: lensPalette[i % lensPalette.length],
+  float: ['chipFloat1', 'chipFloat2', 'chipFloat3'][i % 3],
+}));
 
 function nodePos(angle, r, cx = 280, cy = 280) {
   const rad = (angle * Math.PI) / 180;
   return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
 }
 
-function MagnifierConnectors({ cx = 280, cy = 280 }) {
+function MagnifierConnectors({ cx = 280, cy = 280, activeIndex }) {
   return (
     <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }} viewBox="0 0 560 560" preserveAspectRatio="none">
       {magnifierNodes.map((n, i) => {
         const [x, y] = nodePos(n.angle, n.r, cx, cy);
-        return <line key={`l${i}`} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(34,197,94,0.18)" strokeWidth="1" strokeDasharray="5 4" style={{ animation: 'dashFlow 2s linear infinite', animationDelay: `${i * 0.25}s` }} />;
+        const isActive = i === activeIndex;
+        return (
+          <line
+            key={`l${i}`}
+            x1={cx} y1={cy} x2={x} y2={y}
+            stroke={isActive ? n.color : 'rgba(34,197,94,0.18)'}
+            strokeOpacity={isActive ? 0.65 : 1}
+            strokeWidth={isActive ? 1.8 : 1}
+            strokeDasharray="5 4"
+            style={{ animation: 'dashFlow 2s linear infinite', animationDelay: `${i * 0.25}s`, transition: 'stroke 0.4s ease, stroke-width 0.4s ease' }}
+          />
+        );
       })}
       {magnifierNodes.map((n, i) => {
         const [x, y] = nodePos(n.angle, n.r, cx, cy);
+        const isActive = i === activeIndex;
         return (
-          <circle key={`d${i}`} r="2.5" fill="#22c55e" opacity="0.6">
+          <circle key={`d${i}`} r={isActive ? 4 : 2.5} fill={isActive ? n.color : '#22c55e'} opacity={isActive ? 0.95 : 0.6}>
             <animateMotion dur={`${2.4 + i * 0.22}s`} repeatCount="indefinite" path={`M${cx},${cy} L${x},${y}`} />
           </circle>
         );
@@ -231,18 +249,45 @@ function MagnifierGlass({ cx = 280, cy = 280 }) {
 
       {/* glass highlight */}
       <ellipse cx={cx - 34} cy={cy - 40} rx="46" ry="26" fill="rgba(255,255,255,0.07)" transform={`rotate(-25 ${cx - 34} ${cy - 40})`} />
-
-      {/* SEO wordmark */}
-      <text x={cx} y={cy + 3} textAnchor="middle" dominantBaseline="middle" fontFamily="'Playfair Display', serif" fontWeight="900" fontSize="34" letterSpacing="2" fill="#eafff1">SEO</text>
-      <text x={cx} y={cy + 28} textAnchor="middle" fontFamily="Poppins, sans-serif" fontWeight="700" fontSize="8" letterSpacing="3" fill="#4ade80">RANK ENGINE</text>
     </svg>
   );
 }
 
-function MagnifierIconNode({ node }) {
+// Content shown *inside* the lens — cross-fades to the active service's
+// icon, name (type) and a short line explaining what that service covers.
+function MagnifierLensContent({ item, cx = 280, cy = 280 }) {
+  const [renderKey, setRenderKey] = useState(0);
+  useEffect(() => { setRenderKey(k => k + 1); }, [item.title]);
+  return (
+    <div
+      key={renderKey}
+      style={{
+        position: 'absolute',
+        left: cx, top: cy,
+        transform: 'translate(-50%,-50%)',
+        width: 152, textAlign: 'center',
+        zIndex: 6, pointerEvents: 'none',
+        animation: 'lensFade 0.55s cubic-bezier(0.22,1,0.36,1)',
+      }}
+    >
+      <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(74,222,128,0.14)', border: '1px solid rgba(74,222,128,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px', color: '#4ade80', fontSize: 19 }}>
+        <i className={item.icon} aria-hidden="true" />
+      </div>
+      <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: 15, letterSpacing: '0.2px', color: '#eafff1', lineHeight: 1.15 }}>
+        {item.title}
+      </div>
+      <div style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 7.5, letterSpacing: '0.18em', color: '#4ade80', marginTop: 5, textTransform: 'uppercase' }}>
+        {item.subtitle}
+      </div>
+    </div>
+  );
+}
+
+function MagnifierIconNode({ node, active }) {
   const [x, y] = nodePos(node.angle, node.r);
   const [hov, setHov] = useState(false);
-  const size = node.big ? 62 : 50;
+  const lit = hov || active;
+  const size = active ? 58 : 50;
   return (
     <div
       className={node.float}
@@ -251,18 +296,29 @@ function MagnifierIconNode({ node }) {
       style={{
         position: 'absolute',
         left: x, top: y,
-        transform: `translate(-50%,-50%) scale(${hov ? 1.1 : 1})`,
+        transform: `translate(-50%,-50%) scale(${lit ? 1.1 : 1})`,
         width: size, height: size, borderRadius: '50%',
-        background: hov ? 'rgba(8,20,12,0.97)' : 'rgba(8,20,12,0.9)',
-        border: `1.5px solid ${hov ? node.color : 'rgba(34,197,94,0.22)'}`,
-        boxShadow: hov ? `0 0 22px ${node.color}55, 0 10px 26px rgba(0,0,0,0.55)` : '0 6px 20px rgba(0,0,0,0.5)',
+        background: lit ? 'rgba(8,20,12,0.97)' : 'rgba(8,20,12,0.9)',
+        border: `1.5px solid ${lit ? node.color : 'rgba(34,197,94,0.22)'}`,
+        boxShadow: lit ? `0 0 22px ${node.color}55, 0 10px 26px rgba(0,0,0,0.55)` : '0 6px 20px rgba(0,0,0,0.5)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
+        transition: 'transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease, width 0.35s ease, height 0.35s ease',
         zIndex: 6, cursor: 'default',
       }}
     >
-      <i className={node.icon} aria-hidden="true" style={{ fontSize: node.big ? 24 : 19, color: node.color }} />
+      <i className={node.icon} aria-hidden="true" style={{ fontSize: active ? 22 : 19, color: node.color }} />
+      {active && (
+        <div style={{
+          position: 'absolute', top: '112%', left: '50%', transform: 'translateX(-50%)',
+          whiteSpace: 'nowrap', fontSize: 8, fontWeight: 700, color: node.color,
+          background: 'rgba(6,15,10,0.92)', border: `1px solid ${node.color}55`,
+          borderRadius: 6, padding: '3px 7px', letterSpacing: '0.03em',
+          animation: 'lensFade 0.4s ease',
+        }}>
+          {node.title}
+        </div>
+      )}
     </div>
   );
 }
@@ -270,15 +326,18 @@ function MagnifierIconNode({ node }) {
 function SeoMagnifierScene() {
   const { ref: wrapRef, scale } = useSceneScale(560);
   const { ref: tiltRef, tilt } = useParallax(3);
+  const activeIndex = useCycle(magnifierNodes.length, 2600);
+  const activeItem = magnifierNodes[activeIndex];
   return (
     <div ref={wrapRef} style={{ width: '100%', maxWidth: 560 }}>
       <div style={{ width: '100%', height: 540 * scale, overflow: 'hidden', position: 'relative' }}>
         <div ref={tiltRef} style={{ width: 560, height: 540, transformOrigin: 'top left', transform: `scale(${scale}) perspective(1400px) rotateX(${-tilt.y * 0.12}deg) rotateY(${tilt.x * 0.12}deg)`, transition: 'transform 0.25s ease-out', position: 'relative' }}>
           <div style={{ position: 'absolute', top: '14%', left: '26%', width: 380, height: 380, borderRadius: '50%', background: 'radial-gradient(circle,rgba(34,197,94,0.14) 0%,rgba(34,197,94,0.05) 50%,transparent 75%)', filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0, animation: 'sceneGlow 4s ease-in-out infinite' }} />
           <div style={{ position: 'absolute', top: '48%', right: '6%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(74,222,128,0.1) 0%,transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none', zIndex: 0, animation: 'sceneGlow2 5.5s ease-in-out infinite 1.5s' }} />
-          <MagnifierConnectors />
-          {magnifierNodes.map((n, i) => <MagnifierIconNode key={i} node={n} />)}
+          <MagnifierConnectors activeIndex={activeIndex} />
+          {magnifierNodes.map((n, i) => <MagnifierIconNode key={i} node={n} active={i === activeIndex} />)}
           <MagnifierGlass />
+          <MagnifierLensContent item={activeItem} />
         </div>
       </div>
     </div>
@@ -538,6 +597,7 @@ export default function SeoPage() {
         @keyframes floatIcon{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
         @keyframes dashFlow{to{stroke-dashoffset:-18}}
+        @keyframes lensFade{from{opacity:0;transform:translate(-50%,-50%) translateY(6px) scale(0.92)}to{opacity:1;transform:translate(-50%,-50%) translateY(0) scale(1)}}
         @keyframes chipFloat1{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-7px)}}
         @keyframes chipFloat2{0%,100%{transform:translate(-50%,-50%) translateY(0) rotate(-0.4deg)}50%{transform:translate(-50%,-50%) translateY(-9px) rotate(0.4deg)}}
         @keyframes chipFloat3{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-5px)}}
@@ -554,9 +614,7 @@ export default function SeoPage() {
         .white-h2{color:#fff;margin-bottom:56px;}
         .section-sub{font-size:15px;color:#6b7280;line-height:1.7;max-width:480px;margin-bottom:48px;}
 
-        /* Desktop: side-by-side */
         .hero-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:56px;align-items:center;padding:80px 64px 72px;}
-        /* The scene column — ALWAYS shown, never hidden at any breakpoint */
         .hero-right{display:flex;justify-content:center;align-items:center;overflow:hidden;min-width:0;width:100%;}
 
         .hero-btns{display:flex;gap:12px;margin-bottom:44px;flex-wrap:wrap;}
@@ -606,7 +664,6 @@ export default function SeoPage() {
           .cta-section{padding:64px 48px;}
         }
         @media(max-width:1024px){
-          /* Stack hero vertically on tablet */
           .hero-grid{grid-template-columns:1fr !important;padding:60px 40px 52px !important;gap:32px !important;}
           .hero-right{max-width:560px;margin-left:auto;margin-right:auto;}
           .stats-grid{grid-template-columns:repeat(2,1fr) !important;}
@@ -636,7 +693,6 @@ export default function SeoPage() {
         }
         @media(max-width:640px){
           .hero-grid{padding:36px 16px 32px !important;gap:24px !important;}
-          /* Scene is always shown — useSceneScale handles scaling down automatically */
           .hero-right{max-width:100%;margin-left:0;margin-right:0;}
           .hero-btns{flex-direction:column;align-items:stretch;}
           .hero-btns button,.hero-btns a,.hero-btns a button{width:100% !important;text-align:center;}
@@ -709,7 +765,7 @@ export default function SeoPage() {
               </div>
             </div>
 
-            {/* ✅ Scene always shown — new magnifying-glass composition, auto-scales via useSceneScale hook */}
+            {/* Scene: magnifier that cycles through each SEO service, name shown inside the lens */}
             <div className="hero-right">
               <SeoMagnifierScene />
             </div>
