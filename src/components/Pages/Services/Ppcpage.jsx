@@ -92,36 +92,6 @@ function useCountUp(target, duration = 1800, decimals = 0) {
   return { ref, count };
 }
 
-function TypingText({ words, typeSpeed = 85, deleteSpeed = 45, pause = 1400, style }) {
-  const [wordIndex, setWordIndex] = useState(0);
-  const [text, setText] = useState('');
-  const [deleting, setDeleting] = useState(false);
-
-  useEffect(() => {
-    const current = words[wordIndex % words.length];
-    let timeout;
-
-    if (!deleting && text === current) {
-      timeout = setTimeout(() => setDeleting(true), pause);
-    } else if (deleting && text === '') {
-      setDeleting(false);
-      setWordIndex(i => (i + 1) % words.length);
-    } else {
-      timeout = setTimeout(() => {
-        setText(t => deleting ? current.slice(0, t.length - 1) : current.slice(0, t.length + 1));
-      }, deleting ? deleteSpeed : typeSpeed);
-    }
-    return () => clearTimeout(timeout);
-  }, [text, deleting, wordIndex, words, typeSpeed, deleteSpeed, pause]);
-
-  return (
-    <span style={style}>
-      {text}
-      <span style={{ display: 'inline-block', width: 3, marginLeft: 3, height: '0.85em', verticalAlign: '-0.1em', background: 'currentColor', animation: 'blinkCursorPPC 0.9s step-end infinite' }} />
-    </span>
-  );
-}
-
 function AnimatedBg() {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -160,245 +130,203 @@ function AnimatedBg() {
 }
 
 /* ══════════════════════════════════════════════
-   FLAT-STYLE "PPC" HERO ILLUSTRATION
-   Original vector artwork — giant PPC letters with
-   small flat-design people, a coin/cash stack, and
-   a target-and-arrow — built entirely from SVG
-   primitives in the site's brand palette (no stock
-   art, no external image assets).
+   PREMIUM CAMPAIGN DASHBOARD MOCKUP
+   Replaces the cartoon-cube illustration with a
+   credible "live product" visual — the signature
+   element of the hero. Built entirely from HTML/CSS
+   + one inline SVG chart, no stock photography.
 ══════════════════════════════════════════════ */
 
-function PersonFace({ r = 12.5 }) {
-  // Simple, warm facial features shared across poses for a friendlier, less generic look.
-  return (
-    <>
-      <ellipse cx={-r * 0.42} cy={-r * 0.06} rx="1.5" ry="2" fill="#2b2320" />
-      <ellipse cx={r * 0.42} cy={-r * 0.06} rx="1.5" ry="2" fill="#2b2320" />
-      <path d={`M ${-r*0.32},${r*0.42} Q 0,${r*0.62} ${r*0.32},${r*0.42}`} stroke="#8a5a3a" strokeWidth="1.4" fill="none" strokeLinecap="round" />
-      <ellipse cx={-r*0.7} cy={r*0.12} rx={r*0.22} ry={r*0.16} fill="#e8896a" opacity="0.45" />
-      <ellipse cx={r*0.7} cy={r*0.12} rx={r*0.22} ry={r*0.16} fill="#e8896a" opacity="0.45" />
-    </>
-  );
+const chartPoints = [22, 30, 26, 38, 34, 48, 44, 58, 52, 68, 62, 78, 74, 88];
+
+function buildSmoothPath(points, w, h) {
+  const max = Math.max(...points), min = Math.min(...points);
+  const xs = points.map((_, i) => (i / (points.length - 1)) * w);
+  const ys = points.map(p => h - ((p - min) / (max - min)) * h * 0.86 - 6);
+  let d = `M ${xs[0]},${ys[0]}`;
+  for (let i = 1; i < xs.length; i++) {
+    const cx = (xs[i - 1] + xs[i]) / 2;
+    d += ` C ${cx},${ys[i - 1]} ${cx},${ys[i]} ${xs[i]},${ys[i]}`;
+  }
+  return { d, xs, ys, max, min };
 }
 
-function FlatPerson({ transform, skin = '#e3a97a', top = '#ffffff', bottom = '#0b3d24', hair = '#2b2320', pose = 'stand', accent = '#33c972', shoe = '#1a1a2e', delay = 0 }) {
-  // A reusable flat-vector person with light shading, faces, and shoes for a more
-  // finished, "realistic flat illustration" look (still fully vector, no photos).
-  // pose: 'stand' | 'sit' | 'climb' | 'reach' | 'walk'
-  // The inner <g> carries a CSS animation class so the figure visibly moves
-  // (bob / step / sway) while the outer <g> keeps its fixed scene position.
-  const shade = 'rgba(0,0,0,0.13)';
-  const highlight = 'rgba(255,255,255,0.22)';
+function DashboardChart({ draw }) {
+  const W = 320, H = 110;
+  const { d, xs, ys } = buildSmoothPath(chartPoints, W, H);
+  const areaD = `${d} L ${xs[xs.length - 1]},${H} L ${xs[0]},${H} Z`;
+  const lastX = xs[xs.length - 1], lastY = ys[ys.length - 1];
   return (
-    <g transform={transform}>
-    <g className={`ppc-anim-${pose}`} style={{ animationDelay: `${delay}ms` }}>
-      {pose === 'sit' ? (
-        <>
-          <ellipse cx="0" cy="30" rx="30" ry="6" fill="#000" opacity="0.07" />
-          <rect x="-16" y="6" width="32" height="22" rx="9" fill={bottom} />
-          <rect x="0" y="6" width="16" height="22" rx="9" fill={shade} />
-          <rect x="-18" y="-16" width="36" height="26" rx="10" fill={top} />
-          <rect x="2" y="-16" width="16" height="26" rx="10" fill={shade} />
-          <rect x="-16" y="-13" width="32" height="3" rx="1.5" fill={highlight} />
-          <circle cx="0" cy="-30" r="13" fill={skin} />
-          <circle cx="6" cy="-27" r="9" fill={shade} opacity="0.5" />
-          <path d="M -13,-33 Q 0,-48 13,-33 Q 13,-40 0,-42 Q -13,-40 -13,-33 Z" fill={hair} />
-          <PersonFace />
-          <rect x="-27" y="-6" width="16" height="9" rx="4.5" fill={skin} transform="rotate(-12 -27 -6)" />
-          <rect x="11" y="-6" width="16" height="9" rx="4.5" fill={skin} transform="rotate(12 27 -6)" />
-        </>
-      ) : pose === 'climb' ? (
-        <>
-          <rect x="-9" y="-2" width="14" height="26" rx="6" fill={bottom} transform="rotate(-18 -9 -2)" />
-          <rect x="-3" y="-2" width="14" height="26" rx="6" fill={bottom} transform="rotate(10 -3 -2)" />
-          <ellipse cx="-2" cy="26" rx="7" ry="3.5" fill={shoe} transform="rotate(-18 -2 26)" />
-          <ellipse cx="10" cy="26" rx="7" ry="3.5" fill={shoe} transform="rotate(10 10 26)" />
-          <rect x="-15" y="-30" width="30" height="30" rx="11" fill={top} />
-          <rect x="1" y="-30" width="14" height="30" rx="11" fill={shade} />
-          <rect x="-13" y="-27" width="26" height="3" rx="1.5" fill={highlight} />
-          <circle cx="0" cy="-42" r="12.5" fill={skin} />
-          <circle cx="5" cy="-39" r="8.5" fill={shade} opacity="0.5" />
-          <path d="M -12,-45 Q 0,-58 12,-45 Q 12,-52 0,-54 Q -12,-52 -12,-45 Z" fill={hair} />
-          <PersonFace r={12.5} />
-          <rect x="-24" y="-38" width="15" height="8.5" rx="4.2" fill={skin} transform="rotate(-40 -24 -38)" />
-          <rect x="9" y="-52" width="15" height="8.5" rx="4.2" fill={skin} transform="rotate(-60 24 -52)" />
-        </>
-      ) : pose === 'walk' ? (
-        <>
-          <ellipse cx="0" cy="38" rx="16" ry="4" fill="#000" opacity="0.08" />
-          <rect x="-10" y="6" width="9" height="30" rx="4.5" fill={bottom} transform="rotate(8 -10 6)" />
-          <rect x="1" y="6" width="9" height="30" rx="4.5" fill={bottom} transform="rotate(-10 1 6)" />
-          <ellipse cx="-9" cy="35" rx="7" ry="3.2" fill={shoe} transform="rotate(8 -9 35)" />
-          <ellipse cx="8" cy="35" rx="7" ry="3.2" fill={shoe} transform="rotate(-10 8 35)" />
-          <rect x="-15" y="-22" width="30" height="30" rx="11" fill={top} />
-          <rect x="1" y="-22" width="14" height="30" rx="11" fill={shade} />
-          <rect x="-13" y="-19" width="26" height="3" rx="1.5" fill={highlight} />
-          <circle cx="0" cy="-34" r="12.5" fill={skin} />
-          <circle cx="5" cy="-31" r="8.5" fill={shade} opacity="0.5" />
-          <path d="M -12,-37 Q 0,-50 12,-37 Q 12,-44 0,-46 Q -12,-44 -12,-37 Z" fill={hair} />
-          <PersonFace />
-          <rect x="9" y="-16" width="15" height="8.5" rx="4.2" fill={skin} transform="rotate(8 24 -16)" />
-          <rect x="-24" y="-10" width="13" height="12" rx="2.5" fill={T.text} opacity="0.9" />
-          <rect x="-24" y="-10" width="13" height="4" rx="2" fill={highlight} opacity="0.4" />
-        </>
-      ) : (
-        <>
-          <ellipse cx="0" cy="38" rx="17" ry="4.2" fill="#000" opacity="0.08" />
-          <rect x="-10" y="8" width="9" height="30" rx="4.5" fill={bottom} />
-          <rect x="1" y="8" width="9" height="30" rx="4.5" fill={bottom} />
-          <rect x="1" y="8" width="9" height="30" rx="4.5" fill={shade} opacity="0.55" />
-          <ellipse cx="-5.5" cy="37" rx="7" ry="3.2" fill={shoe} />
-          <ellipse cx="5.5" cy="37" rx="7" ry="3.2" fill={shoe} />
-          <rect x="-15" y="-22" width="30" height="30" rx="11" fill={top} />
-          <rect x="1" y="-22" width="14" height="30" rx="11" fill={shade} />
-          <rect x="-13" y="-19" width="26" height="3" rx="1.5" fill={highlight} />
-          <circle cx="0" cy="-34" r="12.5" fill={skin} />
-          <circle cx="5" cy="-31" r="8.5" fill={shade} opacity="0.5" />
-          <path d="M -12,-37 Q 0,-50 12,-37 Q 12,-44 0,-46 Q -12,-44 -12,-37 Z" fill={hair} />
-          <PersonFace />
-          <rect x="-24" y="-16" width="15" height="8.5" rx="4.2" fill={skin} transform="rotate(20 -24 -16)" />
-          <rect x="9" y="-16" width="15" height="8.5" rx="4.2" fill={skin} transform="rotate(-20 24 -16)" />
-        </>
-      )}
-    </g>
-    </g>
-  );
-}
-
-function PpcIllustration() {
-  return (
-    <svg viewBox="0 0 820 620" width="100%" height="auto" style={{ display: 'block', overflow: 'visible' }}>
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} style={{ display: 'block', overflow: 'visible' }}>
       <defs>
-        <linearGradient id="letterGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#33c972" />
-          <stop offset="55%" stopColor={T.primary} />
-          <stop offset="100%" stopColor={T.primaryDark} />
+        <linearGradient id="dashFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#33c972" stopOpacity="0.32" />
+          <stop offset="100%" stopColor="#33c972" stopOpacity="0" />
         </linearGradient>
-        <linearGradient id="coinGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffe28a" />
-          <stop offset="100%" stopColor="#f0b93a" />
-        </linearGradient>
-        <radialGradient id="targetGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(0,163,77,0.22)" />
-          <stop offset="100%" stopColor="transparent" />
-        </radialGradient>
-        <radialGradient id="ringOuter" cx="38%" cy="32%" r="75%">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="100%" stopColor="#dcd6c6" />
-        </radialGradient>
-        <radialGradient id="ringMid" cx="38%" cy="32%" r="75%">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="100%" stopColor="#eef0e8" />
-        </radialGradient>
-        <radialGradient id="coinTop" cx="35%" cy="30%" r="75%">
-          <stop offset="0%" stopColor="#fff3c4" />
-          <stop offset="100%" stopColor="#e0a52c" />
-        </radialGradient>
       </defs>
-
-      {/* soft ambient leaves, brand-tinted */}
-      <g opacity="0.55">
-        <path d="M40,560 Q10,420 90,300 Q120,420 90,560 Z" fill={T.primaryLight} />
-        <path d="M760,560 Q800,400 730,260 Q700,400 730,560 Z" fill={T.primaryLight} />
-        <path d="M120,540 Q100,440 160,360" stroke="#cdeedd" strokeWidth="10" fill="none" strokeLinecap="round" />
-        <path d="M700,540 Q720,440 660,360" stroke="#cdeedd" strokeWidth="10" fill="none" strokeLinecap="round" />
-      </g>
-
-      {/* ground shadow */}
-      <ellipse cx="410" cy="585" rx="330" ry="18" fill="#000" opacity="0.06" />
-
-      {/* ===== Giant PPC letters (soft drop shadow + gradient + rim light) ===== */}
-      <text x="416" y="438" textAnchor="middle" fontFamily="'Playfair Display', serif" fontWeight="900" fontSize="330" letterSpacing="-6" fill={T.primaryDark} opacity="0.18">PPC</text>
-      <text x="410" y="430" textAnchor="middle" fontFamily="'Playfair Display', serif" fontWeight="900" fontSize="330" letterSpacing="-6" fill="url(#letterGrad)">PPC</text>
-      <text x="410" y="430" textAnchor="middle" fontFamily="'Playfair Display', serif" fontWeight="900" fontSize="330" letterSpacing="-6" fill="none" stroke="#ffffff" strokeWidth="1" opacity="0.18">PPC</text>
-
-      {/* ===== Money stack, left of first P (layered coins + cash, 3-D shading) ===== */}
-      <g transform="translate(150,470)">
-      <g className="ppc-anim-coin">
-        <ellipse cx="0" cy="4" rx="52" ry="10" fill="#000" opacity="0.08" />
-        {[-14, -30, -46].map((y, i) => (
-          <g key={y}>
-            <rect x={-46 + i * 6} y={y} width={92 - i * 12} height="16" rx="4" fill="url(#coinGrad)" stroke="#c98f1d" strokeWidth="1.5" />
-            <ellipse cx="0" cy={y} rx={46 - i * 6} ry="4.5" fill="url(#coinTop)" stroke="#c98f1d" strokeWidth="1" />
-            <ellipse cx={-8} cy={y - 1.2} rx={14 - i} ry="1.6" fill="#fff" opacity="0.5" />
-          </g>
-        ))}
-        <circle cx="0" cy="-38" r="12" fill="#fff6da" stroke="#c98f1d" strokeWidth="1.5" />
-        <text x="0" y="-33" textAnchor="middle" fontSize="13" fontWeight="800" fill="#c98f1d">₹</text>
-        <g transform="translate(58,-6) rotate(-6)">
-          <rect x="-30" y="-42" width="60" height="34" rx="3" fill="#e9fbf0" stroke="#33c972" strokeWidth="1.5" />
-          <rect x="-30" y="-42" width="60" height="10" rx="3" fill="#d3f3e2" />
-          <rect x="-22" y="-34" width="44" height="22" rx="2" fill="none" stroke="#33c972" strokeWidth="1" opacity="0.6" />
-          <text x="0" y="-19" textAnchor="middle" fontSize="15" fontWeight="800" fill={T.primaryDark}>₹</text>
-        </g>
-        <g transform="translate(50,-2) rotate(3)">
-          <rect x="-28" y="-30" width="56" height="30" rx="3" fill="#dff6ea" stroke="#33c972" strokeWidth="1" opacity="0.9" />
-        </g>
-      </g>
-      </g>
-
-      {/* ===== Target with arrow, right of C (metallic-bevel rings, pulsing bullseye) ===== */}
-      <g transform="translate(690,300)">
-        <ellipse cx="6" cy="86" rx="66" ry="12" fill="#000" opacity="0.07" />
-        <circle cx="0" cy="0" r="95" fill="url(#targetGlow)" />
-        <circle cx="0" cy="0" r="70" fill="url(#ringOuter)" stroke={T.primaryDark} strokeWidth="4" />
-        <circle cx="0" cy="0" r="50" fill="url(#ringMid)" stroke={T.primary} strokeWidth="4" />
-        <circle cx="0" cy="0" r="30" fill="url(#ringOuter)" stroke={T.primaryDark} strokeWidth="4" />
-        <circle className="ppc-anim-target-ring" cx="0" cy="0" r="11" fill="none" stroke="#33c972" strokeWidth="3" />
-        <circle cx="0" cy="0" r="11" fill={T.primary} />
-        <circle cx="-3" cy="-3" r="4" fill="#66d49a" opacity="0.8" />
-        <g transform="rotate(-38)">
-        <g className="ppc-anim-arrow">
-          <rect x="-3" y="-130" width="6" height="132" rx="3" fill="#8a6035" />
-          <rect x="-3" y="-130" width="2.5" height="132" rx="1.2" fill="#a97a45" />
-          <path d="M -3,-128 L 0,-150 L 3,-128 Z" fill="#c98f1d" />
-          <path d="M -3,-96 l -14,-10 l 6,14 z" fill={T.primaryDark} />
-          <path d="M 3,-96 l 14,-10 l -6,14 z" fill={T.primaryDark} />
-        </g>
-        </g>
-      </g>
-
-      {/* person climbing a ladder toward the target */}
-      <g transform="translate(600,470)">
-        <g stroke="#c9b28a" strokeWidth="6" strokeLinecap="round">
-          <line x1="-26" y1="0" x2="-14" y2="-140" />
-          <line x1="24" y1="0" x2="12" y2="-140" />
-          <line x1="-24" y1="-24" x2="21" y2="-24" />
-          <line x1="-21" y1="-58" x2="18" y2="-58" />
-          <line x1="-18" y1="-92" x2="15" y2="-92" />
-          <line x1="-16" y1="-126" x2="13" y2="-126" />
-        </g>
-        <FlatPerson transform="translate(0,-150)" pose="climb" top="#ffffff" bottom="#173a2a" accent={T.primary} delay={0} />
-      </g>
-
-      {/* person sitting on the first P, on the phone */}
-      <FlatPerson transform="translate(150,205)" pose="sit" top="#ffffff" bottom="#0b3d24" delay={200} />
-
-      {/* person cross-legged with laptop on the second P */}
-      <FlatPerson transform="translate(480,230) scale(1.05)" pose="sit" top="#f4f1ea" bottom="#173a2a" delay={600} />
-      <rect x="452" y="215" width="56" height="6" rx="2" fill="#173a2a" transform="translate(0,20)" />
-
-      {/* person cross-legged at the base with a phone, near the coins */}
-      <FlatPerson transform="translate(280,540)" pose="sit" top="#ffffff" bottom="#0b3d24" delay={900} />
-
-      {/* two people talking near the base of the C */}
-      <FlatPerson transform="translate(560,540)" pose="walk" top="#ffffff" bottom="#173a2a" delay={100} />
-      <g transform="translate(560,516)">
-        <rect x="-13" y="0" width="18" height="14" rx="2.5" fill={T.text} opacity="0.85" />
-      </g>
-      <FlatPerson transform="translate(608,548)" pose="stand" top="#f4f1ea" bottom="#0b3d24" delay={400} />
-
-      {/* person with briefcase, far left */}
-      <FlatPerson transform="translate(55,545)" pose="walk" top="#ffffff" bottom="#173a2a" delay={500} />
-      <rect x="20" y="528" width="20" height="16" rx="2.5" fill={T.text} opacity="0.85" transform="translate(3,3)" />
-
-      {/* small accent sparkles */}
-      <g fill={T.primary} opacity="0.55">
-        <circle cx="230" cy="150" r="4" />
-        <circle cx="640" cy="150" r="3" />
-        <circle cx="410" cy="80" r="3.5" />
-      </g>
+      {[0, 1, 2, 3].map(i => (
+        <line key={i} x1={0} x2={W} y1={(H / 3.4) * i + 4} y2={(H / 3.4) * i + 4} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+      ))}
+      <path d={areaD} fill="url(#dashFill)" style={{ opacity: draw ? 1 : 0, transition: 'opacity 0.6s ease 0.5s' }} />
+      <path d={d} fill="none" stroke="#33c972" strokeWidth="2.25" strokeLinecap="round"
+        pathLength="1" strokeDasharray="1" strokeDashoffset={draw ? 0 : 1}
+        style={{ transition: 'stroke-dashoffset 1.3s cubic-bezier(0.65,0,0.35,1) 0.15s' }} />
+      <circle cx={lastX} cy={lastY} r="4" fill="#0a140e" stroke="#33c972" strokeWidth="2"
+        style={{ opacity: draw ? 1 : 0, transition: 'opacity 0.4s ease 1.4s' }} />
+      <circle cx={lastX} cy={lastY} r="9" fill="none" stroke="#33c972" strokeWidth="1.5"
+        style={{ opacity: draw ? 0.35 : 0, transition: 'opacity 0.4s ease 1.4s' }} />
     </svg>
+  );
+}
+
+function MetricTile({ label, value, suffix, decimals, delta, up, draw, delay }) {
+  const { ref, count } = useCountUp(value, 1500, decimals);
+  return (
+    <div ref={ref} style={{
+      flex: 1, padding: '12px 14px', borderRadius: 12,
+      background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.08)',
+      opacity: draw ? 1 : 0, transform: draw ? 'translateY(0)' : 'translateY(10px)',
+      transition: `opacity 0.5s ease ${delay}ms, transform 0.5s ease ${delay}ms`,
+    }}>
+      <div style={{ fontSize: 9.5, color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{label}</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+        <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, fontWeight: 800, color: '#fff' }}>
+          {decimals ? count.toFixed(decimals) : count}{suffix}
+        </span>
+        <span style={{ fontSize: 10, fontWeight: 700, color: up ? '#33c972' : '#ff8a7a', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <i className={`ti ti-arrow-${up ? 'up' : 'down'}-right`} style={{ fontSize: 11 }} />{delta}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ChannelBar({ label, icon, pct, spend, color, draw, delay }) {
+  return (
+    <div style={{ opacity: draw ? 1 : 0, transition: `opacity 0.5s ease ${delay}ms` }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>
+          <i className={icon} style={{ fontSize: 13, color }} />{label}
+        </span>
+        <span style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', fontFamily: "'JetBrains Mono',monospace" }}>{spend}</span>
+      </div>
+      <div style={{ height: 5, borderRadius: 4, background: 'rgba(255,255,255,0.07)', overflow: 'hidden' }}>
+        <div style={{ height: '100%', borderRadius: 4, width: draw ? `${pct}%` : '0%', background: color, transition: `width 1s cubic-bezier(0.22,1,0.36,1) ${delay + 150}ms` }} />
+      </div>
+    </div>
+  );
+}
+
+function DashboardMockup() {
+  const [draw, setDraw] = useState(false);
+  const wrapRef = useRef(null);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setDraw(true); obs.disconnect(); } }, { threshold: 0.2 });
+    if (wrapRef.current) obs.observe(wrapRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 1400);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div ref={wrapRef} style={{ width: '100%', maxWidth: 460, position: 'relative' }}>
+      {/* ambient backdrop */}
+      <div style={{ position: 'absolute', inset: '-8%', background: 'radial-gradient(ellipse at 50% 40%,rgba(0,163,77,0.16) 0%,transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
+
+      {/* floating corroborating chips */}
+      <div style={{
+        position: 'absolute', top: -18, right: 18, zIndex: 2,
+        background: '#fff', borderRadius: 12, padding: '8px 14px',
+        boxShadow: '0 12px 28px -8px rgba(0,0,0,0.18)', border: `1px solid ${T.border}`,
+        display: 'flex', alignItems: 'center', gap: 8,
+        opacity: draw ? 1 : 0, transform: draw ? 'translateY(0)' : 'translateY(-10px)',
+        transition: 'opacity 0.6s ease 0.9s, transform 0.6s ease 0.9s',
+      }}>
+        <div style={{ width: 26, height: 26, borderRadius: 7, background: T.primaryLight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <i className="ti ti-trending-up" style={{ fontSize: 13, color: T.primaryDark }} />
+        </div>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 800, color: T.text, lineHeight: 1 }}>6.8× ROAS</div>
+          <div style={{ fontSize: 8.5, color: T.textLighter, marginTop: 2 }}>this campaign</div>
+        </div>
+      </div>
+
+      <div style={{
+        position: 'absolute', bottom: -16, left: -14, zIndex: 2,
+        background: '#fff', borderRadius: 12, padding: '8px 14px',
+        boxShadow: '0 12px 28px -8px rgba(0,0,0,0.18)', border: `1px solid ${T.border}`,
+        display: 'flex', alignItems: 'center', gap: 8,
+        opacity: draw ? 1 : 0, transform: draw ? 'translateY(0)' : 'translateY(10px)',
+        transition: 'opacity 0.6s ease 1.1s, transform 0.6s ease 1.1s',
+      }}>
+        <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#0a140e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#33c972', boxShadow: '0 0 0 3px rgba(51,201,114,0.25)' }} />
+        </div>
+        <div>
+          <div style={{ fontSize: 11.5, fontWeight: 700, color: T.text, lineHeight: 1 }}>Live optimisation</div>
+          <div style={{ fontSize: 8.5, color: T.textLighter, marginTop: 2 }}>bids adjusted hourly</div>
+        </div>
+      </div>
+
+      {/* main card */}
+      <div style={{
+        position: 'relative', zIndex: 1, background: 'linear-gradient(165deg,#0c1812,#070f0a)',
+        borderRadius: 22, border: '1px solid rgba(255,255,255,0.09)',
+        boxShadow: '0 32px 70px -20px rgba(6,20,12,0.55), 0 8px 24px -8px rgba(0,0,0,0.25)',
+        padding: '22px 22px 24px', overflow: 'hidden',
+        opacity: draw ? 1 : 0, transform: draw ? 'translateY(0) scale(1)' : 'translateY(18px) scale(0.98)',
+        transition: 'opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1)',
+      }}>
+        <div style={{ position: 'absolute', top: -60, right: -60, width: 200, height: 200, background: 'radial-gradient(circle,rgba(0,163,77,0.18) 0%,transparent 70%)', pointerEvents: 'none' }} />
+
+        {/* window chrome */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 18 }}>
+          {['#ff8a7a', '#ffd166', '#33c972'].map(c => <span key={c} style={{ width: 8, height: 8, borderRadius: '50%', background: c, opacity: 0.7 }} />)}
+          <span style={{ marginLeft: 8, fontSize: 10, color: 'rgba(255,255,255,0.32)', fontFamily: "'JetBrains Mono',monospace" }}>campaign-dashboard.app</span>
+        </div>
+
+        {/* header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+          <div>
+            <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Account Overview</div>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 18, fontWeight: 800, color: '#fff' }}>Search + Shopping</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(51,201,114,0.12)', border: '1px solid rgba(51,201,114,0.28)', borderRadius: 20, padding: '5px 10px 5px 8px' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#33c972', opacity: tick % 2 === 0 ? 1 : 0.4, transition: 'opacity 0.3s ease' }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#66d49a' }}>Live</span>
+          </div>
+        </div>
+
+        {/* revenue headline */}
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 4 }}>
+          <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 30, fontWeight: 900, color: '#fff', letterSpacing: '-0.5px' }}>₹8.4L</span>
+          <span style={{ fontSize: 11.5, fontWeight: 700, color: '#33c972', display: 'flex', alignItems: 'center' }}><i className="ti ti-arrow-up-right" style={{ fontSize: 13 }} />32% MoM</span>
+        </div>
+        <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', marginBottom: 14 }}>Attributed revenue · last 30 days</div>
+
+        {/* chart */}
+        <DashboardChart draw={draw} />
+
+        {/* metric tiles */}
+        <div style={{ display: 'flex', gap: 8, marginTop: 16, marginBottom: 18 }}>
+          <MetricTile label="ROAS" value={6.8} decimals={1} suffix="×" delta="0.6" up draw={draw} delay={650} />
+          <MetricTile label="Avg CPC" value={22} suffix="" delta="₹3" up={false} draw={draw} delay={730} />
+          <MetricTile label="Conv. Rate" value={5.6} decimals={1} suffix="%" delta="1.1%" up draw={draw} delay={810} />
+        </div>
+
+        {/* channel breakdown */}
+        <div style={{ paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <ChannelBar label="Google Search" icon="ti ti-brand-google" pct={72} spend="₹3.1L" color="#33c972" draw={draw} delay={950} />
+          <ChannelBar label="Meta Shopping" icon="ti ti-brand-meta" pct={54} spend="₹2.0L" color="#66d49a" draw={draw} delay={1020} />
+          <ChannelBar label="YouTube" icon="ti ti-brand-youtube" pct={31} spend="₹0.9L" color="#9fe6bd" draw={draw} delay={1090} />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -658,22 +586,11 @@ function Hero() {
           </div>
           <h1 className="ppc-reveal" style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(36px,5vw,54px)', fontWeight:900, lineHeight:1.06, color:T.text, letterSpacing:'-1.2px', marginBottom:20, animationDelay:'0.1s' }}>
             Every Rupee Spent.<br />
-            <span style={{ background:`linear-gradient(135deg,${T.primaryDark} 0%,${T.primary} 55%,#33c972 100%)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-              Every <TypingText words={['Click', 'Lead', 'Sale', 'Customer', 'Rupee']} /> Earned.
-            </span>
+            <span style={{ background:`linear-gradient(135deg,${T.primaryDark} 0%,${T.primary} 55%,#33c972 100%)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>Every Click Earned.</span>
           </h1>
-          <p className="ppc-reveal" style={{ fontSize:15, color:T.textLight, lineHeight:1.8, maxWidth:460, marginBottom:22, animationDelay:'0.18s' }}>
+          <p className="ppc-reveal" style={{ fontSize:15, color:T.textLight, lineHeight:1.8, maxWidth:460, marginBottom:34, animationDelay:'0.18s' }}>
             PPC campaigns built to maximise ROAS — not just clicks. From Google Search to Meta Shopping, we turn ad spend into measurable, scalable revenue.
           </p>
-          <div className="ppc-reveal" style={{ display:'inline-flex', alignItems:'center', gap:8, background:'#0a140e', border:'1px solid rgba(0,163,77,0.3)', borderRadius:10, padding:'10px 16px', marginBottom:28, animationDelay:'0.22s' }}>
-            <span style={{ width:7, height:7, borderRadius:'50%', background:'#33c972', flexShrink:0 }} />
-            <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:12.5, color:'rgba(255,255,255,0.4)' }}>optimising:</span>
-            <TypingText
-              words={['Google Search Ads…', 'Meta Shopping campaigns…', 'YouTube pre-rolls…', 'Remarketing funnels…', 'Performance Max…']}
-              typeSpeed={38} deleteSpeed={22} pause={1300}
-              style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:12.5, fontWeight:600, color:'#66d49a' }}
-            />
-          </div>
           <div className="ppc-reveal" style={{ display:'flex', gap:12, marginBottom:32, flexWrap:'wrap', animationDelay:'0.26s' }}>
             <a href="#contact" style={{ textDecoration:'none' }}>
               <button className="magnetic-btn" style={{ background:T.primary, color:'#fff', padding:'14px 28px', borderRadius:12, fontFamily:'Poppins,sans-serif', fontWeight:700, fontSize:13, border:'none', cursor:'pointer', boxShadow:'0 6px 20px rgba(0,163,77,0.36)' }}>Get Free PPC Audit →</button>
@@ -709,9 +626,7 @@ function Hero() {
           </div>
         </div>
         <div style={{ display:'flex', justifyContent:'center', alignItems:'center' }}>
-          <div style={{ width:'100%', maxWidth:520 }}>
-            <PpcIllustration />
-          </div>
+          <DashboardMockup />
         </div>
       </div>
     </div>
@@ -926,22 +841,6 @@ export default function PPCPage() {
         @keyframes pulsePPC{0%,100%{box-shadow:0 0 0 3px rgba(0,163,77,0.25)}50%{box-shadow:0 0 0 6px rgba(0,163,77,0.1)}}
         @keyframes fadeUpPPC{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
         @keyframes gradientMovePPC{0%{background-position:0%}100%{background-position:200%}}
-        @keyframes blinkCursorPPC{0%,100%{opacity:1}50%{opacity:0}}
-        .ppc-anim-walk{transform-box:fill-box;transform-origin:50% 100%;animation:ppcWalkBob 0.6s ease-in-out infinite;}
-        @keyframes ppcWalkBob{0%,100%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(-7px,-5px) rotate(-6deg)}75%{transform:translate(7px,-2px) rotate(6deg)}}
-        .ppc-anim-sit{transform-box:fill-box;transform-origin:50% 100%;animation:ppcSitBob 1.8s ease-in-out infinite;}
-        @keyframes ppcSitBob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-5px) rotate(3deg)}}
-        .ppc-anim-climb{transform-box:fill-box;transform-origin:50% 100%;animation:ppcClimbStep 4s cubic-bezier(0.45,0,0.55,1) infinite;}
-        @keyframes ppcClimbStep{0%{transform:translateY(0) rotate(0deg)}10%{transform:translateY(-4px) rotate(-3deg)}20%{transform:translateY(-10px) rotate(2deg)}45%{transform:translateY(-34px) rotate(-3deg)}55%{transform:translateY(-40px) rotate(2deg)}92%{transform:translateY(-46px) rotate(0deg);opacity:1}96%{opacity:0}97%{transform:translateY(0);opacity:0}100%{transform:translateY(0);opacity:1}}
-        .ppc-anim-stand{transform-box:fill-box;transform-origin:50% 100%;animation:ppcIdleBreathe 1.6s ease-in-out infinite;}
-        @keyframes ppcIdleBreathe{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) rotate(-2.5deg)}}
-        .ppc-anim-arrow{transform-box:fill-box;transform-origin:50% 100%;animation:ppcArrowPulse 1.4s ease-in-out infinite;}
-        @keyframes ppcArrowPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-        .ppc-anim-target-ring{animation:ppcTargetPulse 2.2s ease-in-out infinite;}
-        @keyframes ppcTargetPulse{0%,100%{opacity:0.35;r:11}50%{opacity:0.05;r:26}}
-        .ppc-anim-coin{transform-box:fill-box;transform-origin:50% 50%;animation:ppcCoinBob 2.4s ease-in-out infinite;}
-        @keyframes ppcCoinBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-        @media(prefers-reduced-motion:reduce){.ppc-anim-walk,.ppc-anim-sit,.ppc-anim-climb,.ppc-anim-stand,.ppc-anim-arrow,.ppc-anim-target-ring,.ppc-anim-coin{animation:none!important;}}
         .ppc-reveal{animation:fadeUpPPC 0.7s cubic-bezier(0.22,1,0.36,1) both;}
         .magnetic-btn{transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease;}
         .magnetic-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 30px rgba(0,163,77,0.32);}
